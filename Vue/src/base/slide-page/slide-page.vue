@@ -24,6 +24,7 @@
     transform: translate3d(100%, 0, 0);
   }
   .slide-page {
+    z-index: 1;
     background: black;
     height: 100%;
     width: 100%;
