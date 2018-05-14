@@ -9,6 +9,7 @@ import VueLazyload from 'vue-lazyload'
 
 import 'common/js/adaption.js' // 自适应
 import 'common/style/index.less' // 全局控制样式
+import 'font-awesome/css/font-awesome.css'
 
 import 'common/js/methods.js'
 // 滚动到可视区，则显示图片，loading为默认加载前的图,,节点中用v-lazy="item.imgurl"

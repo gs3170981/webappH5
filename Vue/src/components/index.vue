@@ -19,7 +19,7 @@
           </div>
         </banner>
         <!--item内容-->
-        <ul class="row-padding menu">
+        <ul class="row-padding menu row-border-bottom">
           <li class="item row-item" v-for="t in items">
             <img class="icon" :src="t.path" />
             <p class="title" v-text="t.title"></p>
@@ -29,7 +29,7 @@
           <li style="background: black;color: white;line-height: 1.5rem;" v-for="item in items" v-text="item" @click="test()"></li>
         </ul>-->
         <!--图表的内容-->
-        <section class="row-padding chart">
+        <section class="row-padding chart row-border-bottom">
           <h1 class="title">推广业绩<span class="more">查看更多　<i class="fa fa-angle-right"></i></span></h1>
           <ul class="det">
             <li class="item" v-for="t in chart">
@@ -43,7 +43,10 @@
           </ul>
         </section>
         <!--任务-->
-        
+        <section class="row-padding task">
+          <h1 class="title">权益任务</h1>
+
+        </section>
         <!--底部-->
         <bottom-footer></bottom-footer>
       </div>
@@ -116,7 +119,7 @@
       }, r => {
         this.banner = r.data.slider
       })
-      
+
       // 模拟数据
       setTimeout(r => {
         let chart = [{id:'a',title:'臻分期',val:80},{id:'b',title:'臻商贷',val:50},{id:'c',title:'臻车贷',val:40},{id:'d',title:'信用卡',val:60}]
@@ -150,20 +153,22 @@
 <style scoped lang='less'>
   .main {
     position: fixed;
+    background: @color-hui1;
     width: 100%;
     top: 0; /*什么破设定，没就错*/
     bottom: 0; /*什么破设定，没就错*/
-   
+
     .content {
       height: 100%;
       overflow: hidden;
-      
+
       .slider-wrapper {
         position: relative;
         width: 100%;
         overflow: hidden;
       }
       .menu {
+        background: white;
         display: flex;
         justify-content: center;
         .item {
@@ -173,7 +178,7 @@
           &:last-child {
             margin-right: 0;
           }
-          
+
           .icon {
             height: .54rem;
             width: .58rem;
@@ -185,6 +190,7 @@
         }
       }
       .chart {
+        background: white;
         .title {
           font-size: @font-size-item_title;
           height: .6rem;
@@ -196,7 +202,7 @@
           }
         }
         .det {
-          padding: .2rem .05rem .5rem;
+          padding: .2rem .05rem 0;
           .item {
             height: .75rem;
             overflow: hidden;
@@ -234,6 +240,21 @@
               color: @color-org;
               font-size: @font-size-big;
             }
+          }
+        }
+      }
+      .task {
+        background: white;
+        .title {
+          font-size: @font-size-item_title;
+          height: .6rem;
+          font-weight: bold;
+          line-height: .6rem;
+        }
+        .det {
+          padding: .2rem 0 .43rem;
+          .img {
+
           }
         }
       }
