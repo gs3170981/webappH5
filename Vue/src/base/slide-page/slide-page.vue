@@ -25,7 +25,7 @@
   }
   .slide-page {
     z-index: 1;
-    background: black;
+    background: white;
     height: 100%;
     width: 100%;
     position: fixed;
