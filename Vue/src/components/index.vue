@@ -13,12 +13,12 @@
       <div><!--必须加-->
         
         <!--TODO 在子页面时，banner的定时器未清空,仍在执行,有时间改改-->
-        <banner v-if="banner.length" class="slider-wrapper">
-          <div v-for="item in banner">
-            <a :href="item.linkUrl">
+        <banner v-if="banner.length" class="row-slider-wrapper">
+          <div v-for="t in banner">
+            <a :href="t.linkUrl">
               <!--如果fastclick延迟点击与自身click冲突，则加needsclick样式，进行冒泡-->
-              <img class="needsclick" @load="loadImage" :src="item.picUrl">
-            </a>
+              <img class="needsclick" @load="loadImage" :src="t.picUrl">
+            </a><!--loadImage有啥用回家再看-->
           </div>
         </banner>
         
@@ -222,11 +222,7 @@
     bottom: 0; /*什么破设定，没就错*/
 
     .row-content {
-      .slider-wrapper {
-        position: relative;
-        width: 100%;
-        overflow: hidden;
-      }
+      
       .menu {
         background: white;
         display: flex;

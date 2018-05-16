@@ -12,8 +12,53 @@
           <h1 class="title">佣金概览<router-link tag="span" class="more" to="/my_commission/more">查看更多　<i class="fa fa-angle-right"></i></router-link></h1>
           <div id="chart"></div>
         </section>
+        <!--中间的内容模块-->
+        <section class="content row-padding row-border-bottom">
+          <h1 class="title">任务佣金<router-link tag="span" class="more" to="/my_commission/more">历史任务　<i class="fa fa-angle-right"></i></router-link></h1>
+          <!--TODO 在子页面时，banner的定时器未清空,仍在执行,有时间改改-->
+          <banner v-if="banner.length" class="row-slider-wrapper">
+            <!--有时间加个传参，去变化滚动的css样式-->
+            <div v-for="t in banner" class="banner" :key="t.id">
+              <template v-if="t.type === 'false'">
+                <p class="title" style="margin-top: .2rem;"><i class="fa icon" :class="t.icon"></i>{{ t.title }}</p>
+                <div v-if="t.type === 'false'" style="margin-top: .2rem;" class="row-btn" @click="getTask()">领任务</div>
+              </template>
+              
+              <template v-else-if="t.type === 'loading'">
+                <p class="title"><i class="fa icon" :class="t.icon"></i>{{ t.title }}</p>
+                <p class="timer">{{ t.timer }}</p>
+                <div class="btn loading row-btn">进行中</div>
+              </template>
+              
+            </div>
+          </banner>
+        </section>
+        <!--底部内容模块-->
+        <footer class="footer row-padding">
+          <h1 class="title">产品佣金</h1>
+          <ul class="det">
+            <li class="item" v-for="t in footer_data">
+              <span v-text="t.title"></span>
+              <router-link tag="span" class="more row-item" to="/my_commission/rule">详见《佣金规则》</router-link>
+              <!--<span class="more">详见《佣金规则》</span>-->
+            </li>
+          </ul>
+        </footer>
+        
+        <!--底部-->
+        <bottom-footer></bottom-footer>
       </div>
     </scroll>
+    <!--弹出的任务模板-->
+    <mask-page :show="mask.is">
+      <div class="mask-content">
+        <dl class="content" :style="mask.style">
+          <dt class="det" v-text="mask.det"></dt>
+          <dd class="row-btn row-item" @click="getTask(true)">领任务</dd>
+          <dd class="close" @click="mask.is = false">x</dd>
+        </dl>
+      </div>
+    </mask-page>
     <!--子滑动页面-->
     <router-view></router-view>
   </slide-page>
@@ -22,17 +67,37 @@
 <script>
   import SlidePage from 'base/slide-page/slide-page'
   import TopHeader from 'base/top-header/top-header'
+  import Banner from 'base/banner/banner'
   import Scroll from 'base/scroll/scroll'
-//import echarts from 'echarts'
-//import echarts from 'echarts/lib/echarts'
-//import 'echarts/lib/pie'
-//import 'echarts/lib/tooltip'
-//import 'echarts/lib/title'
+  import MaskPage from 'base/mask/mask-page'
+  import BottomFooter from 'base/bottom-footer/bottom-footer'
   
   import { $ } from 'common/js/methods.js'
   export default {
     data () {
       return {
+        footer_data: [
+          {
+            id: 'a',
+            title: '臻商贷推广'
+          }, {
+            id: 'b',
+            title: '臻车贷推广'
+          }, {
+            id: 'c',
+            title: '信用卡推广'
+          }
+        ],
+        mask: {
+          is: false,
+          style: {
+            background: "url(" + require('common/image/comm_pop_img_prize.png') + ")top center",
+            backgroundSize: '100% 100%'
+          },
+          money: 1000,
+//        title: '',
+          det: '任务领取后xx天内，累计完成xx单【放款】联网报警服务费分期业务【分期金额不限】即可获得任务奖励，任务奖励可到佣金记录查看。任务有效期内未完成规有奖励，请知悉！定任务，则没有奖励，请知悉！'
+        },
         header_img: require('common/image/commission-header.png'),
         top_header: {
           left: {
@@ -45,21 +110,85 @@
             href: '/my_commission/rule',
           }
         },
+        banner: [
+          {
+            icon: 'fa-share-square-o',
+            type: 'false',
+            id: 'a',
+            title: '臻分期推广'
+          }, {
+            icon: 'fa-share-square-o',
+            type: 'loading',
+            timer: '2018年5月2日到期',
+            id: 'b',
+            title: '完善个人资料'
+          }
+        ],
+        /* TODO 这边要看后台的数据结构,再做相应的数据抽离整改*/
+        chartData: [
+          {
+            name: '已提佣金',
+            val: 3000
+          }, {
+            name: '冻结佣金',
+            val: 1000
+          }, {
+            name: '可提佣金',
+            val: 5000
+          }
+        ],
         option: {
           tooltip: {
             trigger: 'item',
             formatter: "{a} <br/>{b}: {c} ({d}%)"
           },
           legend: {
-            orient: 'vertical',
-            x: 'left',
-            data:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+            orient: 'horizontal',
+            x: 'center',
+            y: '70%',
+            formatter: (name) => {
+              let chartData = this.chartData
+              for (let i = 0; i < chartData.length; i++) {
+                if (chartData[i].name === name) {
+                  return  name + '\n￥' + chartData[i].val
+                }
+              }
+            },
+            data: [
+              {
+                name: '已提佣金',
+                icon: 'circle'
+              }, {
+                name: '冻结佣金',
+                icon: 'circle'
+              }, {
+                name: '可提佣金',
+                icon: 'circle'
+              }
+            ]
+          },
+          color:['#38d7ff','#8871d5','#4694fc'],
+          title: {
+            text: '总资产',
+            subtext: '￥8000',
+            textStyle: {
+              color: '#bcbdbe',
+              fontSize: '13',
+              height: '5px'
+            },
+            subtextStyle: {
+              color: '#303132',
+              fontSize: '16',
+            },
+            x: 'center',
+            y: '23%'
           },
           series: [
             {
-              name:'访问来源',
+              name:'佣金概述',
               type:'pie',
-              radius: ['50%', '70%'],
+              radius: ['40%', '60%'],
+              center: ['center', '35%'],
               avoidLabelOverlap: false,
               label: {
                 normal: {
@@ -69,7 +198,7 @@
                 emphasis: {
                   show: true,
                   textStyle: {
-                    fontSize: '30',
+                    fontSize: '19',
                     fontWeight: 'bold'
                   }
                 }
@@ -80,11 +209,25 @@
                 }
               },
               data:[
-                {value:335, name:'直接访问'},
-                {value:310, name:'邮件营销'},
-                {value:234, name:'联盟广告'},
-                {value:135, name:'视频广告'},
-                {value:1548, name:'搜索引擎'}
+                {
+                  value: 3000,
+                  name: '已提佣金',
+                  label: {
+                    show: false
+                  }
+                }, {
+                  value: 1000,
+                  name: '冻结佣金',
+                  label: {
+                    show: false
+                  }
+                }, {
+                  value: 5000,
+                  name: '可提佣金',
+                  label: {
+                    show: false
+                  }
+                }
               ]
             }
           ]
@@ -94,22 +237,36 @@
     components: {
       TopHeader,
       Scroll,
-      SlidePage
+      Banner,
+      SlidePage,
+      MaskPage,
+      BottomFooter
     },
     created () {
       
     },
     mounted () {
-      var echarts = require('echarts/lib/echarts')
-      // 引入柱状图
+      let echarts = require('echarts/lib/echarts')
       require('echarts/lib/chart/pie')
-      // 引入提示框和标题组件
       require('echarts/lib/component/tooltip')
+      require('echarts/lib/component/legend')
       require('echarts/lib/component/title')
-//    console.log($('chart'))
-//    debugger
       let myChart = echarts.init($('chart'))
       myChart.setOption(this.option)
+    },
+    methods: {
+      getTask (is) {
+        /*AJAX*/
+        if (is) {
+          /*领取成功!*/
+          this.mask.is = false
+        } else {
+          this.mask.is = true
+        }
+      },
+      maskClose () {
+        this.mask.is = false
+      }
     }
   }
 </script>
@@ -130,6 +287,7 @@
       box-shadow: 0 .2rem .45rem 0 #e9eff7;
       left: .3rem;
       top: 2.4rem;
+      z-index: 1;
       background: white;
       .title {
         font-size: @font-size-item_title;
@@ -142,8 +300,113 @@
         }
       }
       #chart {
-        height: 2.9rem;
-        line-height: 2.9rem;
+        height: 100%;
+        /*line-height: 2.9rem;*/
+      }
+    }
+    .content {
+      background: white;
+      padding-top: 4.5rem;
+      .title {
+        font-size: @font-size-item_title;
+        height: .4rem;
+        margin: .05rem 0;
+        font-weight: bold;
+        line-height: .4rem;
+        .more {
+          color: @color-hui;
+          float: right;
+        }
+      }
+      .banner {
+        height: 2.2rem;
+        text-align: center;
+        .title {
+          height: .65rem;
+          font-weight: 400;
+          font-size: @font-size-item_title;
+          line-height: .65rem;
+          .icon { /* 这个颜色应该也是后台配置的 */
+            color: #2ee5a7;
+            font-size: .45rem;
+            position: relative;
+            top: .07rem;
+            margin-right: .2rem;
+          }
+        }
+        .timer {
+          margin-bottom: .2rem;
+          color: @color-org;
+        }
+        .row-btn {
+          background: @background-org-btn;
+          box-shadow: 0 .1rem .16rem 0 rgba(252, 173, 103, 0.4);
+        }
+        .loading {
+          opacity: .5;
+        }
+      }
+    }
+    .footer {
+      background: white;
+      .title {
+        font-size: @font-size-item_title;
+        height: .6rem;
+        font-weight: bold;
+        line-height: .6rem;
+        padding-bottom: .2rem;
+        border-bottom: .01rem solid #f5f6f7;
+      }
+      .det {
+        .item {
+          height: .8rem;
+          overflow: hidden;
+          line-height: .8rem;
+          border-bottom: .01rem solid #f5f6f7;
+          &:last-child {
+            border-bottom: none;
+          }
+          .more {
+            float: right;
+            font-size: @font-size-item_det1;
+            color: @color-blue;
+          }
+        }
+      }
+    }
+  }
+  .mask-content {
+    display: flex;
+    align-items: center;
+    height: 90%;
+    justify-content: center;
+    .content {
+      width: 7.2rem;
+      height: 8rem;
+      .det {
+        box-sizing: border-box;
+        padding: 4.05rem 1.06rem .3rem;
+        line-height: .48rem;
+        color: @color-org1;
+        font-size: @font-size-item_det1;
+      }
+      .row-btn {
+        width: 3rem;
+        height: .68rem;
+        background: @background-org-btn;
+        box-shadow: 0 .1rem .16rem 0 rgba(252, 173, 103, 0.4);
+      }
+      .close {
+        height: .7rem;
+        width: .7rem;
+        border-radius: 50%;
+        border: .02rem solid white;
+        font-weight: bold;
+        text-align: center;
+        line-height: .65rem;
+        margin: 1rem auto 0;
+        font-size: @font-size-header_title;
+        color: white;
       }
     }
   }

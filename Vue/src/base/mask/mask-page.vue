@@ -1,5 +1,8 @@
 <template>
-  <section class="mask" v-show="show" :class="{ show: show }" @click="mask_show"></section>
+  <section class="mask" :class="{ show: show }" @click="mask_show">
+    <slot>
+    </slot>
+  </section>
 </template>
 
 <script>
@@ -25,12 +28,15 @@
     position: fixed;
     height: 100%;
     width: 100%;
-    background: rgba(0, 0, 0, 0.2);
+    visibility: hidden;
+    background: rgba(0, 0, 0, 0.3);
     opacity: 0;
     transition: opacity .3s ease;
     z-index: 0;
+    top: 0;
   }
   .show {
+    visibility: visible;
     opacity: 1;
   }
 </style>

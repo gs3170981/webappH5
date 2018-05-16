@@ -14,6 +14,7 @@ import 'font-awesome/css/font-awesome.css'
 
 import { M_Touch } from 'common/js/methods.js'
 
+
 // 滚动到可视区，则显示图片，loading为默认加载前的图,,节点中用v-lazy="item.imgurl"
 // Vue.use(VueLazyload, {
 //   loading: require('common/image/default.png')
