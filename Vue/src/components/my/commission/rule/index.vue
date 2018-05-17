@@ -4,6 +4,7 @@
     <top-header class="header" :opt="top_header"></top-header>
     <!--内容-->
     <scroll class="row-content" ref="scroll"><!-- :data="items"监听会变动的数据，节点自动计算然后可上下滚动-->
+      <!--TODO 有bug，高度计算有误，暂时先这样使用-->
       <div style="padding-bottom: 1.7rem;">
         <img class="content-title" :src="product.path" />
         <!--臻分期-->
@@ -126,6 +127,7 @@
     }
     .row-content {
       margin: .9rem .3rem .78rem;
+      /*margin: 90px 30px 78px;*/
       /*padding: .9rem .3rem .78rem;*/
       .content-title {
         width: 3.7rem;

@@ -15,9 +15,10 @@ const env = require('../config/prod.env')
 
 const webpackConfig = merge(baseWebpackConfig, {
   module: {
+    // TODO 字体文件打包的坑，要改成extract false
     rules: utils.styleLoaders({
       sourceMap: config.build.productionSourceMap,
-      extract: true,
+      extract: false,
       usePostCSS: true
     })
   },

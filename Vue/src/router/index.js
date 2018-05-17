@@ -6,7 +6,7 @@ import Index from 'components/index'
 
 Vue.use(Router)
 
-// 因为直接import，url中带‘-’解析不了，则用回调
+// TODO 因为直接import，url中带‘-’解析不了，则用回调
 // 这里就不用for遍历json配置项了，保持代码可读性
 
 const MenuItemMore = (resolve) => {
@@ -46,6 +46,11 @@ const MyCommission = (resolve) => {
 }
 const MyCommissionRule = (resolve) => {
   import('components/my/commission/rule/index').then((module) => {
+    resolve(module)
+  })
+}
+const MyCommissionMore = (resolve) => {
+  import('components/my/commission/more/index').then((module) => {
     resolve(module)
   })
 }
@@ -101,6 +106,9 @@ export default new Router({
             {
               path: '/my_commission/rule',
               component: MyCommissionRule
+            }, {
+              path: '/my_commission/more',
+              component: MyCommissionMore
             }
           ]
         }, {

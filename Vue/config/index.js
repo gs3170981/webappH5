@@ -10,17 +10,17 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-//  proxyTable: {},
-    proxyTable: {
-      '/api': {
-        target: 'http://127.0.0.1:80',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/api': '/' //这里理解成用‘/api’代替target里面的地址，组件中我们调接口时直接用/api代替
-          // 比如我要调用'http://0.0:300/user/add'，直接写‘/api/user/add’即可 代理后地址栏显示/
-        }
-      }
-    },
+    proxyTable: {},
+//  proxyTable: { // 转接
+//    '/api': {
+//      target: 'http://127.0.0.1:80',
+//      changeOrigin: true,
+//      pathRewrite: {
+//        '^/api': '/' //这里理解成用‘/api’代替target里面的地址，组件中我们调接口时直接用/api代替
+//        // 比如我要调用'http://0.0:300/user/add'，直接写‘/api/user/add’即可 代理后地址栏显示/
+//      }
+//    }
+//  },
     // Various Dev Server settings
     host: '0.0.0.0', // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
@@ -59,7 +59,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: './', /*TODO 修改打包路径*/
 
     /**
      * Source Maps
@@ -73,7 +73,7 @@ module.exports = {
     // Surge or Netlify already gzip all static assets for you.
     // Before setting to `true`, make sure to:
     // npm install --save-dev compression-webpack-plugin
-    productionGzip: false,
+    productionGzip: false, // 是否开启压缩
     productionGzipExtensions: ['js', 'css'],
 
     // Run the build command with an extra argument to
