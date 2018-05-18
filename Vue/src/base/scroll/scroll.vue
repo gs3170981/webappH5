@@ -52,15 +52,14 @@
           probeType: this.probeType,
           click: this.click
         })
-
         if (this.listenScroll) {
           let me = this
           this.scroll.on('scroll', (pos) => {
             me.$emit('scroll', pos)
           })
         }
-
-        if (this.pullup) {
+        
+        if (this.pullup) { // 上拉刷新 pullup 需传参为 true
           this.scroll.on('scrollEnd', () => {
             if (this.scroll.y <= (this.scroll.maxScrollY + 50)) {
               this.$emit('scrollToEnd')

@@ -14,7 +14,7 @@
         </section>
         <!--中间的内容模块-->
         <section class="content row-padding row-border-bottom">
-          <h1 class="title">任务佣金<router-link tag="span" class="more" to="/my_commission/more">历史任务　<i class="fa fa-angle-right"></i></router-link></h1>
+          <h1 class="title">任务佣金<router-link tag="span" class="more" to="/my_commission/task">历史任务　<i class="fa fa-angle-right"></i></router-link></h1>
           <!--TODO 在子页面时，banner的定时器未清空,仍在执行,有时间改改-->
           <banner v-if="banner.length" class="row-slider-wrapper">
             <!--有时间加个传参，去变化滚动的css样式-->

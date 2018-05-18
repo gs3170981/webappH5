@@ -49,8 +49,18 @@ const MyCommissionRule = (resolve) => {
     resolve(module)
   })
 }
+const MyCommissionTask = (resolve) => {
+  import('components/my/commission/task/index').then((module) => {
+    resolve(module)
+  })
+}
 const MyCommissionMore = (resolve) => {
   import('components/my/commission/more/index').then((module) => {
+    resolve(module)
+  })
+}
+const MyCommissionMoreDet = (resolve) => {
+  import('components/my/commission/more/det/index').then((module) => {
     resolve(module)
   })
 }
@@ -82,46 +92,55 @@ export default new Router({
       component: Index,
       children: [
         {
-          path: '/menuItem_stages', // 头部item列表
+          path: 'menuItem_stages', // 头部item列表
           component: MenuItemStages
         }, {
-          path: '/menuItem_shop',
+          path: 'menuItem_shop',
           component: MenuItemShop
         }, {
-          path: '/menuItem_car',
+          path: 'menuItem_car',
           component: MenuItemCar
         }, {
-          path: '/menuItem_card',
+          path: 'menuItem_card',
           component: MenuItemCard
         }, {
-          path: '/menuItem_more',
+          path: 'menuItem_more',
           component: MenuItemMore
         }, {
-          path: '/chartAnalysisMore', // 中部图表
+          path: 'chartAnalysisMore', // 中部图表
           component: ChartAnalysisMore
         }, {
-          path: '/my_commission', // 底部item列表
+          path: 'my_commission', // 底部item列表
           component: MyCommission,
           children: [
             {
-              path: '/my_commission/rule',
+              path: 'rule',
               component: MyCommissionRule
             }, {
-              path: '/my_commission/more',
-              component: MyCommissionMore
+              path: 'more',
+              component: MyCommissionMore,
+              children: [
+                {
+                  path: 'det',
+                  component: MyCommissionMoreDet
+                }
+              ]
+            }, {
+              path: 'task',
+              component: MyCommissionTask
             }
           ]
         }, {
-          path: '/my_task',
+          path: 'my_task',
           component: MyTask
         }, {
-          path: '/news', // 左上角menu菜单列表
+          path: 'news', // 左上角menu菜单列表
           component: Mews
         }, {
-          path: '/problem',
+          path: 'problem',
           component: Problem
         }, {
-          path: '/about',
+          path: 'about',
           component: About
         }
       ]
