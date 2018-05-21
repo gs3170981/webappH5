@@ -20,8 +20,24 @@
               <img class="icon" :src="t.img" />
               <h5 class="name" v-text="t.title"></h5>
               <span v-if="t.type === 'false'" class="type">失败</span>
+              <span v-else-if="t.type === 'loading'" class="type loading">进行中</span>
+              <span v-else class="type succ">成功</span>
             </div>
-            <div></div>
+            <dl class="det">
+              <dt class="content">
+                <p class="single">
+                  <i class="fa fa-calendar-o icon"></i>
+                  <span>限时{{ t.count }}单</span>
+                  <i class="fa fa-calendar-check-o icon" style="margin-left: .45rem;"></i>
+                  <span>完成{{ t.count }}单</span>
+                </p>
+                <p class="timer">
+                  <i class="fa fa-hourglass-2 icon"></i>
+                  {{ t.timer }}
+                </p>
+              </dt>
+              <dd class="chart"></dd>
+            </dl>
               
           </router-link>
           <li class="item item-loading">
@@ -65,19 +81,35 @@
           },
           title: '历史任务',
           right: {
-            icon: '',
+            icon: 'fa-calendar',
             href: ''
           }
         },
         task: [
           {
             id: 'a',
-            timer: '2018.03.17—2018.05.17',
+            timer: '2018.03.17 — 2018.05.17',
             count: 30,
             now: 24,
             type: 'false',
             img: require('common/image/home_icon_loan.png'),
-            title: '臻商贷限时推广'
+            title: '臻商贷限时推广',
+          }, {
+            id: 'b',
+            timer: '2018.03.17 — 2018.05.17',
+            count: 30,
+            now: 30,
+            type: 'true',
+            img: require('common/image/home_icon_car.png'),
+            title: '臻车贷限时推广'
+          }, {
+            id: 'c',
+            timer: '2018.03.17 — 2018.05.17',
+            count: 30,
+            now: 24,
+            type: 'loading',
+            img: require('common/image/home_icon_card.png'),
+            title: '信用卡限时推广'
           }
         ],
         chart_data: {},
@@ -271,16 +303,13 @@
     .row-content {
       margin-top: .9rem;
       #moreChart {
-        padding-bottom: .8rem;
         height: 3.86rem;
       }
       .task-title {
         height: .36rem;
         font-weight: bold;
         line-height: .36rem;
-        padding-top: .77rem;
         font-size: @font-size-item_title;
-        margin-top: -.53rem;
         background: @color-hui1;
       }
       .task-det {
@@ -308,24 +337,52 @@
               font-weight: bold;
               margin-left: auto;
             }
+            .loading {
+              color: @color-yellow;
+            }
+            .succ {
+              color: @color-green;
+            }
+          }
+          .det {
+            overflow: hidden;
+            .content {
+              float: left;
+              color: @color-hui;
+              line-height: .55rem;
+              padding: .24rem 0 .24rem .69rem;
+              .single {
+                height: .55rem;
+              }
+              .icon {
+                font-size: .3rem;
+                margin-right: .1rem;
+              }
+            }
+            
+            .chart {
+              float: right;
+            }
           }
           
 
         }
         .item-loading {
           height: .8rem;
-          line-height: .8rem;
           position: relative;
           .item-loading-title {
             text-align: center;
             position: absolute;
-            width: 100%;
+            line-height: .8rem;
+            width: 95%;
             color: @color-hui;
           }
           .item-loading-icon {
             position: absolute;
-            left: 3.35rem;
+            left: 3.5rem;
             color: @color-hui;
+            font-size: @font-size-big;
+            line-height: .8rem;
             text-align: center;
             position: absolute;
           }
