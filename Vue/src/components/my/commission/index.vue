@@ -246,15 +246,9 @@
       BottomFooter
     },
     created () {
-      
     },
     mounted () {
-      let echarts = require('echarts/lib/echarts')
-      require('echarts/lib/chart/pie')
-      require('echarts/lib/component/tooltip')
-      require('echarts/lib/component/legend')
-      require('echarts/lib/component/title')
-      let myChart = echarts.init($('chart'))
+      let myChart = this.echarts.init($('chart'))
       myChart.setOption(this.option)
     },
     methods: {

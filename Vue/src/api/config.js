@@ -37,7 +37,11 @@ const API_commission = (data, fn) => { // 佣金概况
   fn(res)
 }
 const API_taskRecord = (data, fn) => { // 佣金概况
-  let res = [
+  let res = {
+    chart: [{
+      
+    }],
+    arr: [
     {
       id: 'a',
       timer: '2018.03.17 — 2018.05.17',
@@ -65,6 +69,7 @@ const API_taskRecord = (data, fn) => { // 佣金概况
       title: '信用卡限时推广'
     }
   ]
+  }
   fn(res)
 }
 export {

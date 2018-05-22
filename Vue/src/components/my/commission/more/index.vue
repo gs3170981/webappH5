@@ -59,13 +59,7 @@
   import { API_commission } from 'api/config.js'
   import BottomFooter from 'base/bottom-footer/bottom-footer'
   
-  /* TODO 有时间把这个放到Vue原型上*/
-  import echarts from 'echarts/lib/echarts'
-  import 'echarts/lib/component/graphic'
-  import 'echarts/lib/chart/bar'
-  import 'echarts/lib/component/tooltip'
-  import 'echarts/lib/component/dataZoom'
-  
+
 //import { Loadmore } from 'mint-ui'
 
   export default {
@@ -279,7 +273,7 @@
             },
             itemStyle: {
               emphasis: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                color: new this.echarts.graphic.LinearGradient(0, 0, 0, 1, [{
                   offset: 0,
                   color: '#b4f9ff'
                 }, {
@@ -288,7 +282,7 @@
                 }])
               }
             },
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+            color: new this.echarts.graphic.LinearGradient(0, 0, 0, 1, [{
               offset: 0,
               color: '#60c8fd'
             }, {
@@ -305,7 +299,7 @@
           }]
           console.log(this.option)
           setTimeout(r => {
-            let myChart = echarts.init($('moreChart'))
+            let myChart = this.echarts.init($('moreChart'))
             myChart.setOption(this.option)
           }, 20)
           
