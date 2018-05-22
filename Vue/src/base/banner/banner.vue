@@ -5,7 +5,11 @@
       </slot>
     </div>
     <div class="dots">
-      <span class="dot" :class="{active: currentPageIndex === index }" v-for="(item, index) in dots"></span>
+      <span class="dot" :style="dotsIndex" :class="{active: currentPageIndex === index }" v-for="(item, index) in dots"></span>
+    </div>
+    <div v-if="manual" class="manual-icon">
+      <i class="fa fa-caret-left" @click="_manualClick('left')"></i>
+      <i class="fa fa-caret-right" @click="_manualClick('right')"></i>
     </div>
   </div>
 </template>
@@ -21,7 +25,19 @@
         type: Boolean,
         default: true
       },
-      autoPlay: {
+      dotsIndex: {
+        type: Object,
+        default: function () {
+          return {
+            background: 'white'
+          }
+        }
+      },
+      manual: { // icon事件增添手动触发滚动
+        type: Boolean,
+        default: false
+      },
+      autoPlay: { // 自动滚动
         type: Boolean,
         default: true
       },
@@ -37,6 +53,7 @@
       }
     },
     mounted() {
+      
       setTimeout(() => {
         this._setSliderWidth()
         this._initDots()
@@ -124,6 +141,21 @@
         this.timer = setTimeout(() => {
           this.slider.goToPage(pageIndex, 0, 400)
         }, this.interval)
+      },
+      _manualClick (type) {
+        let e = this.slider.getCurrentPage()
+        console.log(e)
+        clearTimeout(this.timer)
+        let pageIndex = this.currentPageIndex + 1
+        type === 'right' ? pageIndex ++ : pageIndex --
+        setTimeout(() => {
+          this.slider.goToPage(pageIndex, 0, 400)
+        })
+        setTimeout(() => {
+          clearTimeout(this.timer)
+          this._play()
+        }, 2000) // 没设开关，所以多些延迟，防止滚动操作频繁
+        
       }
     }
   }
@@ -168,14 +200,37 @@
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.5);
+        opacity: .5;
+        /*background: rgba(255, 255, 255, 0.5);*/
       }
       .active {
         width: 20px;
         border-radius: 5px;
-        background: rgba(255, 255, 255, 0.8);
+        /*background: rgba(255, 255, 255, 0.8);*/
+        opacity: .8;
       }
     }
+    .manual-icon {
+      color: @color-yellow;
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      font-size: .6rem;
+      align-items: center;
+      .fa-caret-left {
+        left: 0;
+        padding: .5rem;
+        position: absolute;
+      }
+      .fa-caret-right {
+        right: 0;
+        padding: .5rem;
+        position: absolute;
+      }
+    }
+    
   }
 
 

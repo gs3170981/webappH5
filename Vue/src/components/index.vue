@@ -189,7 +189,7 @@
         }
       }, 200)
 
-
+      
     },
     methods: {
       loadImage() {

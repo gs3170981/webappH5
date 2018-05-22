@@ -77,17 +77,6 @@
         chart_data: {},
         option: {
           color: ['#3398DB'],
-          tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b}: {c} (元)",
-          },
-          grid: {
-            left: '5%',
-            top: '5%',
-            right: '5%',
-            bottom: '0',
-            containLabel: true
-          },
           xAxis: [{
             type: 'category',
             data: [],

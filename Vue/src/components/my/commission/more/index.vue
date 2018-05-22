@@ -192,6 +192,7 @@
               }
             },
             boundaryGap: false,
+            minInterval: 50,
             axisLine: {
               show: false
             },
@@ -245,7 +246,7 @@
           t.is2 = true
         }
 
-
+        // TODO 当月时间不加年限的前缀，之后都加17年，16年
         API_commission({ // 模拟数据 --- 请求参数
           timer: 2018, // 截止当前时间
           limit: 5, // 每页显示的条数
@@ -386,6 +387,10 @@
           .title {
             font-size: @font-size-smail;
             margin-bottom: .02rem;
+            font-weight: bold;
+          }
+          .det {
+            font-weight: bold;
           }
         }
         .active {
