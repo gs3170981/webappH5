@@ -71,7 +71,6 @@
   import Scroll from 'base/scroll/scroll'
   import MaskPage from 'base/mask/mask-page'
   import BottomFooter from 'base/bottom-footer/bottom-footer'
-  
   import { $ } from 'common/js/methods.js'
   export default {
     data () {
