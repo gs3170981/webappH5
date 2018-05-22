@@ -65,6 +65,11 @@ const MyCommissionMoreDet = (resolve) => {
     resolve(module)
   })
 }
+const MyCommissionTaskDet = (resolve) => {
+  import('components/my/commission/task/det/index').then((module) => {
+    resolve(module)
+  })
+}
 const MyTask = (resolve) => {
   import('components/my/task/index').then((module) => {
     resolve(module)
@@ -128,7 +133,13 @@ export default new Router({
               ]
             }, {
               path: 'task',
-              component: MyCommissionTask
+              component: MyCommissionTask,
+              children: [
+                {
+                  path: 'det',
+                  component: MyCommissionTaskDet
+                }
+              ]
             }
           ]
         }, {

@@ -16,7 +16,7 @@
         <section class="content row-padding row-border-bottom">
           <h1 class="title">任务佣金<router-link tag="span" class="more" to="/my_commission/task">历史任务　<i class="fa fa-angle-right"></i></router-link></h1>
           <!--TODO 在子页面时，banner的定时器未清空,仍在执行,有时间改改-->
-          <banner v-if="banner.length" class="row-slider-wrapper">
+          <banner v-if="banner.length" class="row-slider-wrapper" :manual="true" :dotsIndex="bannerIndexStyle">
             <!--有时间加个传参，去变化滚动的css样式-->
             <div v-for="t in banner" class="banner" :key="t.id">
               <template v-if="t.type === 'false'">
@@ -123,6 +123,9 @@
             title: '完善个人资料'
           }
         ],
+        bannerIndexStyle: {
+          background: '#f56f55'
+        },
         /* TODO 这边要看后台的数据结构,再做相应的数据抽离整改*/
         chartData: [
           {
@@ -139,7 +142,8 @@
         option: {
           tooltip: {
             trigger: 'item',
-            formatter: "{a} <br/>{b}: {c} ({d}%)"
+            formatter: "{a} <br/>{b}: {c} ({d}%)",
+            position: [0, 0]
           },
           legend: {
             orient: 'horizontal',
@@ -149,7 +153,7 @@
               let chartData = this.chartData
               for (let i = 0; i < chartData.length; i++) {
                 if (chartData[i].name === name) {
-                  return  name + '\n￥' + chartData[i].val
+                  return  ' ' + name + '\n ￥' + chartData[i].val
                 }
               }
             },
@@ -242,15 +246,9 @@
       BottomFooter
     },
     created () {
-      
     },
     mounted () {
-      let echarts = require('echarts/lib/echarts')
-      require('echarts/lib/chart/pie')
-      require('echarts/lib/component/tooltip')
-      require('echarts/lib/component/legend')
-      require('echarts/lib/component/title')
-      let myChart = echarts.init($('chart'))
+      let myChart = this.echarts.init($('chart'))
       myChart.setOption(this.option)
     },
     methods: {
