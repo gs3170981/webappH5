@@ -366,7 +366,12 @@
           }
           for (let i = 0; i < arr.length; i++) {
             setTimeout(() => {
+
+              if (!$('chart' + arr[i].id)) {
+                return
+              }
               let myChart = this.echarts.init($('chart' + arr[i].id))
+
               myChart.setOption(arr[i].option)
             }, 300 * (i + 1))
           }
