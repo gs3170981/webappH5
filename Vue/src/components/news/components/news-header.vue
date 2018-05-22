@@ -4,19 +4,18 @@
 			<i class="fa left-icon row-item  fa-angle-left"></i>
 		</router-link>
 		<div class="header-title">消息中心</div>
-		<div class="news-seach">
-			<img src="../../../common/image/news-seach.png">
-		</div>
+		<!--放大镜-->
+			<!--<img class="news-seach" src="../../../common/image/news-seach.png">-->
 	</div>
 </template>
 
 <script>
 </script>
 
-<style  scoped>
+<style lang="less" scoped>
 	.header-info {
-		width: 750px;
-		height: 50px;
+		width: 7.5rem;
+		height: .93rem;
 		background: #429bfa;
 	}
 	.fa {
@@ -34,17 +33,19 @@
 		padding: .25rem .2rem;
 	}
 	.header-title {
-		width: 145px;
-		height: 34px;
-		line-height: 50px;
+		width: 1.45rem;
+		height: .34rem;
+		line-height: .5rem;
 		color: #fff;
-		font-size: 18px;
-		padding-left: 150px;
-		/*overflow: hidden;*/
+		font-size: .36rem;
+		padding-top: .32rem;
+		padding-left: 2.73rem;
 	}
+	/*搜索*/
 	.news-seach{
-		width: 24px;
-		height: 24px;
+		width: .4rem;
+		height: .4rem;
+		padding-left: 6.54rem;
 		float: right;
 		display: block;
 		color: #fff;

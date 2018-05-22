@@ -3,6 +3,7 @@
     <news-header/>
     <news-business/>
     <news-info/>
+    <system-info/>
   </slide-page>
 </template>
 
@@ -11,6 +12,7 @@
 	import HeaderComponent from "./components/news-header";
 	import BusinessComponent from "./components/news-business";
   import InfoComponent from "./components/news-info";
+  import SystemComponent from "./components/system-info";
   
   export default {
     data () {
@@ -18,11 +20,11 @@
       }
     },
     components: {
-//    SlidePage
 			"slide-page": SlidePage,
       "news-header": HeaderComponent,
       "news-business": BusinessComponent,
-      "news-info": InfoComponent
+      "news-info": InfoComponent,
+      "system-info": SystemComponent
     },
     created () {
 
