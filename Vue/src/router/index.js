@@ -70,7 +70,7 @@ const MyTask = (resolve) => {
   })
 }
 const Mews = (resolve) => {
-  import('components/news/index').then((module) => {
+  import('components/news/news').then((module) => {
     resolve(module)
   })
 }

@@ -1,6 +1,6 @@
 <template>
   <slide-page>
-    <div>123</div>
+    <div>关于我们</div>
   </slide-page>
 </template>
 
@@ -15,7 +15,6 @@
       SlidePage
     },
     created () {
-
     }
   }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <slide-page>
-    <div>123</div>
+    <div>问题建议</div>
   </slide-page>
 </template>
 
