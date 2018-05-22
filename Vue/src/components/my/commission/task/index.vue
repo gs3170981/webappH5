@@ -10,40 +10,30 @@
         <section id="moreChart"></section>
         <p class="task-title row-padding">任务记录</p>
         <ul class="task-det">
-          
-          <router-link tag="li" 
-            v-for="t in task" 
-            class="item row-border-bottom" 
-            :key="t.id" 
-            :to="{path: 'task/det', query: {id: t.id}}">
-            <div class="title">
-              <img class="icon" :src="t.img" />
-              <h5 class="name" v-text="t.title"></h5>
-              <span v-if="t.type === 'false'" class="type">失败</span>
-              <span v-else-if="t.type === 'loading'" class="type loading">进行中</span>
-              <span v-else class="type succ">成功</span>
-            </div>
-            <dl class="det">
-              <dt class="content">
+          <router-link tag="li" v-for="t in task" class="item row-border-bottom" :key="t.id" :to="{path: 'task/det', query: {id: t.id}}">
+            <div class="title"> <img class="icon" :src="t.img" />
+              <h5 class="name" v-text="t.title"></h5> <span v-if="t.type === 'false'" class="type">失败</span> <span v-else-if="t.type === 'loading'" class="type loading">进行中</span> <span v-else class="type succ">成功</span> </div>
+            <dl class="det"> <dt class="content">
+                <!--<i class="fa fa-calendar-o icon"></i> 限时{{ t.count }} 单
+                <i class="fa fa-calendar-check-o icon" style="margin-left: .45rem;"></i> 完成{{ t.count }}单
+                <br />
+                <i class="fa fa-hourglass-2 icon"></i> {{ t.timer }}-->
                 <p class="single">
                   <i class="fa fa-calendar-o icon"></i>
                   <span>限时{{ t.count }}单</span>
                   <i class="fa fa-calendar-check-o icon" style="margin-left: .45rem;"></i>
-                  <span>完成{{ t.count }}单</span>
+                  <span>完成{{ t.now }}单</span>
                 </p>
                 <p class="timer">
                   <i class="fa fa-hourglass-2 icon"></i>
                   {{ t.timer }}
                 </p>
               </dt>
-              <dd class="chart"></dd>
+              <dd :id="'chart'+t.id" class="chart"></dd>
             </dl>
-              
           </router-link>
           <li class="item item-loading">
-            <p class="item-loading-title" :class="{ active: !allLoaded }">上拉加载更多</p>
-            <i class="fa fa-spinner fa-pulse item-loading-icon" :class="{ active: allLoaded }"></i>
-          </li>
+            <p class="item-loading-title" :class="{ active: !allLoaded }">上拉加载更多</p> <i class="fa fa-spinner fa-pulse item-loading-icon" :class="{ active: allLoaded }"></i> </li>
         </ul>
       </div>
     </scroll>
@@ -58,18 +48,16 @@
   import TopHeader from 'base/top-header/top-header'
   import Scroll from 'base/scroll/scroll'
   import { $ } from 'common/js/methods.js'
-  import { API_commission } from 'api/config.js'
+  import { API_taskRecord } from 'api/config.js'
   import BottomFooter from 'base/bottom-footer/bottom-footer'
-  
   /* TODO 有时间把这个放到Vue原型上*/
   import echarts from 'echarts/lib/echarts'
   import 'echarts/lib/component/graphic'
   import 'echarts/lib/chart/bar'
+  import 'echarts/lib/chart/pie'
   import 'echarts/lib/component/tooltip'
   import 'echarts/lib/component/dataZoom'
-  
-//import { Loadmore } from 'mint-ui'
-
+  //import { Loadmore } from 'mint-ui'
   export default {
     data() {
       return {
@@ -85,33 +73,7 @@
             href: ''
           }
         },
-        task: [
-          {
-            id: 'a',
-            timer: '2018.03.17 — 2018.05.17',
-            count: 30,
-            now: 24,
-            type: 'false',
-            img: require('common/image/home_icon_loan.png'),
-            title: '臻商贷限时推广',
-          }, {
-            id: 'b',
-            timer: '2018.03.17 — 2018.05.17',
-            count: 30,
-            now: 30,
-            type: 'true',
-            img: require('common/image/home_icon_car.png'),
-            title: '臻车贷限时推广'
-          }, {
-            id: 'c',
-            timer: '2018.03.17 — 2018.05.17',
-            count: 30,
-            now: 24,
-            type: 'loading',
-            img: require('common/image/home_icon_card.png'),
-            title: '信用卡限时推广'
-          }
-        ],
+        task: [],
         chart_data: {},
         option: {
           color: ['#3398DB'],
@@ -179,99 +141,95 @@
       Scroll,
       SlidePage,
       BottomFooter
-//    'mt-loadmore': Loadmore
+      //    'mt-loadmore': Loadmore
     },
     created() {
-//    this.nav_click(this.nav[0])
+      this.nav_click()
     },
     mounted() {
-      
-      
-//    let myChart = echarts.init($('moreChart'))
-//    myChart.setOption(this.option)
+      //    let myChart = echarts.init($('moreChart'))
+      //    myChart.setOption(this.option)
     },
     methods: {
-      nav_click (t) { // 业务逻辑，到时候接口调通，也要重写
-        let data = this.nav
-        if (t.is) {
-          return
-        }
-        for (let i = 0; i < data.length; i++) {
-          data[i].is = false
-          data[i].is2 = false
-        }
-        t.is = true
-        if (t.id === 'a') {
-          for (let i = 0; i < data.length; i++) {
-            data[i].is2 = true
-          }
-        } else {
-          t.is2 = true
-        }
-
-
-        API_commission({ // 模拟数据 --- 请求参数
-          timer: 2018, // 截止当前时间
+      nav_click() { // 业务逻辑，到时候接口调通，也要重写
+        API_taskRecord({ // 模拟数据 --- 请求参数
+          timerS: '2017-05-02',
+          timerE: '2018-04-02',
           limit: 5, // 每页显示的条数
-          title: t.title,
           page: 1 // 这些都是去请求接口的，当前的页数(也就是10~20的数据返回)
         }, r => { // 可能会存vuex
-          console.log(r)
-          r.is = true
-          this.chart_data = r
-          
-          this.option.xAxis[0].data = r[0]
-          this.option.dataZoom = [{
-            type: 'inside',
-            show: true,
-            startValue: r[1].length - 6,
-            endValue: r[1].length - 1
-          }]
-          this.option.series = [{
-            name: t.title,
-            type: 'bar',
-            barWidth: '30%',
-            data: r[1],
-            label: {
-              normal: {
-                show: true,
-                position: 'top',
-                formatter: "￥{c} ",
-                color: '#71dffe'
-              }
-            },
-            itemStyle: {
-              emphasis: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                  offset: 0,
-                  color: '#b4f9ff'
+//        console.log(r)
+          for (let i = 0; i < r.length; i++) {
+            r[i].option = {
+              title: {
+                text: r[i].now,
+                textStyle: {
+                  color: '#79dbff',
+                  fontSize: '10',
+                },
+                x: '50%',
+                y: 'center'
+              },
+//            color: ['red', '#e6f4fe'],
+              series: [{
+                name: '访问来源',
+                type: 'pie',
+                radius: ['70%', '90%'],
+                center: ['65%', 'center'],
+                avoidLabelOverlap: false,
+                label: {
+                  normal: {
+                    show: false
+                  }
+                },
+                itemStyle: {
+                  normal: {
+                    color: function (obj) {
+//                    console.log(obj)
+                      let colorS = [{
+                        offset: 0,
+                        color: '#a6f1ff' // 0% 处的颜色
+                      }, {
+                        offset: 1,
+                        color: '#5ec0ff' // 100% 处的颜色
+                      }]
+                      if (obj.data.name === 'over') {
+                        return '#e6f4fe'
+                      }
+                      return {
+                        type: 'linear',
+                        x: 0,
+                        y: 0,
+                        x2: .3,
+                        y2: 1,
+                        colorStops: colorS,
+                        globalCoord: false // 缺省为 false
+                      }
+
+                    }
+                  }
+                },
+                data: [{
+                  value: r[i].now,
+                  name: 'now'
                 }, {
-                  offset: 1,
-                  color: '#6fc4ff'
-                }])
-              }
-            },
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-              offset: 0,
-              color: '#60c8fd'
-            }, {
-              offset: 1,
-              color: '#4093f8'
-            }]),
-            markLine: {
-              lineStyle: {
-                normal: {
-                  type: 'dashed'
-                }
-              }
+                  value: r[i].count - r[i].now,
+                  name: 'over'
+                }]
+              }]
             }
-          }]
-          console.log(this.option)
-          setTimeout(r => {
-            let myChart = echarts.init($('moreChart'))
-            myChart.setOption(this.option)
-          }, 20)
+          }
+          this.task = r
           
+          for (let i = 0; i < r.length; i++) {
+            setTimeout(() => {
+//            console.log(r[i].option)
+              let myChart = echarts.init($('chart' + r[i].id))
+              myChart.setOption(r[i].option)
+            }, 20)
+          }
+          
+                    
         })
       },
       scrollTouchend() {
@@ -313,7 +271,6 @@
         background: @color-hui1;
       }
       .task-det {
-
         background: white;
         .item {
           padding: 0 .24rem;
@@ -350,7 +307,8 @@
               float: left;
               color: @color-hui;
               line-height: .55rem;
-              padding: .24rem 0 .24rem .69rem;
+              width: 4.6rem;
+              padding: .24rem 0 .24rem .8rem;
               .single {
                 height: .55rem;
               }
@@ -359,13 +317,13 @@
                 margin-right: .1rem;
               }
             }
-            
             .chart {
+              margin-top: .24rem;
               float: right;
+              height: 1.08rem;
+              width: 1.6rem;
             }
           }
-          
-
         }
         .item-loading {
           height: .8rem;
@@ -390,7 +348,6 @@
             visibility: hidden;
           }
         }
-        
       }
     }
     .footer {

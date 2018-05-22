@@ -1,21 +1,21 @@
 // import Ajax from 'common/ajax.js'
-import axios from 'axios'
+//import axios from 'axios'
 const CODE_OK = 'OK'
 const CODE_ERR = r => {
   console.error(r.url, r.info)
 }
 
 
-const API_test = (data, fn) => {
-  let url = '/api/test/test.php'
-  axios.post(url, data).then(res => {
-    if (res.code === CODE_OK) {
-      fn(res)
-    } else {
-      CODE_ERR({url: url, info: res})
-    }
-  }).catch(res => CODE_ERR({url: url, info: res}))
-}
+//const API_test = (data, fn) => {
+//let url = '/api/test/test.php'
+//axios.post(url, data).then(res => {
+//  if (res.code === CODE_OK) {
+//    fn(res)
+//  } else {
+//    CODE_ERR({url: url, info: res})
+//  }
+//}).catch(res => CODE_ERR({url: url, info: res}))
+//}
 const API_banner = (data, fn) => {
   let res = {"code":0,"data":{"slider":[{"linkUrl":"https://y.qq.com/m/act/KingCross/index.html?ADTAG=jiaodiantu","picUrl":"http://y.gtimg.cn/music/common/upload/MUSIC_FOCUS/276899.jpg","id":15571},{"linkUrl":"https://y.qq.com/m/digitalbum/gold/index.html?_video=true&id=2271035&g_f=shoujijiaodian","picUrl":"http://y.gtimg.cn/music/photo_new/T003R720x288M000000XR39M2eBuRw.jpg","id":15490},{"linkUrl":"https://y.qq.com/apg/242/index.html","picUrl":"http://y.gtimg.cn/music/common/upload/MUSIC_FOCUS/276716.jpg","id":15549},{"linkUrl":"http://y.qq.com/w/album.html?albummid=001QEmNL0Wl3Yg","picUrl":"http://y.gtimg.cn/music/common/upload/MUSIC_FOCUS/277011.jpg","id":15583},{"linkUrl":"https://y.qq.com/m/act/HiddenSinger2/v3/index.html?ADTAG=jiaodiantu&_video=true","picUrl":"http://y.gtimg.cn/music/common/upload/MUSIC_FOCUS/276939.jpg","id":15560}],"radioList":[{"picUrl":"http://y.gtimg.cn/music/photo/radio/track_radio_199_13_1.jpg","Ftitle":"热歌","radioid":199},{"picUrl":"http://y.gtimg.cn/music/photo/radio/track_radio_307_13_1.jpg","Ftitle":"一人一首招牌歌","radioid":307}],"songList":[]}}
   fn(res)
@@ -36,9 +36,40 @@ const API_commission = (data, fn) => { // 佣金概况
   }
   fn(res)
 }
-
+const API_taskRecord = (data, fn) => { // 佣金概况
+  let res = [
+    {
+      id: 'a',
+      timer: '2018.03.17 — 2018.05.17',
+      count: 30,
+      now: 24,
+      type: 'false',
+      img: require('common/image/home_icon_loan.png'),
+      title: '臻商贷限时推广',
+    }, 
+//  {
+//    id: 'b',
+//    timer: '2018.03.17 — 2018.05.17',
+//    count: 30,
+//    now: 30,
+//    type: 'true',
+//    img: require('common/image/home_icon_car.png'),
+//    title: '臻车贷限时推广'
+//  }, {
+//    id: 'c',
+//    timer: '2018.03.17 — 2018.05.17',
+//    count: 30,
+//    now: 24,
+//    type: 'loading',
+//    img: require('common/image/home_icon_card.png'),
+//    title: '信用卡限时推广'
+//  }
+  ]
+  fn(res)
+}
 export {
   API_test,
   API_banner,
-  API_commission
+  API_commission,
+  API_taskRecord
 }
