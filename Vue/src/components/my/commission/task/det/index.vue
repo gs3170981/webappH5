@@ -41,7 +41,7 @@
         top_header: {
           left: {
             icon: 'fa-angle-left',
-            href: '/my_commission/more'
+            href: '/my_commission/task'
           },
           title: '佣金详情',
           right: {

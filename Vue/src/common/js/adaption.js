@@ -3,7 +3,7 @@
     resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
     recalc = function() {
       let clientWidth = docEl.clientWidth
-      if(!clientWidth) return
+      if(!clientWidth) return // 750 是看psd设计稿的宽度
       docEl.style.fontSize = 100 * (clientWidth / 750) + 'px'
     }
   if(!doc.addEventListener) return

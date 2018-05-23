@@ -142,8 +142,38 @@
         option: {
           tooltip: {
             trigger: 'item',
-            formatter: "{a} <br/>{b}: {c} ({d}%)",
-            position: [0, 0]
+//          formatter: "{a} <br/>{b}: {c} ({d}%)",
+            formatter: "{b}: <br/>{c} ({d}%)",
+            position: (pos, params, dom, rect, size) => {
+              let obj = {}
+//            x = pos[0] y = pos[1] y顶点左上，x顶点左下（pos为点击的坐标）
+//            pos[0] > size.viewSize[0] / 2 为x轴大于中间（size.viewSize为大小）
+//            console.log(pos[0], size.viewSize[0] / 2)
+              let lr = pos[0] > size.viewSize[0] / 2
+              let ud = pos[1] > size.viewSize[1] / 2
+              if (!lr && !ud) { // 上左
+                obj = {
+                  top: 0,
+                  left: 0
+                }
+              } else if (lr && !ud) { // 上右
+                obj = {
+                  top: 0,
+                  right: 0
+                }
+              } else if (lr && ud) { // 下右
+                obj = {
+                  bottom: 80,
+                  right: 0
+                }
+              } else if (!lr && ud) { // 下左
+                obj = {
+                  bottom: 80,
+                  left: 0
+                }
+              }
+              return obj
+            }
           },
           legend: {
             orient: 'horizontal',
