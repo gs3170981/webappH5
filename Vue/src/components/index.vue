@@ -167,7 +167,7 @@
     },
     created () {
       // 模拟数据
-      API_banner({
+      API_banner({ 
         val: 123
       }, r => {
         this.banner = r.data.slider
