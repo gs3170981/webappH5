@@ -81,7 +81,7 @@
 //        scrollX: this.scrollX,
           bindToWrapper: true, // TODO 如果是自己的滚动事件，并绑定在容器上，则该属性须为true！
           scrollY: this.scrollY,
-          stopPropagation: true
+//        stopPropagation: true
         })
         if (this.listenScroll) {
           let me = this

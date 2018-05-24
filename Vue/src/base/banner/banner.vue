@@ -112,6 +112,7 @@
           snap: true,
           snapLoop: this.loop,
           snapThreshold: 0.3,
+          bindToWrapper: true,
           snapSpeed: 400
         })
 

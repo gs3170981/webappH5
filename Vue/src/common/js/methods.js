@@ -68,7 +68,7 @@ const M_touchMove = (klass, call) => {
       throttle(() => {
         var touch = e.targetTouches[0]
         if (touch.pageX >= 0) {
-          console.log(123)
+//        console.log(123) // 节流效果查看
           // 该节点需要有c3平滑属性transition
           obj.style.transform = "translate3d("+ touch.pageX +"px, 0, 0)"
         }
