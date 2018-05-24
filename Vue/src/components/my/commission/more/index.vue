@@ -2,7 +2,7 @@
   <slide-page class="more MY_COMMISSION_MORE" :klass="'MY_COMMISSION_MORE'" :href="top_header.left.href">
     <!--<scroll style="height: 100%;overflow: hidden;" :scrollX="true" :id="slidePageId" :scrollY="false" :listenScroll="true" :probeType="2" @scroll="slideScroll">-->
       <!--<div style="position: fixed;top: 0;overflow: hidden;height: 100%;left: 0;width: 101%;">-->
-        <!--头部-->
+        <!--头部--> 
         <top-header class="header" :opt="top_header"></top-header>
         <!--内容-->
         <scroll class="row-content" ref="scroll" :pullup='allLoaded' :data="record" @scrollToEnd="scrollTouchend">
