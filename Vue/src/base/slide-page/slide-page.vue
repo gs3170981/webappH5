@@ -24,47 +24,35 @@
 <script>
   import Scroll from 'base/scroll/scroll'
   import BScroll from 'better-scroll'
+  import { M_touchMove } from 'common/js/methods.js'
   export default {
-    props: ['id'],
+    props: {
+      href: {
+        type: String,
+        default: '/'
+      },
+      klass: {
+        type: String,
+        default: ''
+      }
+    },
     data() {
       return {
       }
     },
     mounted () {
-//    setTimeout(() => {
-//      let el = document.getElementsByClassName('slide-page')
-//      debugger
-////      transform: translate(0, 0) translateZ(0);
-//    }, 200)
-//    console.log(this.id)
-//    setTimeout(() => {
-//      this._initScroll()
-//    }, 20)
+      console.log(this.klass, this.href)
+      if (!this.klass) {
+        return
+      }
+      M_touchMove(this.klass, () => {
+        this.$router.push({
+          path: this.href
+        })
+      })
     },
     methods: {
-      _initScroll() {
-        if (!this.$refs.slideScroll) {
-          return
-        }
-        this.slideS = new BScroll(this.$refs.slideScroll, {
-          scrollX: false,
-          scrollY: false,
-          probeType: 2,
-          momentum: false, // ？
-//        stopPropagation: true
-          
-        })
-        this.slideS.on('scroll', (pos) => {
-          console.log(this.slideS.distX)
-//        if (this.scroll.y <= (this.scroll.maxScrollY + 50)) {
-//          this.$emit('scrollToEnd')
-//        }
-        })
-        
-      },
-      scroll (pos) {
-        console.log(pos)
-      }
+
     },
     components: {
       Scroll
@@ -78,12 +66,15 @@
   }*/
   .slide-enter, .slide-leave-to {
     transform: translate(100%, 0) translateZ(0)!important;
-    /*transform: translate3d(100%, 0, 0);*/
+    /*transform: translate3d(100%, 0, 0)!important;*/
   }
   .slide-page {
-    transition: all 0.3s;
-    transform: translate3d(0, 0, 0);
-    /*transform: translate(0, 0) translateZ(0);*/
+    /*-webkit-transition:-webkit-transform 0.3s linear;*/
+    transition: all .2s ease;
+    /*transition: all .1s ease;*/
+    /*transition: all .3s ease;*/
+    /*transform: translate3d(0, 0, 0);*/ /*TODO 听说3d安卓上失效?*/
+    transform: translate(0, 0) translateZ(0);
     z-index: 1;
     background: #f5f6f7;
     height: 100%;

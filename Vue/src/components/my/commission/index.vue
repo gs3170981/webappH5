@@ -1,5 +1,5 @@
 <template>
-  <slide-page>
+  <slide-page class="MY_COMMISSION" :klass="'MY_COMMISSION'" :href="top_header.left.href">
     <!--头部-->
     <top-header :opt="top_header"></top-header>
     <!--内容-->

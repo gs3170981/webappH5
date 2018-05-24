@@ -1,5 +1,5 @@
 <template>
-  <slide-page class="rule">
+  <slide-page class="rule MY_COMMISSION_RULE" :klass="'MY_COMMISSION_RULE'" :href="top_header.left.href">
     <!--头部-->
     <top-header class="header" :opt="top_header"></top-header>
     <!--内容-->

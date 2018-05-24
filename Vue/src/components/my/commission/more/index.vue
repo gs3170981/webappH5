@@ -1,11 +1,11 @@
 <template>
-  <slide-page class="more MORE">
+  <slide-page class="more MY_COMMISSION_MORE" :klass="'MY_COMMISSION_MORE'" :href="top_header.left.href">
     <!--<scroll style="height: 100%;overflow: hidden;" :scrollX="true" :id="slidePageId" :scrollY="false" :listenScroll="true" :probeType="2" @scroll="slideScroll">-->
       <!--<div style="position: fixed;top: 0;overflow: hidden;height: 100%;left: 0;width: 101%;">-->
         <!--头部-->
         <top-header class="header" :opt="top_header"></top-header>
         <!--内容-->
-        <scroll class="row-content" ref="scroll" @scrollX="true" :pullup='allLoaded' :data="record" @scrollToEnd="scrollTouchend">
+        <scroll class="row-content" ref="scroll" :pullup='allLoaded' :data="record" @scrollToEnd="scrollTouchend">
           <!-- :data="items"监听会变动的数据，节点自动计算然后可上下滚动-->
           <!--TODO 有bug，高度计算有误，暂时先这样使用-->
           <div style="padding-bottom: .9rem;">
@@ -223,32 +223,6 @@
     },
     mounted() {
       
-      let obj = document.getElementsByClassName('MORE')[0]
-      let touchmove = (event) => {
-        // 如果这个元素的位置内只有一个手指的话  
-        if (event.targetTouches.length == 1) {
-          event.preventDefault(); // 阻止浏览器默认事件，重要   
-          var touch = event.targetTouches[0];
-          // 把元素放在手指所在的位置  
-//          obj.style.left = touch.pageX - x + 'px';
-          // obj.style.top = touch.pageY + 'px';  
-          console.log(touch.pageX, touch.pageY, 'MORE')
-        }
-      }
-      let touchstart = (event) => {
-        var touch = event.targetTouches[0];
-        var left = parseInt(obj.style.left);
-        var x = touch.pageX - left;
-        var y = touch.pageY - left;
-        obj.addEventListener('touchmove', touchmove, false);
-      }
-
-      obj.addEventListener("touchend", function () {
-//      obj.removeEventListener("touchstart", touchstart);
-        obj.removeEventListener("touchmove", touchmove);
-      });
-      obj.addEventListener("touchstart", touchstart, false)
-    
       
 //    let myChart = echarts.init($('moreChart'))
 //    myChart.setOption(this.option)

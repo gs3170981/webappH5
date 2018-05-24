@@ -1,5 +1,5 @@
 <template>
-  <slide-page class="more">
+  <slide-page class="task MY_COMMISSION_TASK" :klass="'MY_COMMISSION_TASK'" :href="top_header.left.href">
     <!--头部-->
     <top-header class="header" :opt="top_header"></top-header>
     <!--内容-->
@@ -382,7 +382,7 @@
   }
 </script>
 <style lang="less" scoped>
-  .more {
+  .task {
     background: @background-header;
     .header {
       background: @background-header;
