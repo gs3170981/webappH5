@@ -87,7 +87,7 @@
           let me = this
           this.scroll.on('scroll', (pos) => {
 //          if (this.id === id) {
-              me.$emit('scroll', this.scroll.distX, pos)
+              me.$emit('scroll', this.scroll)
 //          }
           })
         }

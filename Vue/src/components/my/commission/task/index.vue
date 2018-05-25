@@ -147,12 +147,12 @@
         allLoaded: true, // 可下拉
         top_header: {
           left: {
-            icon: 'fa-angle-left',
+            icon: require('common/image/nav_btn_back.png'),
             href: '/my_commission'
           },
           title: '历史任务',
           right: {
-            icon: 'fa-calendar',
+            icon: '',
             href: ''
           }
         },

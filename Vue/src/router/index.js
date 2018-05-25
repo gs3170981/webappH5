@@ -50,6 +50,11 @@ const MyCommissionRule = (resolve) => {
     resolve(module)
   })
 }
+const MyCommissionAskMoney = (resolve) => {
+  import('components/my/commission/ask-money/index').then((module) => {
+    resolve(module)
+  })
+}
 const MyCommissionTask = (resolve) => {
   import('components/my/commission/task/index').then((module) => {
     resolve(module)
@@ -120,6 +125,9 @@ export default new Router({
           component: MyCommission,
           children: [
             {
+              path: 'ask_money',
+              component: MyCommissionAskMoney
+            }, {
               path: 'rule',
               component: MyCommissionRule
             }, {

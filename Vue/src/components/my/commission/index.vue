@@ -3,20 +3,21 @@
     <!--头部-->
     <top-header :opt="top_header"></top-header>
     <!--内容-->
-    <scroll class="row-content" ref="scroll"><!-- :data="items"监听会变动的数据，节点自动计算然后可上下滚动-->
+    <scroll class="row-content" ref="scroll" :probeType="2" :listenScroll="true" @scroll="_scroll"><!-- :data="items"监听会变动的数据，节点自动计算然后可上下滚动-->
       <div>
         <!--头部背景-->
         <img class="header" :src="header_img" />
         <!--悬浮的模块-->
         <section class="content-float row-padding">
-          <h1 class="title">佣金概览<router-link tag="span" class="more" to="/my_commission/more">查看更多　<i class="fa fa-angle-right"></i></router-link></h1>
+          <h1 class="title">佣金概览<router-link tag="span" class="more" to="/my_commission/more">查看更多<img class="row-icon-right" :src="icon.right" /></router-link></h1>
           <div id="chart"></div>
+          <router-link tag="img" class="ask_money" :src="icon.money" to="/my_commission/ask_money"></router-link>
         </section>
         <!--中间的内容模块-->
         <section class="content row-padding row-border-bottom">
-          <h1 class="title">任务佣金<router-link tag="span" class="more" to="/my_commission/task">历史任务　<i class="fa fa-angle-right"></i></router-link></h1>
+          <h1 class="title">任务佣金<router-link tag="span" class="more" to="/my_commission/task">历史任务<img class="row-icon-right" :src="icon.right" /></router-link></h1>
           <!--TODO 在子页面时，banner的定时器未清空,仍在执行,有时间改改-->
-          <banner v-if="banner.length" class="row-slider-wrapper" :manual="true" :dotsIndex="bannerIndexStyle">
+          <banner v-if="banner.length" class="row-slider-wrapper" :dotsIndex="bannerIndexStyle"><!--:manual="true" -->
             <!--有时间加个传参，去变化滚动的css样式-->
             <div v-for="t in banner" class="banner" :key="t.id">
               <template v-if="t.type === 'false'">
@@ -75,6 +76,10 @@
   export default {
     data () {
       return {
+        icon: {
+          right: require('common/image/det_btn_more.png'),
+          money: require('common/image/comm_icon_cash.png')
+        },
         footer_data: [
           {
             id: 'a',
@@ -100,13 +105,13 @@
         header_img: require('common/image/commission-header.png'),
         top_header: {
           left: {
-            icon: 'fa-angle-left',
+            icon: require('common/image/nav_btn_back.png'),
             href: '/'
           },
           title: '我的佣金',
           right: {
-            icon: 'fa-question-circle-o',
-            href: '/my_commission/rule',
+            icon: require('common/image/nav_btn_help.png'),
+            href: '/my_commission/rule'
           }
         },
         banner: [
@@ -183,7 +188,21 @@
               let chartData = this.chartData
               for (let i = 0; i < chartData.length; i++) {
                 if (chartData[i].name === name) {
-                  return  ' ' + name + '\n ￥' + chartData[i].val
+                  return  [
+                    ` {title|${name}}`,
+                    `￥{money|${chartData[i].val}}　`,
+                  ].join('\n')
+                }
+              }
+            },
+            textStyle: {
+              lineHeight: 17,
+              rich: {
+                title: {
+                  color: '#bfbfbf'
+                },
+                money: {
+                  fontSize: 15,
                 }
               }
             },
@@ -293,6 +312,21 @@
       },
       maskClose () {
         this.mask.is = false
+      },
+      _scroll (e) {
+//      e = window.getComputedStyle(e.wrapper, null)
+        let e_style = e.wrapper.children[0].style
+        let trasf = e_style.transform
+        trasf = parseInt(trasf.substring(trasf.indexOf(',') + 1, trasf.indexOf(')')))
+        if (trasf <= 0 && trasf >= -100) {
+          console.log(1)
+          let header = e.wrapper.parentNode.getElementsByTagName('header')[0]
+          let bg = window.getComputedStyle(header, null).background
+          let val = Math.abs(trasf) / 100
+          header.style.background = 'linear-gradient(90deg, rgba(63, 141, 247, '+ val +') 0%, rgba(72, 184, 255, '+ val +') 100%)'
+          // TODO 之后看看能不能用除了js控制的方式实现，还有想办法抽离，不能每个地方都写这
+          // 手势滑动 会有颜色的问题
+        }
       }
     }
   }
@@ -330,6 +364,14 @@
         height: 100%;
         /*line-height: 2.9rem;*/
       }
+      .ask_money {
+        position: absolute;
+        width: .4rem;
+        height: .36rem;
+        padding: .1rem;
+        right: .3rem;
+        bottom: .4rem;
+      }
     }
     .content {
       background: white;
@@ -346,7 +388,7 @@
         }
       }
       .banner {
-        height: 2.2rem;
+        height: 2.4rem;
         text-align: center;
         .title {
           height: .65rem;

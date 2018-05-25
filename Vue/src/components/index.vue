@@ -8,7 +8,7 @@
     </top-header>
     
     <!--首页内容核心-->
-    <scroll class="row-content" ref="scroll"><!-- :data="items"监听会变动的数据，节点自动计算然后可上下滚动-->
+    <scroll class="row-content" ref="scroll" :listenScroll="true" @scroll="_scroll"><!-- :data="items"监听会变动的数据，节点自动计算然后可上下滚动-->
     <!--竖向可拖动，优化性能，取消自带的滚动条-->
       <div><!--必须加-->
         
@@ -32,7 +32,7 @@
         
         <!--图表的内容-->
         <section class="row-padding chart row-border-bottom">
-          <h1 class="title">推广业绩<router-link tag="span" class="more" to="/chartAnalysisMore">查看更多　<i class="fa fa-angle-right"></i></router-link></h1>
+          <h1 class="title">推广业绩<router-link tag="span" class="more" to="/chartAnalysisMore">查看更多<img class="row-icon-right" :src="icon.right" /></router-link></h1>
           <ul class="det">
             <li class="item" v-for="t in chart">
               <h3 class="name" v-text="t.title"></h3>
@@ -74,6 +74,9 @@
   export default {
     data () {
       return {
+        icon: {
+          right: require('common/image/det_btn_more.png'),
+        },
         items: [
           {
             id: 'a',
@@ -119,27 +122,32 @@
         banner: [],
         top_header: {
           left: {
-            icon: 'fa-angle-left',
+            icon: require('common/image/nav_btn_back.png'),
             href: ''
           },
           title: '',
           right: {
-            icon: 'fa-reorder',
+            icon: require('common/image/nav_btn_more.png'),
             href: '',
             item: [
               {
                 id: 'a',
-                icon: 'fa-bell-o',
+                icon: require('common/image/pop_icon_new.png'),
                 title: '消息中心',
                 href: '/news'
               }, {
                 id: 'b',
-                icon: 'fa-commenting-o',
-                title: '问题建议',
+                icon: require('common/image/pop_icon_write.png'),
+                title: '问题反馈',
                 href: '/problem'
               }, {
                 id: 'c',
-                icon: 'fa-address-card-o',
+                icon: require('common/image/pop_icon_help.png'),
+                title: '帮助中心',
+                href: '/help'
+              }, {
+                id: 'd',
+                icon: require('common/image/pop_icon_about.png'),
                 title: '关于我们',
                 href: '/about'
               }
@@ -208,6 +216,9 @@
       },
       topHeader_menu () {
         console.log('menu')
+      },
+      _scroll (e) {
+        console.log(e)
       }
     }
   }

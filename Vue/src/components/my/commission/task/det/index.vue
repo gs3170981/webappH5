@@ -40,7 +40,7 @@
       return {
         top_header: {
           left: {
-            icon: 'fa-angle-left',
+            icon: require('common/image/nav_btn_back.png'),
             href: '/my_commission/task'
           },
           title: '佣金详情',

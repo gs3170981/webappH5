@@ -2,18 +2,19 @@
   <header class="top-header">
     <!--左边-->
     <router-link 
-      tag="i" 
-      class="fa left-icon row-item" 
-      :class="opt.left.icon" 
+      tag="img" 
+      class="left-icon row-item" 
+      :src="opt.left.icon" 
       :to="opt.left.href">
     </router-link>
     <!--title-->
     <h1 class="title" v-text="opt.title"></h1>
     <!--右边-->
     <router-link 
-      tag="i" 
-      class="fa right-icon row-item" 
-      :class="opt.right.icon" 
+      v-if="opt.right.icon" 
+      tag="img" 
+      class="right-icon row-item" 
+      :src="opt.right.icon" 
       :to="opt.right.href" 
       @click.native="right">
     </router-link>
@@ -26,7 +27,7 @@
         :key="t.id" 
         @click.native="item_show = false" 
         :to="t.href">
-        <i class="fa icon fa-fw" :class="t.icon"></i>{{ t.title }}
+        <img class="icon" :src="t.icon" />{{ t.title }}
       </router-link>
       </li>
     </ul>
@@ -72,7 +73,9 @@
     height: .87rem;
     line-height: .87rem;
     position: fixed;
+    background: @background-header_tran;
     width: 100%;
+    transition: all .2s ease;
     z-index: 1;
     color: white;
     text-align: center;
@@ -89,17 +92,17 @@
         padding: .25rem .2rem;
     }
     .left-icon {
-        font-size: .7rem;
+        /*font-size: .7rem;*/
         float: left;
     }
     .right-icon {
         float: right;
-        font-size: .4rem;
+        /*font-size: .4rem;*/
     }
     .menu {
       z-index: 2;
       position: absolute;
-      right: .05rem;
+      right: .1rem;
       transform-origin: 90% top 0;
       transition: all .3s ease;
       transform: scale3d(0,0,1);
@@ -108,15 +111,19 @@
       border-radius: .1rem;
       background: white;
       .item {
-        padding-right: .7rem;
-        height: .75rem;
-        line-height: .75rem;
+        padding: 0 .35rem 0 .3rem;
+        height: .85rem;
+        display: flex;
+        align-items: center;
+        line-height: .85rem;
         color: black;
+        font-size: @font-size-item_title;
         border-bottom: .01rem solid #e6e6e6;
         .icon {
           color: @color-hui2;
-          margin: 0 .25rem;
-          font-size: @font-size-header_title;
+          height: .36rem;
+          width: .36rem;
+          margin-right: .25rem;
         }
         &:last-child {
           border-bottom: none;

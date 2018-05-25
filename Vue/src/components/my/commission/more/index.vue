@@ -74,10 +74,10 @@
         allLoaded: true, // 可下拉
         top_header: {
           left: {
-            icon: 'fa-angle-left',
+            icon: require('common/image/nav_btn_back.png'),
             href: '/my_commission'
           },
-          title: '佣金概况',
+          title: '佣金概览',
           right: {
             icon: '',
             href: ''
@@ -192,7 +192,19 @@
               }
             },
             boundaryGap: false,
-            splitNumber: 3,
+//          splitNumber: 3,
+//          interval: 100,
+//          min: 0,
+//          minInterval: 1,
+
+//          interval: 100,
+//          max: 300,
+
+//          maxInterval: 300,
+//          max: (val) => {
+//            console.log(val)
+//            return Math.round(val.max) + 10
+//          },
             axisLine: {
               show: false
             },
@@ -256,6 +268,14 @@
           console.log(r)
           r.is = true
           this.chart_data = r
+          
+          let max = parseInt(Math.max.apply(null, r[1])) // 最大值
+          let pow = Math.pow(10, (max + '').length - 1)
+          max = (parseInt(max / pow) + 1) * pow
+          let ave = max / 4
+          
+          this.option.yAxis[0].interval = ave
+          this.option.yAxis[0].max = max
           
           this.option.xAxis[0].data = r[0]
           this.option.dataZoom = [{
@@ -391,7 +411,6 @@
           .title {
             font-size: @font-size-smail;
             margin-bottom: .02rem;
-            font-weight: bold;
           }
           .det {
             font-weight: bold;

@@ -8,7 +8,7 @@ import router from './router'
 //import VueLazyload from 'vue-lazyload'
 import 'common/js/adaption.js' // 自适应
 import 'common/style/index.less' // 全局控制样式
-import 'font-awesome/css/font-awesome.css'
+import 'font-awesome/css/font-awesome.css' // TODO 仅仅loading要用，到时候改gif或自己写，然后去掉font的引入
 import { M_Touch } from 'common/js/methods.js'
 
 import echarts from 'echarts/lib/echarts'
