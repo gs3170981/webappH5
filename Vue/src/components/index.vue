@@ -13,22 +13,35 @@
       <div><!--必须加-->
         
         <!--TODO 在子页面时，banner的定时器未清空,仍在执行,有时间改改-->
-        <banner v-if="banner.length" class="row-slider-wrapper">
+        <!--<banner v-if="banner.length" class="row-slider-wrapper">
           <div v-for="t in banner">
             <a :href="t.linkUrl">
-              <!--如果fastclick延迟点击与自身click冲突，则加needsclick样式，进行冒泡-->
               <img class="needsclick" @load="loadImage" :src="t.picUrl">
-            </a><!--loadImage有啥用回家再看-->
+            </a>
           </div>
-        </banner>
+        </banner>-->
+        
+        <header class="header row-padding" :style="{ background: header.img }">
+          <img class="icon" :src="header.icon" />
+          <span class="title">臻分期</span>
+          <div class="btn">
+            <span style="font-size: .45rem;">＋</span>
+            <span style="float: right;">关注</span>
+          </div>
+        </header>
         
         <!--item内容(头部导航栏)-->
-        <ul class="row-padding menu row-border-bottom">
-          <router-link v-for="t in items" :key="t.id" tag="li" class="item row-item" :to="t.href">
-            <img class="icon" :src="t.path" />
-            <p class="title" v-text="t.title"></p>
-          </router-link>
-        </ul>
+        <section class="row-padding menu row-border-bottom">
+          <h1 class="title">我的订单</h1>
+          <ul class="det">
+            
+            <router-link v-for="t in items" :key="t.id" tag="li" class="item row-item" :to="t.href">
+              <img class="icon" :src="t.path" />
+              <p class="name" v-text="t.title"></p>
+            </router-link>
+          </ul>
+        </section>
+
         
         <!--图表的内容-->
         <section class="row-padding chart row-border-bottom">
@@ -74,47 +87,56 @@
   export default {
     data () {
       return {
+        header: {
+          img: 'url(' + require('common/image/stages_top_banner.png') + ')no-repeat top center',
+          icon: require('common/image/home_icon_stages.png')
+        },
         items: [
           {
             id: 'a',
-            path: require('common/image/home_icon_stages.png'),
-            href: '/menuItem_stages',
-            title: '臻分期'
+            path: require('common/image/stages_icon_examine.png'),
+            href: '/order_audit',
+            title: '审核中'
           }, {
             id: 'b',
-            path: require('common/image/home_icon_loan.png'),
-            href: '/menuItem_shop',
-            title: '臻商贷'
+            path: require('common/image/stages_icon_write.png'),
+            href: '/order_notContract',
+            title: '待签约'
           }, {
             id: 'c',
-            path: require('common/image/home_icon_car.png'),
-            href: '/menuItem_car',
-            title: '臻车贷'
+            path: require('common/image/stages_icon_money.png'),
+            href: '/order_notLoan',
+            title: '待放款'
           }, {
             id: 'd',
-            path: require('common/image/home_icon_card.png'),
-            href: '/menuItem_card',
-            title: '信用卡'
+            path: require('common/image/stages_icon_payment.png'),
+            href: '/order_notPayment',
+            title: '待付款'
+          }, {
+            id: 'e',
+            path: require('common/image/stages_icon_end.png'),
+            href: '/order_over',
+            title: '已结束'
           }
         ],
         chart: [
-          {
-            id: 'a',
-            title: '臻分期',
-            val: 0
-          }, {
-            id: 'b',
-            title: '臻商贷',
-            val: 0
-          }, {
-            id: 'c',
-            title: '臻车贷',
-            val: 0
-          }, {
-            id: 'd',
-            title: '信用卡',
-            val: 0
-          }
+//        {
+//          id: 'a',
+//          title: '臻分期',
+//          val: 0
+//        }, {
+//          id: 'b',
+//          title: '臻商贷',
+//          val: 0
+//        }, {
+//          id: 'c',
+//          title: '臻车贷',
+//          val: 0
+//        }, {
+//          id: 'd',
+//          title: '信用卡',
+//          val: 0
+//        }
         ],
         banner: [],
         top_header: {
@@ -124,38 +146,38 @@
           },
           title: '',
           right: {
-            icon: 'fa-reorder',
+            icon: 'fa-user-circle-o',
             href: '',
-            item: [
-              {
-                id: 'a',
-                icon: 'fa-bell-o',
-                title: '消息中心',
-                href: '/news'
-              }, {
-                id: 'b',
-                icon: 'fa-commenting-o',
-                title: '问题建议',
-                href: '/problem'
-              }, {
-                id: 'c',
-                icon: 'fa-address-card-o',
-                title: '关于我们',
-                href: '/about'
-              }
-            ]
+//          item: [
+//            {
+//              id: 'a',
+//              icon: 'fa-bell-o',
+//              title: '消息中心',
+//              href: '/news'
+//            }, {
+//              id: 'b',
+//              icon: 'fa-commenting-o',
+//              title: '问题建议',
+//              href: '/problem'
+//            }, {
+//              id: 'c',
+//              icon: 'fa-address-card-o',
+//              title: '关于我们',
+//              href: '/about'
+//            }
+//          ]
           }
         },
         footer_nav: [
-          {
-            id: 'a',
-            path: require('common/image/home_img_comm.png'),
-            href: '/my_commission'
-          }, {
-            id: 'b',
-            path: require('common/image/home_img_task.png'),
-            href: '/my_task'
-          }
+//        {
+//          id: 'a',
+//          path: require('common/image/home_img_comm.png'),
+//          href: '/my_commission'
+//        }, {
+//          id: 'b',
+//          path: require('common/image/home_img_task.png'),
+//          href: '/my_task'
+//        }
         ]
       }
     },
@@ -167,27 +189,27 @@
     },
     created () {
       // 模拟数据
-      API_banner({ 
-        val: 123
-      }, r => {
-        this.banner = r.data.slider
-      })
+//    API_banner({ 
+//      val: 123
+//    }, r => {
+//      this.banner = r.data.slider
+//    })
 
       // 模拟数据
-      setTimeout(r => {
-        let chart = [{id:'a',title:'臻分期',val:80},{id:'b',title:'臻商贷',val:50},{id:'c',title:'臻车贷',val:40},{id:'d',title:'信用卡',val:60}]
-        for (let i = 0; i < chart.length; i++) {
-          for (let j = 0; j < this.chart.length; j++) {
-            if (this.chart[j].id === chart[i].id) {
-              M_NumberPlusReduce({
-                e: this.chart[j],
-                val: 'val'
-              }, chart[i].val)
-              break
-            }
-          }
-        }
-      }, 200)
+//    setTimeout(r => {
+//      let chart = [{id:'a',title:'臻分期',val:80},{id:'b',title:'臻商贷',val:50},{id:'c',title:'臻车贷',val:40},{id:'d',title:'信用卡',val:60}]
+//      for (let i = 0; i < chart.length; i++) {
+//        for (let j = 0; j < this.chart.length; j++) {
+//          if (this.chart[j].id === chart[i].id) {
+//            M_NumberPlusReduce({
+//              e: this.chart[j],
+//              val: 'val'
+//            }, chart[i].val)
+//            break
+//          }
+//        }
+//      }
+//    }, 200)
 
       
     },
@@ -222,26 +244,63 @@
     bottom: 0; /*什么破设定，没就错*/
 
     .row-content {
-      
+      .header {
+        padding-top: 2.4rem;
+        box-sizing: border-box;
+        height: 3.4rem;
+        width: 100%;
+        color: white;
+        line-height: .54rem;
+        overflow: hidden;
+        background-size: 100% 100%!important;
+        .icon {
+          float: left;
+          height: .54rem;
+          width: .58rem;
+        }
+        .title {
+          margin: 0 .3rem 0 .2rem;
+          float: left;
+          font-size: .34rem;
+        }
+        .btn {
+          float: left;
+          border-radius: .3rem;
+          height: .48rem;
+          padding: 0 .2rem 0 .1rem;
+          background: #febe5b;
+          font-size: @font-size-item_det1;
+          
+        }
+      }
       .menu {
         background: white;
-        display: flex;
-        justify-content: center;
-        .item {
-          width: 1.45rem;
-          margin-right: .4rem;
-          text-align: center;
-          &:last-child {
-            margin-right: 0;
-          }
-
-          .icon {
-            height: .54rem;
-            width: .58rem;
-            margin-bottom: .2rem;
-          }
-          .title {
-            font-size: @font-size-item_det1;
+        .title {
+          font-size: @font-size-item_title;
+          height: .6rem;
+          font-weight: bold;
+          line-height: .6rem;
+        }
+        .det {
+          display: flex;
+          padding: .4rem .05rem .3rem;
+          justify-content: center;
+          .item {
+            width: 1.45rem;
+            margin-right: .4rem;
+            text-align: center;
+            &:last-child {
+              margin-right: 0;
+            }
+  
+            .icon {
+              height: .48rem;
+              width: .48rem;
+              margin-bottom: .2rem;
+            }
+            .name {
+              font-size: @font-size-smail;
+            }
           }
         }
       }
