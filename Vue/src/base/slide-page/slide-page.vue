@@ -41,7 +41,7 @@
       }
     },
     mounted () {
-      console.log(this.klass, this.href)
+//    console.log(this.klass, this.href)
       if (!this.klass) {
         return
       }

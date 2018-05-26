@@ -19,11 +19,11 @@ const scroll_header = {
   },
   methods: {
     scrollEnd (e) {
-      console.log('end')
+//    console.log('end')
       clearInterval(this.scroll_timer)
     },
     scrollStart (e) {
-      console.log('start')
+//    console.log('start')
       let header_gra = e.wrapper.parentNode.getElementsByClassName('top-header_gra')[0]
       this.scroll_timer = setInterval(() => {
         let e_style = e.wrapper.children[0].style

@@ -9,7 +9,7 @@
         :to="opt.left.href">
       </router-link>
       <!--title-->
-      <h1 class="title" v-text="opt.title"></h1>
+      <h1 class="title" :style="opt.title_style" v-text="opt.title"></h1>
       <!--右边-->
       <router-link 
         v-if="opt.right.icon" 
