@@ -8,7 +8,7 @@
     </top-header>
     
     <!--首页内容核心-->
-    <scroll class="row-content" ref="scroll" :listenScroll="true" @scroll="_scroll"><!-- :data="items"监听会变动的数据，节点自动计算然后可上下滚动-->
+    <scroll class="row-content" ref="scroll" :end="true" @scrollToEnd="scrollEnd" :start="true" @scrollToStart="scrollStart"><!-- :data="items"监听会变动的数据，节点自动计算然后可上下滚动-->
     <!--竖向可拖动，优化性能，取消自带的滚动条-->
       <div><!--必须加-->
         
@@ -71,7 +71,9 @@
   import Scroll from 'base/scroll/scroll'
   import TopHeader from 'base/top-header/top-header'
   import BottomFooter from 'base/bottom-footer/bottom-footer'
+  import { scroll_header } from 'common/js/mixins.js'
   export default {
+    mixins: [scroll_header],
     data () {
       return {
         icon: {
@@ -217,9 +219,6 @@
       topHeader_menu () {
         console.log('menu')
       },
-      _scroll (e) {
-        console.log(e)
-      }
     }
   }
 </script>

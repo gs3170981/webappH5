@@ -1,5 +1,5 @@
 <template>
-  <slide-page class="more-det MY_COMMISSION_MORE_DET" :klass="'MY_COMMISSION_MORE_DET'" :href="top_header.left.href">
+  <slide-page class="MY_COMMISSION_MORE_DET" :klass="'MY_COMMISSION_MORE_DET'" :href="top_header.left.href">
     <!--头部-->
     <top-header class="header" :opt="top_header"></top-header>
     <!--内容-->
@@ -170,7 +170,7 @@
   }
 </script>
 <style lang="less" scoped>
-  .more-det {
+  .MY_COMMISSION_MORE_DET {
     background: @color-hui1;
     .header {
       background: @background-header;

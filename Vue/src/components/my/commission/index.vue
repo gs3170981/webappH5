@@ -3,7 +3,7 @@
     <!--头部-->
     <top-header :opt="top_header"></top-header>
     <!--内容-->
-    <scroll class="row-content" ref="scroll" :probeType="2" :listenScroll="true" @scroll="_scroll"><!-- :data="items"监听会变动的数据，节点自动计算然后可上下滚动-->
+    <scroll class="row-content" ref="scroll" :end="true" @scrollToEnd="scrollEnd" :start="true" @scrollToStart="scrollStart"><!-- :data="items"监听会变动的数据，节点自动计算然后可上下滚动-->
       <div>
         <!--头部背景-->
         <img class="header" :src="header_img" />
@@ -73,7 +73,9 @@
   import MaskPage from 'base/mask/mask-page'
   import BottomFooter from 'base/bottom-footer/bottom-footer'
   import { $ } from 'common/js/methods.js'
+  import { scroll_header } from 'common/js/mixins.js'
   export default {
+    mixins: [scroll_header],
     data () {
       return {
         icon: {
@@ -312,21 +314,6 @@
       },
       maskClose () {
         this.mask.is = false
-      },
-      _scroll (e) {
-//      e = window.getComputedStyle(e.wrapper, null)
-        let e_style = e.wrapper.children[0].style
-        let trasf = e_style.transform
-        trasf = parseInt(trasf.substring(trasf.indexOf(',') + 1, trasf.indexOf(')')))
-        if (trasf <= 0 && trasf >= -100) {
-          console.log(1)
-          let header = e.wrapper.parentNode.getElementsByTagName('header')[0]
-          let bg = window.getComputedStyle(header, null).background
-          let val = Math.abs(trasf) / 100
-          header.style.background = 'linear-gradient(90deg, rgba(63, 141, 247, '+ val +') 0%, rgba(72, 184, 255, '+ val +') 100%)'
-          // TODO 之后看看能不能用除了js控制的方式实现，还有想办法抽离，不能每个地方都写这
-          // 手势滑动 会有颜色的问题
-        }
       }
     }
   }
@@ -334,7 +321,7 @@
 
 <style scoped lang="less">
   .row-content {
-    
+    background: @color-hui1;
     .header {
       height: 3.3rem;
       width: 100%;

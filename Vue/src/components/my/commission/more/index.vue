@@ -1,5 +1,5 @@
 <template>
-  <slide-page class="more MY_COMMISSION_MORE" :klass="'MY_COMMISSION_MORE'" :href="top_header.left.href">
+  <slide-page class="MY_COMMISSION_MORE" :klass="'MY_COMMISSION_MORE'" :href="top_header.left.href">
     <!--<scroll style="height: 100%;overflow: hidden;" :scrollX="true" :id="slidePageId" :scrollY="false" :listenScroll="true" :probeType="2" @scroll="slideScroll">-->
       <!--<div style="position: fixed;top: 0;overflow: hidden;height: 100%;left: 0;width: 101%;">-->
         <!--头部-->
@@ -355,7 +355,7 @@
   }
 </script>
 <style lang="less" scoped>
-  .more {
+  .MY_COMMISSION_MORE {
     background: @background-header;
     .header {
       background: @background-header;

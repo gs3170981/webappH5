@@ -52,6 +52,14 @@
       refreshDelay: {
         type: Number,
         default: 20
+      },
+      start: {
+        type: Boolean,
+        default: false
+      },
+      end: {
+        type: Boolean,
+        default: false
       }
     },
 //  data () {
@@ -97,6 +105,16 @@
             if (this.scroll.y <= (this.scroll.maxScrollY + 50)) {
               this.$emit('scrollToEnd')
             }
+          })
+        } else if (this.end) {
+          this.scroll.on('scrollEnd', () => {
+            this.$emit('scrollToEnd')
+          })
+        }
+        
+        if (this.start) {
+          this.scroll.on('scrollStart', () => {
+            this.$emit('scrollToStart', this.scroll)
           })
         }
 
