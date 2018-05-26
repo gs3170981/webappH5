@@ -7,10 +7,13 @@
     <div class="dots">
       <span class="dot" :style="dotsIndex" :class="{active: currentPageIndex === index }" v-for="(item, index) in dots"></span>
     </div>
-    <div v-if="manual" class="manual-icon">
-      <i class="fa fa-caret-left" @click="_manualClick('left')"></i>
-      <i class="fa fa-caret-right" @click="_manualClick('right')"></i>
-    </div>
+    <!--<div v-if="manual" class="manual-icon">-->
+      <template v-if="manual">
+        <i class="fa fa-caret-left" @click="_manualClick('left')"></i>
+        <i class="fa fa-caret-right" @click="_manualClick('right')"></i>
+      </template>
+      
+    <!--</div>-->
   </div>
 </template>
 
@@ -109,6 +112,7 @@
           snap: true,
           snapLoop: this.loop,
           snapThreshold: 0.3,
+          bindToWrapper: true,
           snapSpeed: 400
         })
 
@@ -210,7 +214,7 @@
         opacity: .8;
       }
     }
-    .manual-icon {
+    /*.manual-icon {
       color: @color-yellow;
       position: absolute;
       top: 0;
@@ -218,18 +222,21 @@
       width: 100%;
       display: flex;
       font-size: .6rem;
-      align-items: center;
-      .fa-caret-left {
-        left: 0;
+      align-items: center;*/
+      .fa-caret-left, .fa-caret-right {
         padding: .5rem;
         position: absolute;
+        top: 10%;
+        font-size: .6rem;
+        color: @color-yellow;
+      }
+      .fa-caret-left {
+        left: 0;
       }
       .fa-caret-right {
         right: 0;
-        padding: .5rem;
-        position: absolute;
       }
-    }
+    /*}*/
     
   }
 

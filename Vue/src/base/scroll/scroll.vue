@@ -9,6 +9,10 @@
 
   export default {
     props: {
+//    id: {
+//      type: String,
+//      default: 'false'
+//    },
       probeType: {
         type: Number,
         default: 1
@@ -33,29 +37,66 @@
         type: Boolean,
         default: false
       },
+//    stopPropagation: { // 冒泡
+//      type: Boolean,
+//      default: true
+//    },
+      scrollX: { // X轴移动
+        type: Boolean,
+        default: false
+      },
+      scrollY: {
+        type: Boolean,
+        default: true
+      },
       refreshDelay: {
         type: Number,
         default: 20
+      },
+      start: {
+        type: Boolean,
+        default: false
+      },
+      end: {
+        type: Boolean,
+        default: false
       }
     },
+//  data () {
+//    return {
+//      scroll: {}
+//    }
+//  },
     mounted() {
+//    console.log(this.id)
       setTimeout(() => {
-        this._initScroll()
+        this._initScroll(this.id)
       }, 20)
     },
+//  watch: {
+//    scroll (obj) {
+//      console.log(123)
+//    }
+//  },
     methods: {
-      _initScroll() {
+      _initScroll(id) {
         if (!this.$refs.wrapper) {
           return
         }
         this.scroll = new BScroll(this.$refs.wrapper, {
           probeType: this.probeType,
-          click: this.click
+          click: this.click,
+//        scrollX: this.scrollX,
+          bindToWrapper: true, // TODO 如果是自己的滚动事件，并绑定在容器上，则该属性须为true！
+          scrollY: this.scrollY,
+//        stopPropagation: true
         })
         if (this.listenScroll) {
           let me = this
           this.scroll.on('scroll', (pos) => {
-            me.$emit('scroll', pos)
+//          if (this.id === id) {
+              me.$emit('scroll', this.scroll)
+//          }
           })
         }
         
@@ -64,6 +105,16 @@
             if (this.scroll.y <= (this.scroll.maxScrollY + 50)) {
               this.$emit('scrollToEnd')
             }
+          })
+        } else if (this.end) {
+          this.scroll.on('scrollEnd', () => {
+            this.$emit('scrollToEnd')
+          })
+        }
+        
+        if (this.start) {
+          this.scroll.on('scrollStart', () => {
+            this.$emit('scrollToStart', this.scroll)
           })
         }
 

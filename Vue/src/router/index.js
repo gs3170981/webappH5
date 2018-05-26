@@ -10,11 +10,16 @@ Vue.use(Router)
 // TODO 因为直接import，url中带‘-’解析不了，则用回调
 // 这里就不用for遍历json配置项了，保持代码可读性
 
-//const MenuItemMore = (resolve) => {
-//import('components/menu-item/more/index').then((module) => {
-//  resolve(module)
-//})
-//}
+const moneyItemInfo = (resolve) => {
+  import('components/money-item/info/index').then((module) => {
+    resolve(module)
+  })
+}
+const moneyItemInfoPay = (resolve) => {
+  import('components/money-item/info/pay/index').then((module) => {
+    resolve(module)
+  })
+}
 //const MenuItemStages = (resolve) => {
 //import('components/menu-item/stages/index').then((module) => {
 //  resolve(module)
@@ -96,6 +101,18 @@ export default new Router({
     {
       path: '/',
       component: Index,
+      children: [
+        {
+          path: 'moneyItem_info',
+          component: moneyItemInfo,
+          children: [
+            {
+              path: 'pay',
+              component: moneyItemInfoPay
+            }
+          ]
+        }
+      ]
 //    children: [
 //      {
 //        path: 'menuItem_stages', // 头部item列表

@@ -1,25 +1,14 @@
 <template>
   <div class="main">
     <!--头部-->
-    <top-header 
-      :opt="top_header" 
-      @left="topHeader_close" 
-      @right="topHeader_menu">
-    </top-header>
+    <top-header :opt="top_header" @left="topHeader_close"></top-header>
     
     <!--首页内容核心-->
-    <scroll class="row-content" ref="scroll"><!-- :data="items"监听会变动的数据，节点自动计算然后可上下滚动-->
+    <scroll class="row-content" ref="scroll" :end="true" @scrollToEnd="scrollEnd" :start="true" @scrollToStart="scrollStart"><!-- :data="items"监听会变动的数据，节点自动计算然后可上下滚动-->
     <!--竖向可拖动，优化性能，取消自带的滚动条-->
       <div><!--必须加-->
         
-        <!--TODO 在子页面时，banner的定时器未清空,仍在执行,有时间改改-->
-        <!--<banner v-if="banner.length" class="row-slider-wrapper">
-          <div v-for="t in banner">
-            <a :href="t.linkUrl">
-              <img class="needsclick" @load="loadImage" :src="t.picUrl">
-            </a>
-          </div>
-        </banner>-->
+        
         
         <header class="header row-padding" :style="{ background: header.img }">
           <img class="icon" :src="header.icon" />
@@ -35,42 +24,41 @@
           <h1 class="title">我的订单</h1>
           <ul class="det">
             
-            <router-link v-for="t in items" :key="t.id" tag="li" class="item row-item" :to="t.href">
+            <router-link v-for="t in my_item" :key="t.id" tag="li" class="item row-item" :to="t.href">
               <img class="icon" :src="t.path" />
               <p class="name" v-text="t.title"></p>
             </router-link>
           </ul>
         </section>
 
-        
-        <!--图表的内容-->
-        <section class="row-padding chart row-border-bottom">
-          <h1 class="title">推广业绩<router-link tag="span" class="more" to="/chartAnalysisMore">查看更多　<i class="fa fa-angle-right"></i></router-link></h1>
+        <!--item中部内容(分期助手)-->
+        <section class="row-padding menu row-border-bottom">
+          <h1 class="title">分期助手</h1>
           <ul class="det">
-            <li class="item" v-for="t in chart">
-              <h3 class="name" v-text="t.title"></h3>
-              <div class="rate">
-                <p class="bg"></p>
-                <!--TODO 这边width性能有问题，有时间改成scale3d-->
-                <p class="now" :style="{ width: t.val + '%' }"></p>
-              </div>
-              <div class="number">{{ t.val }} <span>单</span></div>
-            </li>
+            
+            <router-link v-for="t in money_item" :key="t.id" tag="li" class="item row-item" :to="t.href">
+              <img class="icon" :src="t.path" />
+              <p class="name" v-text="t.title"></p>
+            </router-link>
           </ul>
         </section>
         
-        <!--任务(底部导航栏)-->
-        <section class="row-padding task">
-          <h1 class="title">权益任务</h1>
-          <div class="det">
-            <router-link v-for="t in footer_nav" :key="t.id" tag="img" class="img row-item" :to="t.href" :src="t.path"></router-link>
+        <!--TODO 在子页面时，banner的定时器未清空,仍在执行,有时间改改-->
+        <banner v-if="banner.length" class="row-slider-wrapper" :dotsIndex="bannerIndexStyle">
+          <div class="banner" v-for="t in banner">
+            <a :href="t.url">
+              <img class="needsclick" @load="loadImage" :src="t.href">
+            </a>
           </div>
-        </section>
+        </banner>
+        
         
         <!--底部-->
         <bottom-footer></bottom-footer>
       </div>
     </scroll>
+
+    <img class="plus_btn row-item" :src="plus_btn" />
     
     <!--子滑动页面-->
     <router-view></router-view>
@@ -79,19 +67,24 @@
 
 <script type="text/ecmascript-6">
   import { API_banner } from 'api/config.js'
-  import { M_NumberPlusReduce } from 'common/js/methods.js'
+//import { M_NumberPlusReduce } from 'common/js/methods.js'
   import Banner from 'base/banner/banner'
   import Scroll from 'base/scroll/scroll'
   import TopHeader from 'base/top-header/top-header'
   import BottomFooter from 'base/bottom-footer/bottom-footer'
+  import { scroll_header } from 'common/js/mixins.js'
   export default {
+    mixins: [scroll_header],
     data () {
       return {
+        bannerIndexStyle: {
+          background: '#4091f7'
+        },
         header: {
           img: 'url(' + require('common/image/stages_top_banner.png') + ')no-repeat top center',
           icon: require('common/image/home_icon_stages.png')
         },
-        items: [
+        my_item: [
           {
             id: 'a',
             path: require('common/image/stages_icon_examine.png'),
@@ -119,66 +112,52 @@
             title: '已结束'
           }
         ],
-        chart: [
-//        {
-//          id: 'a',
-//          title: '臻分期',
-//          val: 0
-//        }, {
-//          id: 'b',
-//          title: '臻商贷',
-//          val: 0
-//        }, {
-//          id: 'c',
-//          title: '臻车贷',
-//          val: 0
-//        }, {
-//          id: 'd',
-//          title: '信用卡',
-//          val: 0
-//        }
+        money_item: [
+          {
+            id: 'a',
+            path: require('common/image/stages_icon_pay.png'),
+            href: '/moneyItem_info',
+            title: '查账付款'
+          }, {
+            id: 'b',
+            path: require('common/image/stages_icon_progress.png'),
+            href: '/order_over',
+            title: '分配进度'
+          }, {
+            id: 'c',
+            path: require('common/image/stages_icon_kown.png'),
+            href: '/order_over',
+            title: '分期须知'
+          }, {
+            id: 'd',
+            path: require('common/image/stages_icon_new.png'),
+            href: '/order_over',
+            title: '消息中心'
+          }
         ],
-        banner: [],
+        banner: [
+          {
+            url: '/',
+            href: require('common/image/stages_banner.png'),
+            id: 'a'
+          }, {
+            url: '/',
+            href: require('common/image/pay_banner.png'),
+            id: 'a'
+          }
+        ],
         top_header: {
           left: {
-            icon: 'fa-angle-left',
+            icon: require('common/image/nav_btn_back.png'),
             href: ''
           },
           title: '',
           right: {
-            icon: 'fa-user-circle-o',
+            icon: require('common/image/nav_btn_user.png'),
             href: '',
-//          item: [
-//            {
-//              id: 'a',
-//              icon: 'fa-bell-o',
-//              title: '消息中心',
-//              href: '/news'
-//            }, {
-//              id: 'b',
-//              icon: 'fa-commenting-o',
-//              title: '问题建议',
-//              href: '/problem'
-//            }, {
-//              id: 'c',
-//              icon: 'fa-address-card-o',
-//              title: '关于我们',
-//              href: '/about'
-//            }
-//          ]
           }
         },
-        footer_nav: [
-//        {
-//          id: 'a',
-//          path: require('common/image/home_img_comm.png'),
-//          href: '/my_commission'
-//        }, {
-//          id: 'b',
-//          path: require('common/image/home_img_task.png'),
-//          href: '/my_task'
-//        }
-        ]
+        plus_btn: require('common/image/suspend_btn.png')
       }
     },
     components: {
@@ -220,16 +199,8 @@
           this.$refs.scroll.refresh()
         }
       },
-      test () {
-        this.$router.push({
-          path: '/chartAnalysis'
-        })
-      },
       topHeader_close () {
         console.log('close')
-      },
-      topHeader_menu () {
-        console.log('menu')
       }
     }
   }
@@ -266,7 +237,7 @@
         .btn {
           float: left;
           border-radius: .3rem;
-          height: .48rem;
+          height: .55rem;
           padding: 0 .2rem 0 .1rem;
           background: #febe5b;
           font-size: @font-size-item_det1;
@@ -304,83 +275,20 @@
           }
         }
       }
-      .chart {
-        background: white;
-        .title {
-          font-size: @font-size-item_title;
-          height: .6rem;
-          font-weight: bold;
-          line-height: .6rem;
-          .more {
-            color: @color-hui;
-            float: right;
-          }
-        }
-        .det {
-          padding: .2rem .05rem 0;
-          .item {
-            height: .75rem;
-            overflow: hidden;
-            line-height: .75rem;
-            .name {
-              float: left;
-              width: 1.53rem;
-            }
-            .rate {
-              float: left;
-              width: 3.75rem;
-              height: .15rem;
-              top: .3rem;
-              position: relative;
-              .bg {
-                background: #edf4f8;
-                border-radius: .2rem;
-                height: 100%;
-                width: 100%;
-              }
-              .now {
-                background: @background-blue-back;
-                border-radius: .2rem;
-                height: .15rem;
-                top: 0;
-                position: absolute;
-                width: 0;
-                transition: all .2s ease;
-              }
-            }
-            .number {
-              width: 1.46rem;
-              float: right;
-              text-align: right;
-              color: @color-org;
-              font-size: @font-size-big;
-            }
-          }
+      .banner {
+        .needsclick {
+          height: 2rem;
         }
       }
-      .task {
-        background: white;
-        .title {
-          font-size: @font-size-item_title;
-          height: .6rem;
-          font-weight: bold;
-          line-height: .6rem;
-        }
-        .det {
-          padding: .2rem .05rem .43rem;
-          overflow: hidden;
-          .img {
-            float: left;
-            height: 1.3rem;
-            width: 3.22rem;
-            border-radius: .02rem;
-            margin-right: .36rem;
-            &:last-child {
-              margin-right: 0;
-            }
-          }
-        }
-      }
+    }
+    .plus_btn {
+      position: fixed;
+      bottom: .5rem;
+      width: .85rem;
+      height: .85rem;
+      right: .5rem;
+      box-shadow: .05rem .05rem .2rem rgba(252, 185, 82, .5);
+      border-radius: 50%;
     }
   }
 </style>

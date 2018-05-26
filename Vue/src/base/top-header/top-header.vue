@@ -1,38 +1,42 @@
 <template>
-  <header class="top-header">
-    <!--左边-->
-    <router-link 
-      tag="i" 
-      class="fa left-icon row-item" 
-      :class="opt.left.icon" 
-      :to="opt.left.href">
-    </router-link>
-    <!--title-->
-    <h1 class="title" v-text="opt.title"></h1>
-    <!--右边-->
-    <router-link 
-      tag="i" 
-      class="fa right-icon row-item" 
-      :class="opt.right.icon" 
-      :to="opt.right.href" 
-      @click.native="right">
-    </router-link>
-    <!--传参有列表的情况下-->
-    <ul class="menu" v-if="opt.right.item" :class="{ active: item_show }">
+  <div class="Top">
+    <header class="top-header">
+      <!--左边-->
       <router-link 
-        tag="li" 
-        class="item row-item" 
-        v-for="t in opt.right.item" 
-        :key="t.id" 
-        @click.native="item_show = false" 
-        :to="t.href">
-        <i class="fa icon fa-fw" :class="t.icon"></i>{{ t.title }}
+        tag="img" 
+        class="left-icon row-item" 
+        :src="opt.left.icon" 
+        :to="opt.left.href">
       </router-link>
-      </li>
-    </ul>
-    <!--遮罩-->
-    <mask-page :show="item_show" @mask_show="mask_show"></mask-page>
-  </header>
+      <!--title-->
+      <h1 class="title" :style="opt.title_style" v-text="opt.title"></h1>
+      <!--右边-->
+      <router-link 
+        v-if="opt.right.icon" 
+        tag="img" 
+        class="right-icon row-item" 
+        :src="opt.right.icon" 
+        :to="opt.right.href" 
+        @click.native="right">
+      </router-link>
+      <!--传参有列表的情况下-->
+      <ul class="menu" v-if="opt.right.item" :class="{ active: item_show }">
+        <router-link 
+          tag="li" 
+          class="item row-item" 
+          v-for="t in opt.right.item" 
+          :key="t.id" 
+          @click.native="item_show = false" 
+          :to="t.href">
+          <img class="icon" :src="t.icon" />{{ t.title }}
+        </router-link>
+        </li>
+      </ul>
+      <!--遮罩-->
+      <mask-page :show="item_show" @mask_show="mask_show"></mask-page>
+    </header>
+    <div class="top-header_gra"></div>
+  </div>
 </template>
 
 <script>
@@ -68,74 +72,94 @@
 </script>
 
 <style scoped lang="less">
-  .top-header {
+  .Top {
     height: .87rem;
     line-height: .87rem;
-    position: fixed;
     width: 100%;
+    position: fixed;
     z-index: 1;
-    color: white;
-    text-align: center;
-    .title {
-      position: fixed;
+    .top-header_gra {
+      transition: opacity .6s ease;
+      background: @background-header;
       width: 100%;
-      z-index: -1;
-      font-size: @font-size-header_title;
-    }
-    .left-icon, .right-icon {
-        width: .4rem;
-        height: .4rem;
-        line-height: .4rem;
-        padding: .25rem .2rem;
-    }
-    .left-icon {
-        font-size: .7rem;
-        float: left;
-    }
-    .right-icon {
-        float: right;
-        font-size: .4rem;
-    }
-    .menu {
-      z-index: 2;
       position: absolute;
-      right: .05rem;
-      transform-origin: 90% top 0;
-      transition: all .3s ease;
-      transform: scale3d(0,0,1);
-      text-align: left;
-      top: .87rem;
-      border-radius: .1rem;
-      background: white;
-      .item {
-        padding-right: .7rem;
-        height: .75rem;
-        line-height: .75rem;
-        color: black;
-        border-bottom: .01rem solid #e6e6e6;
-        .icon {
-          color: @color-hui2;
-          margin: 0 .25rem;
-          font-size: @font-size-header_title;
-        }
-        &:last-child {
-          border-bottom: none;
-        }
-      }
-      &:after {
-        content: '';
-        position: absolute;
-        top: -.05rem;
-        right: .15rem;
-        height: .4rem;
-        width: .5rem;
-        background: white;
-        transform: rotate(-45deg);
-        z-index: -1;
-      }
+      z-index: 0;
+      height: 100%;
+      opacity: 0;
+      top: 0;
     }
-    .active {
-      transform:scale3d(1,1,1)
+    .top-header {
+      height: 100%;
+      position: relative;
+      width: 100%;
+      z-index: 1;
+      color: white;
+      text-align: center;
+      .title {
+        position: absolute;
+        width: 100%;
+        z-index: -1;
+        font-size: @font-size-header_title;
+      }
+      .left-icon, .right-icon {
+          width: .4rem;
+          height: .4rem;
+          line-height: .4rem;
+          padding: .25rem .2rem;
+      }
+      .left-icon {
+          /*font-size: .7rem;*/
+          float: left;
+      }
+      .right-icon {
+          float: right;
+          /*font-size: .4rem;*/
+      }
+      .menu {
+        z-index: 2;
+        position: absolute;
+        right: .1rem;
+        transform-origin: 90% top 0;
+        transition: all .3s ease;
+        transform: scale3d(0,0,1);
+        text-align: left;
+        top: .87rem;
+        border-radius: .1rem;
+        background: white;
+        .item {
+          padding: 0 .35rem 0 .3rem;
+          height: .85rem;
+          display: flex;
+          align-items: center;
+          line-height: .85rem;
+          color: black;
+          font-size: @font-size-item_title;
+          border-bottom: .01rem solid #e6e6e6;
+          .icon {
+            color: @color-hui2;
+            height: .36rem;
+            width: .36rem;
+            margin-right: .25rem;
+          }
+          &:last-child {
+            border-bottom: none;
+          }
+        }
+        &:after {
+          content: '';
+          position: absolute;
+          top: -.05rem;
+          right: .15rem;
+          height: .4rem;
+          width: .5rem;
+          background: white;
+          transform: rotate(-45deg);
+          z-index: -1;
+        }
+      }
+      .active {
+        transform:scale3d(1,1,1)
+      }
     }
   }
 </style>
