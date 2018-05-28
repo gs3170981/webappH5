@@ -11,6 +11,8 @@ import 'common/style/index.less' // 全局控制样式
 import 'font-awesome/css/font-awesome.css'
 import { M_Touch } from 'common/js/methods.js'
 
+import store from './vuex'
+
 import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/bar'
 import 'echarts/lib/chart/pie'
@@ -35,5 +37,6 @@ new Vue({
   el: '#app',
   components: { App },
   router,
+  store,
   template: '<App/>'
 })

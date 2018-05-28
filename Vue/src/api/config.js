@@ -1,10 +1,24 @@
 // import Ajax from 'common/ajax.js'
-//import axios from 'axios'
-const CODE_OK = 'OK'
-const CODE_ERR = r => {
+import axios from 'axios'
+import { MessageBox } from 'mint-ui'
+const URL = 'http://192.168.20.175:8061'
+const CODE_OK = 0
+const CODE_ERR = (r, type) => {
+  type ? MessageBox.alert('网络好像开了点小差？', '提示') : MessageBox.alert('服务器炸啦，正在抢修中！', '提示')
   console.error(r.url, r.info)
 }
 
+const API_zzg_zedHome = (data, fn) => {
+  let url = URL + '/m/zzg/zedHome.json'
+  axios.post(url, data).then(res => {
+    res = res.data
+    if (res.code === CODE_OK) {
+      fn(res)
+    } else {
+      CODE_ERR({url: url, info: res}, true)
+    }
+  }).catch(res => CODE_ERR({url: url, info: res}))
+}
 
 //const API_test = (data, fn) => {
 //let url = '/api/test/test.php'
@@ -76,5 +90,6 @@ export {
   API_test,
   API_banner,
   API_commission,
-  API_taskRecord
+  API_taskRecord,
+  API_zzg_zedHome
 }

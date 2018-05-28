@@ -167,6 +167,9 @@
       BottomFooter
     },
     created () {
+      // 获取手机号存VUEX
+      this.$store.commit('save', '17764587901')
+      
       // 模拟数据
 //    API_banner({ 
 //      val: 123

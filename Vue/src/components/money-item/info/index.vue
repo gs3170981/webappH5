@@ -54,12 +54,14 @@
   import Banner from 'base/banner/banner'
   import Scroll from 'base/scroll/scroll'
   import BottomFooter from 'base/bottom-footer/bottom-footer'
+  import { API_zzg_zedHome } from 'api/config.js'
   export default {
     data () {
       return {
         bannerIndexStyle: {
           background: '#4091f7'
         },
+        data: {},
         top_header: {
           left: {
             icon: require('common/image/nav_btn_back.png'),
@@ -130,7 +132,12 @@
       SlidePage
     },
     created () {
-
+      API_zzg_zedHome({
+        mobile: this.$store.state.personal_info.phone
+      }, res => {
+        this.data = res
+        console.log(res)
+      })
     },
     methods: {
       loadImage() {

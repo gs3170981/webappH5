@@ -6,10 +6,11 @@
     <scroll ref="scroll" class="row-content"><!-- :data="record"-->
       <div style="padding-bottom: .9rem;">
         
-        <header class="header">
+        <header class="header row-border-bottom">
           <div class="card" :style="header.style">
             <p class="title" v-text="data.title"></p>
             <h1 class="money"><span>￥</span>{{ data.money }}</h1>
+            <!--<h1 class="money"><span>￥</span>{{ count }}</h1>-->
             <ul class="det">
               <li class="item" v-for="t in data.item">
                 <p class="name" v-text="t.title"></p>
@@ -19,9 +20,9 @@
           </div>
         </header>
         <ul class="payType">
-          <li v-for="t in options" class="item">
+          <li v-for="t in options" class="item" @click="radio_checked('MONEY_ITEM_INFO_PAY_radio_checked', 'checkValue')">
             <img class="icon" :src="t.icon" />
-            <span class="row-checkbox"></span>
+            <span class="row-checkbox MONEY_ITEM_INFO_PAY_radio_checked"></span>
           </li>
         </ul>
         <div style="position: relative;">
@@ -30,7 +31,7 @@
             <span class="title">提前付款是指针对所有未出账单付款，不能提前支付部分账单，提前付款无任何手续费！</span>
           </p>
         </div>
-        <p class="pay-btn">去付款</p>
+        <p class="pay-btn" @click="goPay">去付款</p>
       </div>
     </scroll>
   </slide-page>
@@ -40,8 +41,15 @@
   import SlidePage from 'base/slide-page/slide-page'
   import TopHeader from 'base/top-header/top-header'
   import Scroll from 'base/scroll/scroll'
-
+  import { radio_checked } from 'common/js/mixins.js'
+  
   export default {
+//  computed: {
+//    count() {
+//      return this.$store.state.personal_info.count
+//    }
+//  },
+    mixins: [radio_checked],
     data () {
       return {
         icon: {
@@ -72,7 +80,7 @@
         type: '',
         header: {
           style: {
-            background: "url(" + require('common/image/stages_top_banner.png') + ")top center",
+            background: "url(" + require('common/image/pay_bg.png') + ")top center",
           }
         },
         data: {
@@ -118,7 +126,10 @@
       }
     },
     methods: {
-
+      goPay () {
+        console.log(this.checkValue)
+//      this.$store.commit('increment')
+      }
     }
   }
 </script>
@@ -135,10 +146,11 @@
         background: white;
         padding-top: .28rem;
         box-sizing: border-box;
-        height: 3.95rem;
+        height: 4.2rem;
         .card {
           width: 6.9rem;
           height: 3.2rem;
+          background-size: 100% 100%!important;
           border-radius: .2rem;
           color: white;
           box-sizing: border-box;

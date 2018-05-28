@@ -33,6 +33,24 @@ const M_NumberPlusReduce = (obj, now) => { // 数据自增自减，针对整数
 const $ = (dom) => {
   return D.getElementById(dom)
 }
+// 相当于JQ find class
+const M_findClass = (el, klass) => {
+  let child = el.children
+  for (let i = 0; i < child.length; i++) {
+    let klass_arr = child[i].classList
+    let is = false
+    for (let j = 0; j < klass_arr.length; j++) {
+      if (klass_arr[j] === klass) {
+        return child[i]
+      }
+    }
+    if (!is) {
+      if (child[i].children[0]) {
+        return M_findClass(child[i], klass)
+      }
+    }
+  }
+}
 
 const M_touchMove = (klass, call) => {
   let obj = D.getElementsByClassName(klass)[0]
@@ -109,5 +127,6 @@ export {
   M_Touch,
   M_NumberPlusReduce,
   $,
-  M_touchMove
+  M_touchMove,
+  M_findClass
 }
