@@ -2,7 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 Vue.use(Vuex)
 
-import personal_info from './modules/personal_info.js'
+import user from './modules/user.js'
+import pay from './modules/pay.js'
 //const test = { // test可从其他文件中import导入
 //state: {
 //  count: 123,
@@ -39,7 +40,7 @@ import personal_info from './modules/personal_info.js'
 //}
 export default new Vuex.Store({ // 总的导出
   modules: {
-    personal_info,
-//  n......
+    user,
+    pay
   }
 })

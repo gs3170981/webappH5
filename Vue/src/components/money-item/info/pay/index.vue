@@ -128,6 +128,7 @@
     methods: {
       goPay () {
         console.log(this.checkValue)
+        this.$router.push({path: '/moneyItem_info', query: {call: true}})
 //      this.$store.commit('increment')
       }
     }

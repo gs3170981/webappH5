@@ -1,9 +1,7 @@
 export default {
   state: {
-    count: 123,
-    count2: 321,
-    count3: 321,
-    phone: ''
+    phone: '',
+    shopId: ''
   },
   mutations: {
     save(state, val) {

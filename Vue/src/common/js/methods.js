@@ -17,18 +17,89 @@ const M_Touch = () => {
     }
   }, 20)
 }
-const M_NumberPlusReduce = (obj, now) => { // 数据自增自减，针对整数
-  let timer = setInterval(r => {
-    if (obj.e[obj.val] === now) {
-      clearInterval(timer)
-      return
+// 测试例子 e 为 父级对象，val为e对象下的key，res.amount为当前的val值
+// M_NumberPlusReduce({
+//   e: this.header,
+//   val: 'money' // this.header.money = 1000
+// }, res.amount) // 1500
+const M_NumberPlusReduce = (obj, now) => { // 数据自增自减，针对2位小数
+  if (Object.prototype.toString.call(obj)=='[object Array]') { // 支持for json
+    for (let i = 0; i < obj.length; i++) {
+      M_NumberPlusReduce(obj[i], obj[i].now)
     }
-    if (obj.e[obj.val] > now) {
-      obj.e[obj.val]--
+    return
+  }
+  if (!Number(now)) return
+  let val = parseInt(obj.e[obj.val])
+  if (!val) val = 0
+  let _now = parseFloat(now).toFixed(2)
+  let now_smail = _now.substring(_now.lastIndexOf('.'), _now.length)
+  now = parseInt(now)
+  const small_comp = (v, n) => {
+    let timer = setInterval(r => {
+      if (v == n) {
+        clearInterval(timer)
+        obj.e[obj.val] = parseFloat(v) + now_smail
+        return
+      }
+      v > n ? v-- : v++
+      obj.e[obj.val] = parseFloat(v) + now_smail
+    }, 0)
+  }
+  let f_number = 1
+  let sum = now
+  let is = false
+  let diff_val = 300 // 差值
+  let i = 0
+  if (val > now) { // 减
+    if ((val - sum) > diff_val) {
+      f_number = parseInt(((val - sum) - diff_val) / 100)
+      if (f_number) {
+        sum += diff_val
+        is = true
+      } else {
+        f_number = 1
+      }
+    }
+    if (is) {
+      let timer = setInterval(r => {
+        if (i === 100) {
+          clearInterval(timer)
+          small_comp(val, now)
+          return
+        }
+        val -= f_number
+        i++
+        obj.e[obj.val] = parseFloat(val) + now_smail
+      }, Math.random() * 15)
     } else {
-      obj.e[obj.val]++
+      small_comp(val, sum)
     }
-  }, 0)
+  } else { // 加
+    if ((sum - val) > diff_val) {
+      f_number = parseInt(((sum - val) - diff_val) / 100)
+      if (f_number) {
+        sum -= diff_val
+        is = true
+      } else {
+        f_number = 1
+      }
+    }
+    if (is) {
+      let timer = setInterval(r => {
+        if (i === 100) {
+          clearInterval(timer)
+          small_comp(val, now)
+          return
+        }
+        val += f_number
+        i++
+        obj.e[obj.val] = parseFloat(val) + now_smail
+      },  Math.random() * 15)
+    } else {
+      small_comp(val, sum)
+    }
+  }
 }
 const $ = (dom) => {
   return D.getElementById(dom)
@@ -49,6 +120,12 @@ const M_findClass = (el, klass) => {
         return M_findClass(child[i], klass)
       }
     }
+  }
+}
+// 例子 M_decimal(res, ['amount', 'remainAmount', 'currentAmount', 'nextMonthAmount'])
+const M_decimal = (obj, arr) => { // 传入多个对象，返回2位小数
+  for (let i = 0; i < arr.length; i++) {
+    obj[arr[i]] = (obj[arr[i]] ? obj[arr[i]] : 0).toFixed(2)
   }
 }
 
@@ -128,5 +205,6 @@ export {
   M_NumberPlusReduce,
   $,
   M_touchMove,
-  M_findClass
+  M_findClass,
+  M_decimal
 }
