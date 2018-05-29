@@ -289,21 +289,22 @@
             text: obj.now,
             textStyle: {
               color: '#79dbff',
-              fontSize: '10',
+              fontSize: '15',
             },
-            x: '50%',
+            x: 'center',
             y: 'center'
           },
+          silent: true,
           //            color: ['red', '#e6f4fe'],
           series: [{
             name: '访问来源',
             type: 'pie',
-            radius: ['70%', '90%'],
-            center: ['65%', 'center'],
+            radius: ['80%', '100%'],
+            center: ['center', 'center'],
             avoidLabelOverlap: false,
             label: {
               normal: {
-                show: false
+                show: false,
               }
             },
             itemStyle: {
@@ -452,7 +453,8 @@
               margin-top: .24rem;
               float: right;
               height: 1.08rem;
-              width: 1.6rem;
+              /*width: 1.6rem;*/
+              width: 1rem;
             }
           }
         }
