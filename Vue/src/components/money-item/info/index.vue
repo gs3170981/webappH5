@@ -3,16 +3,21 @@
     <!--头部-->
     <top-header class="top" :opt="top_header"></top-header>
     <!--内容-->
-    <scroll ref="scroll" class="row-content" :data="item"><!-- :data="record"-->
+    <scroll ref="scroll" class="row-content" :data="list"><!-- :data="record"-->
       <div style="padding-bottom: .9rem;">
         
         <header class="header">
           <h1 class="money"><span>￥</span>{{ header.money }}</h1>
           <p class="tips" v-if="header.his_ago">历史逾期：{{ header.his_ago }}次</p>
           <p class="tips" v-if="header.now_ago">当前逾期：{{ header.now_ago }}次</p>
-          <router-link tag="p" class="btn row-item" :to="'/moneyItem_info/pay'">立即付款</router-link>
+          <template v-if="!list[0]">
+            <p class="tips" style="color: white;">暂无待付订单</p>
+            <p class="btn row-item disabled-btn">立即付款</p>
+          </template>
+          <router-link v-else-if="header.now_ago" tag="p" class="btn row-item" style="background: #fbc25e;" :to="'/moneyItem_info/pay'">立即付款</router-link>
+          <router-link v-else-if="header.money === '0.00' && list[0]" style="background: transparent;border: .01rem solid white;" tag="p" class="btn row-item" :to="{ path:'/moneyItem_info/pay',query: {type: 'early'} }">提前付款</router-link>
+          <router-link v-else tag="p" class="btn row-item" :to="'/moneyItem_info/pay'">立即付款</router-link>
         </header>
-        
         <ul class="much">
         	<li class="items" v-for="t in much" :key="t.id">
         	  <p class="val" v-text="t.val"></p>
@@ -32,16 +37,21 @@
         
         <p class="order">
           <span class="title">全部待付订单</span>
-          <router-link tag="span" class="btn row-item" :to="{ path:'/moneyItem_info/pay',query: {type: 'early'} }">提前付款</router-link>
+          <router-link tag="span" v-if="list[0]" class="btn row-item" :to="{ path:'/moneyItem_info/pay',query: {type: 'early'} }">提前付款</router-link>
+          <span class="btn row-item" v-else style="opacity: .5;">提前付款</span>
         </p>
         
-        <ul class="item">
-          <li v-for="(t, i) in item" class="list">
-            <span class="i">{{ i }}</span>
+        <ul v-if="list[0]" class="item">
+          <li v-for="(t, i) in list" class="list" :key="t.orderNo">
+            <span class="i">{{ i + 1 }}</span>
             <span class="title">订单编号</span>
-            <span class="number" v-text="t.number"></span>
+            <span class="number" v-text="t.orderNo"></span>
           </li>
         </ul>
+        <section v-else class="item_empty">
+          <img :src="footer.icon" class="icon" />
+          <p class="title">暂无待付订单</p>
+        </section>
       </div>
     </scroll>
     <!--子滑动页面-->
@@ -57,7 +67,6 @@
   import Banner from 'base/banner/banner'
   import Scroll from 'base/scroll/scroll'
   import BottomFooter from 'base/bottom-footer/bottom-footer'
-  import { API_zzg_zedHome } from 'api/config.js'
   import { M_NumberPlusReduce } from 'common/js/methods.js'
   export default {
     data () {
@@ -65,7 +74,6 @@
         bannerIndexStyle: {
           background: '#4091f7'
         },
-        data: {},
         top_header: {
           left: {
             icon: require('common/image/nav_btn_back.png'),
@@ -78,22 +86,22 @@
           }
         },
         header: {
-          money: '0.00',
-          his_ago: 1,
-          now_ago: 1
+          money: this.$store.state.pay.currentAmount,
+          his_ago: this.$store.state.pay.historyOverdueCount,
+          now_ago: this.$store.state.pay.overdueCount
         },
         much: [
           {
             id: 'a',
-            val: '0.00',
+            val: this.$store.state.pay.nextMonthAmount,
             title: '下月应付(元)'
           }, {
             id: 'b',
-            val: '0.00',
+            val: this.$store.state.pay.amount,
             title: '分期总额(元)'
           }, {
             id: 'c',
-            val: '0.00',
+            val: this.$store.state.pay.remainAmount,
             title: '剩余未付(元)'
           }
         ],
@@ -108,25 +116,10 @@
             id: 'a'
           }
         ],
-        item: [
-          {
-            number: 'JXAB-0101180512003'
-          }, {
-            number: 'JXAB-0101180512003'
-          }, {
-            number: 'JXAB-0101180512003'
-          }, {
-            number: 'JXAB-0101180512003'
-          }, {
-            number: 'JXAB-0101180512003'
-          }, {
-            number: 'JXAB-0101180512003'
-          }, {
-            number: 'JXAB-0101180512003'
-          }, {
-            number: 'JXAB-0101180512003'
-          }
-        ]
+        list: this.$store.state.pay.list,
+        footer: {
+          icon: require('common/image/pay_img_default.png')
+        }
       }
     },
     components: {
@@ -140,12 +133,12 @@
      '$route' (to, from) { // 监听到 某个 数据 传回call的时候，该页面进行重新加载
         console.log(to.query.call)
         if (to.query.call) {
-          this.API_zzg_zedHome()
+          this.getData()
         }
       }
     },
     created () {
-      this.API_zzg_zedHome()
+      this.getData()
     },
     methods: {
       loadImage() {
@@ -154,36 +147,81 @@
           this.$refs.scroll.refresh() // 加载img的时候，需要重新计算scroll高度
         }
       },
-      API_zzg_zedHome () {
-        API_zzg_zedHome({
-          mobile: this.$store.state.user.phone
-        }, res => {
-          // 数字自增自减动画
-          M_NumberPlusReduce([
-            {
-              e: this.header,
-              val: 'money',
-              now: res.currentAmount
-            }, {
-              e: this.much[0],
-              val: 'val',
-              now: res.nextMonthAmount
-            }, {
-              e: this.much[1],
-              val: 'val',
-              now: res.amount
-            }, {
-              e: this.much[2],
-              val: 'val',
-              now: res.remainAmount
+      getData () {
+        this.AJAX({
+          url: '/zzg/zedHome',
+          data: {
+            mobile: this.$store.state.user.phone
+          },
+          success: res => {
+            // 数字自增自减动画
+            M_NumberPlusReduce([
+              {
+                e: this.header,
+                val: 'money',
+                now: res.currentAmount
+              }, {
+                e: this.much[0],
+                val: 'val',
+                now: res.nextMonthAmount
+              }, {
+                e: this.much[1],
+                val: 'val',
+                now: res.amount
+              }, {
+                e: this.much[2],
+                val: 'val',
+                now: res.remainAmount
+              }
+            ])
+            // 改变导航栏的title
+            if (res.historyOverdueCount > 1) {
+              this.top_header.title = '累计待付'
+            } else if (res.currentAmount === '0.00' && this.list[0]) {
+              this.top_header.title = '本月账单已结清'
             }
-          ])
-          
-          this.header.his_ago = res.historyOverdueCount
-          this.header.now_ago = res.overdueCount
-          
-          this.$store.commit('submit', res)
+            // 第一次要先赋值，data响应不到
+            this.header.his_ago = res.historyOverdueCount
+            this.header.now_ago = res.overdueCount
+            this.list = res.list
+            this.$store.commit('submit', res)
+          }
         })
+//      this.AJAX['/zzg/zedHome']({
+//        mobile: this.$store.state.user.phone
+//      }, res => {
+//        // 数字自增自减动画
+//        M_NumberPlusReduce([
+//          {
+//            e: this.header,
+//            val: 'money',
+//            now: res.currentAmount
+//          }, {
+//            e: this.much[0],
+//            val: 'val',
+//            now: res.nextMonthAmount
+//          }, {
+//            e: this.much[1],
+//            val: 'val',
+//            now: res.amount
+//          }, {
+//            e: this.much[2],
+//            val: 'val',
+//            now: res.remainAmount
+//          }
+//        ])
+//        // 改变导航栏的title
+//        if (res.historyOverdueCount > 1) {
+//          this.top_header.title = '累计待付'
+//        } else if (res.currentAmount === '0.00' && this.list[0]) {
+//          this.top_header.title = '本月账单已结清'
+//        }
+//        // 第一次要先赋值，data响应不到
+//        this.header.his_ago = res.historyOverdueCount
+//        this.header.now_ago = res.overdueCount
+//        this.list = res.list
+//        this.$store.commit('submit', res)
+//      })
       }
     }
   }
@@ -216,14 +254,18 @@
           line-height: .45rem;
         }
         .btn {
-          margin-top: .3rem;
+          margin-top: .25rem;
           /*margin: .3rem auto 0;*/
           width: 2.2rem;
-          height: .65rem;
-          line-height: .65rem;
+          height: .62rem;
+          line-height: .62rem;
           background: #5be7b1;
           border-radius: .3rem;
           margin-bottom: .2rem;
+        }
+        .disabled-btn {
+          background: rgba(89, 193, 252, 0.7);
+          opacity: 0.7;
         }
       }
       .much {
@@ -305,7 +347,7 @@
       }
       .item {
         background: white;
-        padding: .25rem .25rem .4rem;
+        padding: .25rem .25rem 2.5rem;
         .list {
           height: .85rem;
           line-height: .85rem;
@@ -328,6 +370,23 @@
             margin-left: auto;
             color: #979899;
           }
+        }
+      }
+      .item_empty {
+        background: white;
+        height: 3.5rem;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        .icon {
+          height: 1.4rem;
+          width: 2.24rem;
+        }
+        .title {
+          font-size: @font-size-item_det1;
+          color: #b1b2b3;
+          margin-top: .3rem;
         }
       }
     }

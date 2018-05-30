@@ -23,6 +23,9 @@ import 'echarts/lib/component/graphic'
 import 'echarts/lib/component/dataZoom'
 Vue.prototype.echarts = echarts // 用到的模块添加到this原型上
 
+import AJAX from 'api/config.js'
+Vue.prototype.AJAX = AJAX
+
 import 'mint-ui/lib/style.css'
 
 // 滚动到可视区，则显示图片，loading为默认加载前的图,,节点中用v-lazy="item.imgurl"

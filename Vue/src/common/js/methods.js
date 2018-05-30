@@ -29,7 +29,8 @@ const M_NumberPlusReduce = (obj, now) => { // 数据自增自减，针对2位小
     }
     return
   }
-  if (!Number(now)) return
+  // now 是ajax值
+//if (!parseInt(now)) return
   let val = parseInt(obj.e[obj.val])
   if (!val) val = 0
   let _now = parseFloat(now).toFixed(2)
@@ -49,11 +50,12 @@ const M_NumberPlusReduce = (obj, now) => { // 数据自增自减，针对2位小
   let f_number = 1
   let sum = now
   let is = false
-  let diff_val = 300 // 差值
+  let diff_val = 50 // 差值在多少以内，进行随机时间执行
+  let diff_max_val = 100 // 差值太大的时候，执行的固定次数
   let i = 0
   if (val > now) { // 减
     if ((val - sum) > diff_val) {
-      f_number = parseInt(((val - sum) - diff_val) / 100)
+      f_number = parseInt(((val - sum) - diff_val) / diff_max_val)
       if (f_number) {
         sum += diff_val
         is = true
@@ -63,7 +65,7 @@ const M_NumberPlusReduce = (obj, now) => { // 数据自增自减，针对2位小
     }
     if (is) {
       let timer = setInterval(r => {
-        if (i === 100) {
+        if (i === diff_max_val) {
           clearInterval(timer)
           small_comp(val, now)
           return
@@ -71,13 +73,13 @@ const M_NumberPlusReduce = (obj, now) => { // 数据自增自减，针对2位小
         val -= f_number
         i++
         obj.e[obj.val] = parseFloat(val) + now_smail
-      }, Math.random() * 15)
+      }, Math.random() * 10)
     } else {
       small_comp(val, sum)
     }
   } else { // 加
     if ((sum - val) > diff_val) {
-      f_number = parseInt(((sum - val) - diff_val) / 100)
+      f_number = parseInt(((sum - val) - diff_val) / diff_max_val)
       if (f_number) {
         sum -= diff_val
         is = true
@@ -87,7 +89,7 @@ const M_NumberPlusReduce = (obj, now) => { // 数据自增自减，针对2位小
     }
     if (is) {
       let timer = setInterval(r => {
-        if (i === 100) {
+        if (i === diff_max_val) {
           clearInterval(timer)
           small_comp(val, now)
           return
@@ -95,7 +97,7 @@ const M_NumberPlusReduce = (obj, now) => { // 数据自增自减，针对2位小
         val += f_number
         i++
         obj.e[obj.val] = parseFloat(val) + now_smail
-      },  Math.random() * 15)
+      },  Math.random() * 10)
     } else {
       small_comp(val, sum)
     }

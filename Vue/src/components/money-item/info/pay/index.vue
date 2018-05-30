@@ -85,17 +85,17 @@
         },
         data: {
           title: '本月应付',
-          money: '1000.00',
+          money: this.$store.state.pay.currentAmount,
           item: [
             {
               title: '下月应付(元)',
-              val: '1000.00'
+              val: this.$store.state.pay.nextMonthAmount
             }, {
               title: '分期总额(元)',
-              val: '3700.00'
+              val: this.$store.state.pay.amount
             }, {
               title: '剩余未付(元)',
-              val: '2700.00'
+              val: this.$store.state.pay.remainAmount
             }
           ]
         }
@@ -112,23 +112,27 @@
         this.top_header.title = '提前付款'
         this.data = {
           title: '应付金额',
-          money: '1700.00',
+          money: this.$store.state.pay.remainAmount,
           item: [
             {
               title: '分期总额(元)',
-              val: '3700.00'
+              val: this.$store.state.pay.amount
             }, {
               title: '剩余未付(元)',
-              val: '1700.00'
+              val: this.$store.state.pay.remainAmount
             }
           ]
         }
       }
     },
+    mounted () {
+      this.radio_checked('MONEY_ITEM_INFO_PAY_radio_checked', 'checkValue', 0) // 传下标默认选中
+    },
     methods: {
       goPay () {
+        
         console.log(this.checkValue)
-        this.$router.push({path: '/moneyItem_info', query: {call: true}})
+//      this.$router.push({path: '/moneyItem_info', query: {call: true}})
 //      this.$store.commit('increment')
       }
     }
@@ -167,6 +171,7 @@
           }
           .money {
             height: .8rem;
+            font-weight: bold;
             font-size: .56rem;
             line-height: .8rem;
           }
@@ -186,6 +191,7 @@
               }
               .val {
                 height: .46rem;
+                font-weight: bold;
                 line-height: .46rem;
                 font-size: .32rem;
               }
