@@ -149,7 +149,7 @@
       },
       getData () {
         this.AJAX({
-          url: '/zzg/zedHome',
+          url: '/m/zzg/zedHome',
           data: {
             mobile: this.$store.state.user.phone
           },

@@ -202,11 +202,39 @@ const M_touchMove = (klass, call) => {
   obj.addEventListener("touchstart", touchstart, false)
 }
 
+class M_Proms { // 链式调用
+  constructor (fn) {
+    this.arr = []
+    this.count = -1
+    fn(this)
+  }
+  then (r) {
+    if (typeof (r) === 'function') {
+      this.arr.push(r)
+      return this
+    } else {
+      this.arr[++this.count] && this.arr[this.count](this, r)
+    }
+  }
+}
+
+const M_userAgent = () => {
+  var output = {}
+  if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+    output['ios'] = true
+  } else if (navigator.userAgent.match(/android/i)) {
+    output['android'] = true
+  }
+  return output
+}
+
 export {
   M_Touch,
   M_NumberPlusReduce,
   $,
   M_touchMove,
   M_findClass,
-  M_decimal
+  M_decimal,
+  M_Proms,
+  M_userAgent
 }

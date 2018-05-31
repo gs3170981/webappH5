@@ -31,7 +31,7 @@
             <span class="title">提前付款是指针对所有未出账单付款，不能提前支付部分账单，提前付款无任何手续费！</span>
           </p>
         </div>
-        <p class="pay-btn" @click="goPay">去付款</p>
+        <p class="pay-btn row-item" @click="goPay()">去付款</p>
       </div>
     </scroll>
   </slide-page>
@@ -42,6 +42,7 @@
   import TopHeader from 'base/top-header/top-header'
   import Scroll from 'base/scroll/scroll'
   import { radio_checked } from 'common/js/mixins.js'
+  import { M_Proms } from 'common/js/methods.js'
   
   export default {
 //  computed: {
@@ -57,9 +58,11 @@
         },
         options: [
           {
-            icon: require('common/image/pay_logo_alipay.png'),
+            url: '/api/createOrder', // 支付宝
+            icon: require('common/image/pay_logo_alipay.png')
           }, {
-            icon: require('common/image/pay_logo_union.png'),
+            url: '/api/createQuickOrder', // 银联
+            icon: require('common/image/pay_logo_union.png')
           }
         ],
         val: '',
@@ -77,7 +80,7 @@
             href: ''
           }
         },
-        type: '',
+        type: '', // 是否是提前还
         header: {
           style: {
             background: "url(" + require('common/image/pay_bg.png') + ")top center",
@@ -130,8 +133,62 @@
     },
     methods: {
       goPay () {
-        
-        console.log(this.checkValue)
+        let flag = 'all' // 默认是提前还
+        let money = parseFloat(this.$store.state.pay.remainAmount)
+        if (!this.type) { // 如果是当月还 则传当月15号 20180515
+          money = parseFloat(this.$store.state.pay.currentAmount)
+          let _date = new Date()
+          flag = _date.getFullYear() + '' + ((_date.getMonth() + 1) >= 10 ? (_date.getMonth() + 1) : '0' + (_date.getMonth() + 1)) + 15
+        }
+//      console.log(flag, money, this.$store.state.user.phone)
+        new M_Proms(fn => {
+          this.AJAX({
+            url: '/reimbursement/createOrder',
+            data: {
+              leaderPhone: this.$store.state.user.phone,
+  //          money: money, // 应付
+              money: 1,
+              flag: flag
+            },
+            success: res => {
+              fn.then(res)
+            }
+          })
+        }).then((fn, r) => {
+          console.log(r)
+          let key = `?
+            merchantOutOrderNo=${r.merchantOutOrderNo}&
+            merid=${r.merid}&
+            noncestr=${r.noncestr}&
+            notifyUrl=${r.notifyUrl}&
+            orderMoney=${r.orderMoney}&
+            orderTime=${r.orderTime}&
+            sign=${r.sing}
+          `.replace(/\s+/g,"")
+//        location.href = 'https://alipay.3c-buy.com/api/createOrder' + key
+          this.AJAX({
+            url: this.options[this.checkValue].url, // 选择支付的方式
+            data: key,
+//  merchantOutOrderNo=201708020001&merid=100001&noncestr=test&notifyUrl=http://jh.yizhibank.com/api/callback&orderMoney=1.00&orderTime=20170802132205&sign=8c284fa8fa7146abe53cd753c4427ba9
+//          data: {
+//            merchantOutOrderNo: r.merchantOutOrderNo,
+//            merid: r.merid,
+//            noncestr: r.noncestr,
+//            notifyUrl: r.notifyUrl,
+//            orderMoney: r.orderMoney,
+//            orderTime: r.orderTime,
+//            sign: r.sing,
+//          },
+            success: res => {
+              alert(res)
+//            debugger
+              window.location.assign(res)
+//            document.getElementsByClassName('pay-btn')[0].click()
+//            document.getElementById("jump_btn").click()
+              console.log(res)
+            }
+          })
+        })
 //      this.$router.push({path: '/moneyItem_info', query: {call: true}})
 //      this.$store.commit('increment')
       }
