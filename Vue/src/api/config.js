@@ -48,11 +48,7 @@ const API = {
     }).catch(res => CODE_ERR({url: url, info: res}))
   },
   '/reimbursement/createOrder' (url, data, fn) {
-    const dataHandle = (res) => { // 数据处理，相应的字段保留两位小数
-//    M_decimal(res, ['amount', 'remainAmount', 'currentAmount', 'nextMonthAmount'])
-//    for (let i = 0; i < res.list.length; i++) {
-//      M_decimal(res.list[i], ['amount', 'remainAmount'])
-//    }
+    const dataHandle = (res) => {
       return res
     }
     if (FAKE) {
@@ -70,38 +66,42 @@ const API = {
     }).catch(res => CODE_ERR({url: url, info: res}))
   },
   '/api/createOrder' (url, data, fn) { // 支付宝付款API
+    let urlscheme = M_userAgent().ios ? 'alipay' : 'alipays'
+    if (FAKE) {
+      let res = urlscheme + "://platformapi/startApp?appId=10000011&url=http%3A%2F%2Fjh.yizhibank.com%2Fapi%2FcreateOrder%3FmerchantOutOrderNo%3D20180601105137%26merid%3Dyft2017082500005%26noncestr%3Dpay%26notifyUrl%3Dhttp%3A%2F%2Fjh.yizhibank.com%2Fapi%2Fcallback%26orderMoney%3D1.00%26orderTime%3D20180601105137%26%26sign%3D0a16ece94b5492e6d6981b379d0c860b"
+      fn(res)
+      return
+    }
+    let res = urlscheme + '://platformapi/startApp?appId=10000011&url=' + encodeURIComponent('https://alipay.3c-buy.com/api/createOrder' + data)
+    fn(res)
+  },
+  '/api/createQuickOrder' (url, data, fn) { // 银联付款API
+//  let urlscheme = M_userAgent().ios ? 'alipay' : 'alipays'
+    if (FAKE) {
+      let res = "http://alipay.3c-buy.com/api/createQuickOrder?merchantOutOrderNo=20180601112943&merid=yft2017082500005&noncestr=pay&notifyUrl=http://jh.yizhibank.com/api/callback&orderMoney=1.00&orderTime=20180601112943&&sign=62c1593a6e8514ff75f755b45381920e"
+      fn(res)
+      return
+    }
+    let res = 'http://alipay.3c-buy.com/api/createQuickOrder' + data
+    fn(res)
+  },
+  '/reimbursement/querypaystatus' (url, data, fn) {
     const dataHandle = (res) => { // 数据处理，相应的字段保留两位小数
-//    M_decimal(res, ['amount', 'remainAmount', 'currentAmount', 'nextMonthAmount'])
-//    for (let i = 0; i < res.list.length; i++) {
-//      M_decimal(res.list[i], ['amount', 'remainAmount'])
-//    }
       return res
     }
     if (FAKE) {
-//    let res = {"code":0,"obj":{"amount":118800,"remainAmount":89100,"historyOverdueCount":1,"count":1,"currentAmount":19800,"shopId":50339,"list":[{"mobile":null,"orderNo":"wOE9G-10120171130171937","repaymentNo":"FENQI201712010955070001","userInfoId":10088,"amount":118800,"remainAmount":89100,"shopId":50339}],"nextMonthAmount":29700,"overdueCount":0}}
-//    fn(dataHandle(res.obj))
+      let res = {"code":0,"obj":{"payResult": 1}}
+      fn(dataHandle(res.obj))
       return
     }
-//  debugger
-    let urlscheme = M_userAgent().ios ? 'alipay' : 'alipays'
-    let gopage = urlscheme + '://platformapi/startApp?appId=10000011&url=' + encodeURIComponent('https://alipay.3c-buy.com/api/createOrder' + data)
-    debugger
-//  alert(gopage)
-//  location.href = gopage
-    
-    fn(gopage)
-//  merchantOutOrderNo=201708020001&merid=100001&noncestr=test&notifyUrl=http://jh.yizhibank.com/api/callback&orderMoney=1.00&orderTime=20170802132205&sign=8c284fa8fa7146abe53cd753c4427ba9
-
-    
-//  axios.post('https://alipay.3c-buy.com/api/createOrder' + data).then(res => {
-//    fn(dataHandle(res))
-////    res = res.data
-////    if (res.code === CODE_OK) {
-////      fn(dataHandle(res.obj))
-////    } else {
-////      CODE_ERR({url: url, info: res}, true)
-////    }
-//  }).catch(res => CODE_ERR({url: url, info: res}))
+    axios.post(url, data, FORMDATA).then(res => {
+      res = res.data
+      if (res.code === CODE_OK) {
+        fn(dataHandle(res.obj))
+      } else {
+        CODE_ERR({url: url, info: res}, true)
+      }
+    }).catch(res => CODE_ERR({url: url, info: res}))
   }
 }
 

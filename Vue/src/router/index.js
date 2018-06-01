@@ -20,6 +20,12 @@ const moneyItemInfoPay = (resolve) => {
     resolve(module)
   })
 }
+
+const moneyItemInfoPayUnion = (resolve) => {
+  import('components/money-item/info/pay/union/index').then((module) => {
+    resolve(module)
+  })
+}
 //const MenuItemStages = (resolve) => {
 //import('components/menu-item/stages/index').then((module) => {
 //  resolve(module)
@@ -108,7 +114,13 @@ export default new Router({
           children: [
             {
               path: 'pay',
-              component: moneyItemInfoPay
+              component: moneyItemInfoPay,
+              children: [
+                {
+                  path: 'union',
+                  component: moneyItemInfoPayUnion
+                }
+              ]
             }
           ]
         }

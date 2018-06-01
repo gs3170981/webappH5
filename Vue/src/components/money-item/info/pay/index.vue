@@ -1,7 +1,7 @@
 <template>
   <slide-page class="MONEY_ITEM_INFO_PAY" :klass="'MONEY_ITEM_INFO_PAY'" :href="top_header.left.href">
     <!--头部-->
-    <top-header class="top" :opt="top_header"></top-header>
+    <top-header class="top" :opt="top_header" :class="{ top_active: order_type }"></top-header>
     <!--内容-->
     <scroll ref="scroll" class="row-content"><!-- :data="record"-->
       <div style="padding-bottom: .9rem;">
@@ -9,7 +9,7 @@
         <header class="header row-border-bottom">
           <div class="card" :style="header.style">
             <p class="title" v-text="data.title"></p>
-            <h1 class="money"><span>￥</span>{{ data.money }}</h1>
+            <h1 class="money"><span>￥</span>{{ data.money }}<span style="margin-left: .15rem;"></span></h1>
             <!--<h1 class="money"><span>￥</span>{{ count }}</h1>-->
             <ul class="det">
               <li class="item" v-for="t in data.item">
@@ -33,7 +33,10 @@
         </div>
         <p class="pay-btn row-item" @click="goPay()">去付款</p>
       </div>
+      <order-type :type="order_type" :money="data.money" :to="'/moneyItem_info'"></order-type>
     </scroll>
+    <!--子滑动页面-->
+    <router-view></router-view>
   </slide-page>
 </template>
 
@@ -41,6 +44,7 @@
   import SlidePage from 'base/slide-page/slide-page'
   import TopHeader from 'base/top-header/top-header'
   import Scroll from 'base/scroll/scroll'
+  import OrderType from 'base/order-type/order-type'
   import { radio_checked } from 'common/js/mixins.js'
   import { M_Proms } from 'common/js/methods.js'
   
@@ -53,6 +57,7 @@
     mixins: [radio_checked],
     data () {
       return {
+        order_type: false, // 展示订单状态的开关
         icon: {
           err: require('common/image/pay_icon_tip.png')
         },
@@ -107,6 +112,7 @@
     components: {
       TopHeader,
       Scroll,
+      OrderType,
       SlidePage
     },
     created () {
@@ -141,7 +147,7 @@
           flag = _date.getFullYear() + '' + ((_date.getMonth() + 1) >= 10 ? (_date.getMonth() + 1) : '0' + (_date.getMonth() + 1)) + 15
         }
 //      console.log(flag, money, this.$store.state.user.phone)
-        new M_Proms(fn => {
+        new M_Proms(fn => { // 创建订单
           this.AJAX({
             url: '/reimbursement/createOrder',
             data: {
@@ -154,7 +160,7 @@
               fn.then(res)
             }
           })
-        }).then((fn, r) => {
+        }).then((fn, r) => { // 调用支付宝 || 聚合支付API
           console.log(r)
           let key = `?
             merchantOutOrderNo=${r.merchantOutOrderNo}&
@@ -165,29 +171,40 @@
             orderTime=${r.orderTime}&
             sign=${r.sing}
           `.replace(/\s+/g,"")
-//        location.href = 'https://alipay.3c-buy.com/api/createOrder' + key
           this.AJAX({
             url: this.options[this.checkValue].url, // 选择支付的方式
             data: key,
-//  merchantOutOrderNo=201708020001&merid=100001&noncestr=test&notifyUrl=http://jh.yizhibank.com/api/callback&orderMoney=1.00&orderTime=20170802132205&sign=8c284fa8fa7146abe53cd753c4427ba9
-//          data: {
-//            merchantOutOrderNo: r.merchantOutOrderNo,
-//            merid: r.merid,
-//            noncestr: r.noncestr,
-//            notifyUrl: r.notifyUrl,
-//            orderMoney: r.orderMoney,
-//            orderTime: r.orderTime,
-//            sign: r.sing,
-//          },
             success: res => {
-              alert(res)
-//            debugger
-              window.location.assign(res)
-//            document.getElementsByClassName('pay-btn')[0].click()
-//            document.getElementById("jump_btn").click()
               console.log(res)
+//            alert(res)
+//            debugger
+              if (this.checkValue === 0) { // 支付宝
+                window.location.assign(res)
+              } else {
+                this.$router.push({path: '/moneyItem_info/pay/union', query: {href: res}})
+              }
+
+              fn.then({
+                data: res,
+                order: r.merchantOutOrderNo
+              })
             }
           })
+        }).then((fn, r) => { // 定时查询接口
+//        alert(r.order)
+          this.order_type = 'loading'
+          this.top_header.title_style.color = 'white'
+          this.top_header.title = '付款结果'
+          this.top_header.left.icon = require('common/image/nav_btn_back.png')
+//        this.AJAX({
+//          url: '/reimbursement/querypaystatus',
+//          data: {
+//            merchantOutOrderNo: r.order
+//          },
+//          success: res => {
+//            console.log(res)
+//          }
+//        })
         })
 //      this.$router.push({path: '/moneyItem_info', query: {call: true}})
 //      this.$store.commit('increment')
@@ -202,7 +219,11 @@
     .top {
       background: white;
     }
+    .top_active {
+      background: @background-header;
+    }
     .row-content {
+      background: #f5f6f7;
       .header {
         margin-top: .85rem;
         background: white;
@@ -303,6 +324,15 @@
         line-height: .84rem;
         font-size: .34rem;
       }
+    }
+    .iframe {
+      position: fixed;
+      top: 0;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+      padding-top: .87rem;
+      box-sizing: border-box;
     }
   }
 </style>

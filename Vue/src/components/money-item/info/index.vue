@@ -7,7 +7,7 @@
       <div style="padding-bottom: .9rem;">
         
         <header class="header">
-          <h1 class="money"><span>￥</span>{{ header.money }}</h1>
+          <h1 class="money"><span>￥</span>{{ header.money }}<span style="margin-left: .15rem;"></span></h1>
           <p class="tips" v-if="header.his_ago">历史逾期：{{ header.his_ago }}次</p>
           <p class="tips" v-if="header.now_ago">当前逾期：{{ header.now_ago }}次</p>
           <template v-if="!list[0]">
@@ -131,8 +131,8 @@
     },
     watch: {
      '$route' (to, from) { // 监听到 某个 数据 传回call的时候，该页面进行重新加载
-        console.log(to.query.call)
         if (to.query.call) {
+          console.log('监听到数据变动，重新AJAX获取数据', to.query.call)
           this.getData()
         }
       }
