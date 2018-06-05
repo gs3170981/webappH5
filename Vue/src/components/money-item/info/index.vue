@@ -1,12 +1,13 @@
 <template>
   <slide-page class="MONEY_ITEM_INFO" :klass="'MONEY_ITEM_INFO'" :href="top_header.left.href">
     <!--头部-->
-    <top-header class="top" :opt="top_header"></top-header>
+    <!--<top-header class="top" :opt="top_header"></top-header>-->
     <!--内容-->
     <scroll ref="scroll" class="row-content" :data="list"><!-- :data="record"-->
       <div style="padding-bottom: .9rem;">
         
         <header class="header">
+          <h1 class="title">{{top_header.title}}</h1>
           <img v-if="header.money === '0.00' && list[0]" class="icon" :src="header.icon" />
           <h1 v-else class="money"><span>￥</span>{{ header.money }}<span style="margin-left: .15rem;"></span></h1>
           <p class="tips" v-if="header.his_ago">历史逾期：{{ header.his_ago }}次</p>
@@ -15,9 +16,15 @@
             <p class="tips" style="color: white;">暂无待付订单</p>
             <p class="btn row-item disabled-btn">立即付款</p>
           </template>
-          <router-link v-else-if="header.now_ago" tag="p" class="btn row-item" style="background: #fbc25e;" :to="'/moneyItem_info/pay'">立即付款</router-link>
-          <router-link v-else-if="header.money === '0.00' && list[0]" style="background: transparent;border: .01rem solid white;" tag="p" class="btn row-item" :to="{ path:'/moneyItem_info/pay',query: {type: 'early'} }">提前付款</router-link>
-          <router-link v-else tag="p" class="btn row-item" :to="'/moneyItem_info/pay'">立即付款</router-link>
+          <!--<router-link v-else-if="header.now_ago" tag="p" class="btn row-item" style="background: #fbc25e;" :to="'/pay'">立即付款</router-link>-->
+          <p v-else-if="header.now_ago" class="btn row-item" style="background: #fbc25e;" @click="jump('/#/pay', '', '在线付款')">立即付款</p>
+          <!--<router-link v-else-if="header.now_ago" tag="p" class="btn row-item" style="background: #fbc25e;" :to="'/moneyItem_info/pay'">立即付款</router-link>-->
+          <!--<router-link v-else-if="header.money === '0.00' && list[0]" style="background: transparent;border: .01rem solid white;" tag="p" class="btn row-item" :to="{ path:'/pay',query: {type: 'early'} }">提前付款</router-link>-->
+          <p v-else-if="header.money === '0.00' && list[0]" class="btn row-item"  style="background: transparent;border: .01rem solid white;" @click="jump('/#/pay', 'early', '提前付款')">提前付款</p>
+          <!--<router-link v-else-if="header.money === '0.00' && list[0]" style="background: transparent;border: .01rem solid white;" tag="p" class="btn row-item" :to="{ path:'/moneyItem_info/pay',query: {type: 'early'} }">提前付款</router-link>-->
+          <p v-else class="btn row-item" @click="jump('/#/pay', '', '在线付款')">立即付款</p>
+          <!--<p v-else class="btn row-item" @click="jump('/#/moneyItem_info/pay', '', '在线付款')">立即付款</p>-->
+          <!--<router-link v-else tag="p" class="btn row-item" :to="'/moneyItem_info/pay'">立即付款</router-link>-->
         </header>
         <ul class="much">
         	<li class="items" v-for="t in much" :key="t.id">
@@ -38,7 +45,9 @@
         
         <p class="order">
           <span class="title">全部待付订单</span>
-          <router-link tag="span" v-if="list[0]" class="btn row-item" :to="{ path:'/moneyItem_info/pay',query: {type: 'early'} }">提前付款</router-link>
+          <!--<router-link tag="span" v-if="list[0]" class="btn row-item" :to="{ path:'/moneyItem_info/pay',query: {type: 'early'} }">提前付款</router-link>-->
+          <!--<span v-if="list[0]" class="btn row-item" @click="jump('/#/moneyItem_info/pay?type=early', 'early', '提前付款')">提前付款</span>-->
+          <span v-if="list[0]" class="btn row-item" @click="jump('/#/pay', 'early', '提前付款')">提前付款</span>
           <span class="btn row-item" v-else style="opacity: .5;">提前付款</span>
         </p>
         
@@ -64,7 +73,7 @@
 
 <script>
   import SlidePage from 'base/slide-page/slide-page'
-  import TopHeader from 'base/top-header/top-header'
+//import TopHeader from 'base/top-header/top-header'
   import Banner from 'base/banner/banner'
   import Scroll from 'base/scroll/scroll'
   import BottomFooter from 'base/bottom-footer/bottom-footer'
@@ -77,8 +86,8 @@
         },
         top_header: {
           left: {
-            icon: require('common/image/nav_btn_back.png'),
-            href: '/'
+            icon: '',
+            href: ''
           },
           title: '本月待付',
           right: {
@@ -121,11 +130,13 @@
         list: this.$store.state.pay.list,
         footer: {
           icon: require('common/image/pay_img_default.png')
-        }
+        },
+//      iphone: '17764587901' // 测试的
+        iphone: this.$route.query.mobile
       }
     },
     components: {
-      TopHeader,
+//    TopHeader,
       Scroll,
       BottomFooter,
       Banner,
@@ -140,7 +151,10 @@
       }
     },
     created () {
-      this.$store.commit('save', '17764587901') // 存手机号
+//    document.addEventListener("visibilitychange", function(){
+//      document.hidden ? "" : alert(1)
+//    })
+//    this.$store.commit('save', this.iphone) // 存手机号
       this.getData()
     },
     methods: {
@@ -154,7 +168,7 @@
         this.AJAX({
           url: '/m/zzg/zedHome',
           data: {
-            mobile: this.$store.state.user.phone
+            mobile: this.iphone
           },
           success: res => {
             // 数字自增自减动画
@@ -187,44 +201,29 @@
             this.header.his_ago = res.historyOverdueCount
             this.header.now_ago = res.overdueCount
             this.list = res.list
-            this.$store.commit('submit', res)
+            
+//          this.$store.commit('submit', res)
           }
         })
-//      this.AJAX['/zzg/zedHome']({
-//        mobile: this.$store.state.user.phone
-//      }, res => {
-//        // 数字自增自减动画
-//        M_NumberPlusReduce([
-//          {
-//            e: this.header,
-//            val: 'money',
-//            now: res.currentAmount
-//          }, {
-//            e: this.much[0],
-//            val: 'val',
-//            now: res.nextMonthAmount
-//          }, {
-//            e: this.much[1],
-//            val: 'val',
-//            now: res.amount
-//          }, {
-//            e: this.much[2],
-//            val: 'val',
-//            now: res.remainAmount
-//          }
-//        ])
-//        // 改变导航栏的title
-//        if (res.historyOverdueCount > 1) {
-//          this.top_header.title = '累计待付'
-//        } else if (res.currentAmount === '0.00' && this.list[0]) {
-//          this.top_header.title = '本月账单已结清'
-//        }
-//        // 第一次要先赋值，data响应不到
-//        this.header.his_ago = res.historyOverdueCount
-//        this.header.now_ago = res.overdueCount
-//        this.list = res.list
-//        this.$store.commit('submit', res)
-//      })
+      },
+      jump (url, type, title) {
+        const URL = location.protocol + 
+          '//' + 
+          location.host + 
+          location.pathname + 
+          url + 
+          '?mobile=' + 
+          '&nextMonthAmount=' + this.much[0].val + 
+          '&amount=' + this.much[1].val + 
+          '&remainAmount=' + this.much[2].val + 
+          '&currentAmount=' + this.header.money + 
+          this.iphone + (type ? ('&type=' + type) : '')
+//      location.href = URL
+        jiexin.openWindow({
+          url: URL,
+          viewid: 'pail' + type ? type : '',
+          title: title
+        })
       }
     }
   }
@@ -242,11 +241,16 @@
         flex-direction: column;
         justify-content:center;
         align-items: center;
-        margin-top: .9rem;
+        /*margin-top: .9rem;*/
         /*margin-top: 1.3rem;*/
-        height: 3.2rem;
+        /*height: 3.2rem;*/
         color: white;
         text-align: center;
+        .title {
+          height: .87rem;
+          line-height: .87rem;
+          font-size: @font-size-header_title;
+        }
         .money {
           font-size: .56rem;
           font-weight: bold;
@@ -269,7 +273,7 @@
           line-height: .62rem;
           background: #5be7b1;
           border-radius: .3rem;
-          margin-bottom: .2rem;
+          margin-bottom: .25rem;
         }
         .disabled-btn {
           background: rgba(89, 193, 252, 0.7);
@@ -355,7 +359,7 @@
       }
       .item {
         background: white;
-        padding: .25rem .25rem 2.5rem;
+        padding: .25rem .25rem 3rem;
         .list {
           height: .85rem;
           line-height: .85rem;

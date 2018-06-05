@@ -4,7 +4,12 @@ import { MessageBox } from 'mint-ui'
 import { M_decimal, M_userAgent } from 'common/js/methods.js'
 //const URL = 'http://192.168.20.175:8061'
 //const URL = 'http://39.108.15.199:8061'
-const URL = '/api'
+
+//const URL = 'http://114.55.86.215/zfq'
+
+//const URL = location.protocol + location.host + '/zfq'
+const URL = '/zfq'
+//const URL = '/api'
 const CODE_OK = 0
 const FAKE = false // true:假数据 false:真数据
 

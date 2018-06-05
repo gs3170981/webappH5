@@ -1,7 +1,7 @@
 <template>
   <slide-page class="MONEY_ITEM_INFO_PAY" :klass="'MONEY_ITEM_INFO_PAY'" :href="top_header.left.href">
     <!--头部-->
-    <top-header class="top" :opt="top_header" :class="{ top_active: order_type }"></top-header>
+    <!--<top-header class="top" :opt="top_header" :class="{ top_active: order_type }"></top-header>-->
     <!--内容-->
     <scroll ref="scroll" class="row-content"><!-- :data="record"-->
       <div style="padding-bottom: .9rem;">
@@ -34,7 +34,7 @@
         <!--<p class="pay-btn row-item" @click="goPay()">去付款</p>-->
         <a class="pay-btn row-item" :href="order_href" @click="goPay">去付款</a>
       </div>
-      <order-type :type="order_type" :money="data.money" :to="'/moneyItem_info'"></order-type>
+      <order-type :type="order_type" :money="data.money" :to="'/'"></order-type>
     </scroll>
     <!--子滑动页面-->
     <router-view></router-view>
@@ -43,7 +43,7 @@
 
 <script>
   import SlidePage from 'base/slide-page/slide-page'
-  import TopHeader from 'base/top-header/top-header'
+//import TopHeader from 'base/top-header/top-header'
   import Scroll from 'base/scroll/scroll'
   import OrderType from 'base/order-type/order-type'
   import { radio_checked } from 'common/js/mixins.js'
@@ -101,51 +101,54 @@
         },
         data: {
           title: '本月应付',
-          money: this.$store.state.pay.currentAmount,
+//        money: this.$store.state.pay.currentAmount,
+          money: this.$route.query.currentAmount,
           item: [
             {
               title: '下月应付(元)',
-              val: this.$store.state.pay.nextMonthAmount
+              val: this.$route.query.nextMonthAmount
             }, {
               title: '分期总额(元)',
-              val: this.$store.state.pay.amount
+              val: this.$route.query.amount
             }, {
               title: '剩余未付(元)',
-              val: this.$store.state.pay.remainAmount
+              val: this.$route.query.remainAmount
             }
           ]
-        }
+        },
+        iphone: this.$route.query.mobile
       }
     },
     components: {
-      TopHeader,
+//    TopHeader,
       Scroll,
       OrderType,
       SlidePage
     },
-    watch: {
-     '$route' (to, from) { // 监听到 某个 数据 传回call的时候，该页面进行重新加载
-        if (to.query.order_id && from.path === '/moneyItem_info/pay/union') {
-//      if (to.path === '/moneyItem_info/pay' && to.query.order_id) {
-          console.log('监听到order_id，进行定时查询订单信息')
-          this.orderType()
-        }
-      }
-    },
+//  watch: {
+//   '$route' (to, from) { // 监听到 某个 数据 传回call的时候，该页面进行重新加载
+//      if (to.query.order_id && from.path === '/pay/union') {
+////      if (to.query.order_id && from.path === '/moneyItem_info/pay/union') {
+////      if (to.path === '/moneyItem_info/pay' && to.query.order_id) {
+//        console.log('监听到order_id，进行定时查询订单信息')
+//        this.orderType()
+//      }
+//    }
+//  },
     created () {
       this.type = this.$route.query.type
       if (this.type) {
         this.top_header.title = '提前付款'
         this.data = {
           title: '应付金额',
-          money: this.$store.state.pay.remainAmount,
+          money: this.$route.query.remainAmount,
           item: [
             {
               title: '分期总额(元)',
-              val: this.$store.state.pay.amount
+              val: this.$route.query.amount
             }, {
               title: '剩余未付(元)',
-              val: this.$store.state.pay.remainAmount
+              val: this.$route.query.remainAmount
             }
           ]
         }
@@ -165,9 +168,9 @@
     methods: {
       orderCreate () { // 创建订单
         let flag = 'all' // 默认是提前还
-        let money = parseFloat(this.$store.state.pay.remainAmount)
+        let money = parseFloat(this.$route.query.remainAmount)
         if (!this.type) { // 如果是当月还 则传当月15号 20180515
-          money = parseFloat(this.$store.state.pay.currentAmount)
+          money = parseFloat(this.$route.query.currentAmount)
           let _date = new Date()
           flag = _date.getFullYear() + '' + ((_date.getMonth() + 1) >= 10 ? (_date.getMonth() + 1) : '0' + (_date.getMonth() + 1)) + 15
         }
@@ -175,9 +178,10 @@
           this.AJAX({
             url: '/reimbursement/createOrder',
             data: {
-              leaderPhone: this.$store.state.user.phone,
-  //          money: money, // 应付
-              money: 1,
+//            leaderPhone: this.$store.state.user.phone,
+              leaderPhone: this.iphone,
+              money: money, // 应付
+//            money: 1, // 测试的
               flag: flag
             },
             success: r => {
@@ -208,174 +212,29 @@
       },
       goPay () {
         if (this.checkValue !== 0) { // 除去第一种当前页跳转方式
-//        this.order_href = 'javascript:void(0)'
           window.event.currentTarget.href = 'javascript:void(0)'
           this.AJAX({
             url: this.options[this.checkValue].url, // 选择支付的方式
             data: this.order.key,
             success: res => {
-              this.$router.push({path: '/moneyItem_info/pay/union', query: {
-                href: res,
-                order_id: this.order.data.merchantOutOrderNo
-              }})
+              // 直接当前页面跳转掉
+              location.href = res
+//            this.$router.push({path: '/moneyItem_info/pay/union', query: {
+//              href: res,
+//              order_id: this.order.data.merchantOutOrderNo
+//            }})
             }
           })
         } else {
-//        alert(this.order.data.merchantOutOrderNo)
-          window.event.currentTarget.href = this.order.href
-//        const fn = () => {
-//          this.AJAX({
-//            url: '/reimbursement/querypaystatus',
-//            data: {
-//              merchantOutOrderNo: this.order.data.merchantOutOrderNo
-//            },
-//            success: res => {
-//              fn()
-//            }
-//          })
-//        }
-//        fn()
-          
-          
-          M_visibilitychange(() => { // 对于支付宝这类，需监听后台转进页面的跳转
-//          setTimeout(() => {
-//            this.$router.replace('/moneyItem_info/pay?order_id=' + this.order.data.merchantOutOrderNo)
-//          }, 20)
-//          location.reload()
+//        this.orderType()
+          M_visibilitychange(() => { // 对于支付宝这类，需监听后台转进页面的跳转 -- 纯页面才行，app嵌H5就不行
             this.orderType()
-            
           })
+          window.event.currentTarget.href = this.order.href
+          // A标签的问题！！！！ 改成跳转试试
+          
         }
         
-//      setTimeout(() => {
-//        
-//      }, 1000)
-        
-        
-        
-//      let flag = 'all' // 默认是提前还
-//      let money = parseFloat(this.$store.state.pay.remainAmount)
-//      if (!this.type) { // 如果是当月还 则传当月15号 20180515
-//        money = parseFloat(this.$store.state.pay.currentAmount)
-//        let _date = new Date()
-//        flag = _date.getFullYear() + '' + ((_date.getMonth() + 1) >= 10 ? (_date.getMonth() + 1) : '0' + (_date.getMonth() + 1)) + 15
-//      }
-
-
-//      console.log(flag, money, this.$store.state.user.phone)
-//      new M_Proms(fn => { // 创建订单
-//        this.AJAX({
-//          url: '/reimbursement/createOrder',
-//          data: {
-//            leaderPhone: this.$store.state.user.phone,
-////          money: money, // 应付
-//            money: 1,
-//            flag: flag
-//          },
-//          success: res => {
-//            fn.then(res)
-//          }
-//        })
-//      }).then((fn, r) => { // 调用支付宝 || 聚合支付API
-//        console.log(r)
-//        let key = `?
-//          merchantOutOrderNo=${r.merchantOutOrderNo}&
-//          merid=${r.merid}&
-//          noncestr=${r.noncestr}&
-//          notifyUrl=${r.notifyUrl}&
-//          orderMoney=${r.orderMoney}&
-//          orderTime=${r.orderTime}&
-//          sign=${r.sing}
-//        `.replace(/\s+/g,"")
-//        this.AJAX({
-//          url: this.options[this.checkValue].url, // 选择支付的方式
-//          data: key,
-//          success: res => {
-//            console.log(res)
-//            alert(res)
-////            debugger
-//            if (this.checkValue === 0) { // 支付宝
-//              window.location.assign("alipay://platformapi/startApp?appId=10000011&url=https%3A%2F%2Falipay.3c-buy.com%2Fapi%2FcreateOrder%3FmerchantOutOrderNo%3D20180531182130%26merid%3Dyft2017082500005%26noncestr%3Djiexinanbao%26notifyUrl%3Dhttp%3A%2F%2F39.108.15.199%3A8061%2Freimbursement%2Fcallback.json%26orderMoney%3D1.00%26orderTime%3D20180531182130%26sign%3D980194107b044cb792964fb7f23466b6")
-//            } else {
-//              this.$router.push({path: '/moneyItem_info/pay/union', query: {href: res}})
-//            }
-//
-////            fn.then({
-////              data: res,
-////              order: r.merchantOutOrderNo
-////            })
-//          }
-//        })
-//      }).then((fn, r) => { // 定时查询接口
-////        alert(r.order)
-//        setTimeout(() => {
-//          this.order_type = 'loading'
-//          this.top_header.title_style.color = 'white'
-//          this.top_header.title = '付款结果'
-//          this.top_header.left.icon = require('common/image/nav_btn_back.png')
-//        }, 1000)
-//        let timer_is = true // 定时器开关，如果请求不到，则禁止请求下一次，导致请求堆叠
-//        let test = 0
-//        M_visibilitychange(() => {
-////          setTimeout(() => {
-//          this.$router.push({path: '/moneyItem_info/type', query: {order_id: r.order}})
-////            this.AJAX({
-////              url: '/reimbursement/querypaystatus',
-////              data: {
-////                merchantOutOrderNo: r.order
-////              },
-////              success: res => {
-////                timer_is = true
-////                document.getElementById('app').innerText = JSON.stringify(location)
-////              }
-////            })
-////          }, 5000)
-//        })
-//        let _timer = new Date().getTime()
-//        let is = false
-//        setInterval(() => {
-////          while (!is) {
-////            if ((new Date().getTime() - _timer) > 10000) {
-//              document.getElementById('app').innerText = test
-////              return
-////            }
-////
-//          test++
-////            
-////          }
-//        }, 5000)
-          
-          
-//        this.timer = setInterval(() => {
-////            document.getElementById('app').innerText = r.order
-////          if (!timer_is) return
-////          timer_is = false
-//          this.AJAX({
-//            url: '/reimbursement/querypaystatus',
-//            data: {
-//              merchantOutOrderNo: r.order
-//            },
-//            success: res => {
-//              timer_is = true
-//              document.getElementById('app').innerText = res
-////              test++
-////              document.write(timer_is)
-//              console.log(res)
-////              if (!res) { // 返回失败的话
-////                document.getElementById('app').innerText = res
-////                clearInterval(this.timer)
-////                return
-////              }
-////              if (res.payResult === '1') {
-////                this.order_type = 'success'
-////                clearInterval(this.timer)
-////              }
-//            }
-//          })
-//        }, 5000)
-//      })
-//      this.$router.push({path: '/moneyItem_info', query: {call: true}})
-//      this.$store.commit('increment')
       },
       orderType () {
         this.order_type = 'loading'
@@ -423,7 +282,7 @@
     .row-content {
       background: #f5f6f7;
       .header {
-        margin-top: .85rem;
+        /*margin-top: .85rem;*/
         background: white;
         padding-top: .28rem;
         box-sizing: border-box;

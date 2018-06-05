@@ -13,6 +13,8 @@ import { M_Touch } from 'common/js/methods.js'
 
 import store from './vuex'
 
+import 'common/js/app-api.js'
+
 import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/bar'
 import 'echarts/lib/chart/pie'

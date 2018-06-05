@@ -6,7 +6,7 @@
         <h1 class="title">付款处理中</h1>
         <p class="tips">已提交申请，等待付款处理</p>
       </template>
-      <template v-else>
+      <template v-else-if="type === 'success'">
         <img :src="success.icon" class="icon" />
         <h1 class="title">付款成功</h1>
         <p class="tips">￥{{ money }}<span style="margin-left: .15rem;"></span></p>
