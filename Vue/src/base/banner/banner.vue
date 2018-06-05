@@ -108,6 +108,7 @@
         this.slider = new BScroll(this.$refs.slider, {
           scrollX: true,
           scrollY: false,
+//        freeScroll: true,
           momentum: false,
           snap: true,
           snapLoop: this.loop,
@@ -117,12 +118,13 @@
         })
 
         this.slider.on('scrollEnd', () => {
+
           let pageIndex = this.slider.getCurrentPage().pageX
           if (this.loop) {
             pageIndex -= 1
           }
           this.currentPageIndex = pageIndex
-
+          this.$emit('touchEnd', pageIndex)
           if (this.autoPlay) {
             this._play()
           }
@@ -137,8 +139,8 @@
       _initDots() {
         this.dots = new Array(this.children.length)
       },
-      _play() {
-        let pageIndex = this.currentPageIndex + 1
+      _play(page) { // 进来的page必须是字符型
+        let pageIndex = page ? parseInt(page) : this.currentPageIndex + 1
         if (this.loop) {
           pageIndex += 1
         }

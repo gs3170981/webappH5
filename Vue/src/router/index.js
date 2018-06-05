@@ -15,12 +15,21 @@ const moneyItemInfo = (resolve) => {
     resolve(module)
   })
 }
+const myOrderItem = (resolve) => {
+  import('components/my-order-item/index').then((module) => {
+    resolve(module)
+  })
+}
 const moneyItemInfoPay = (resolve) => {
   import('components/money-item/info/pay/index').then((module) => {
     resolve(module)
   })
 }
-
+//const moneyItemInfoType = (resolve) => {
+//import('components/money-item/info/pay/type').then((module) => {
+//  resolve(module)
+//})
+//}
 const moneyItemInfoPayUnion = (resolve) => {
   import('components/money-item/info/pay/union/index').then((module) => {
     resolve(module)
@@ -106,6 +115,7 @@ export default new Router({
   routes: [
     {
       path: '/',
+//    component: Index,
       component: Index,
       children: [
         {
@@ -123,6 +133,9 @@ export default new Router({
               ]
             }
           ]
+        }, {
+          path: 'myOrder_item',
+          component: myOrderItem
         }
       ]
 //    children: [

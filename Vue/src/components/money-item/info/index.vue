@@ -7,7 +7,8 @@
       <div style="padding-bottom: .9rem;">
         
         <header class="header">
-          <h1 class="money"><span>￥</span>{{ header.money }}<span style="margin-left: .15rem;"></span></h1>
+          <img v-if="header.money === '0.00' && list[0]" class="icon" :src="header.icon" />
+          <h1 v-else class="money"><span>￥</span>{{ header.money }}<span style="margin-left: .15rem;"></span></h1>
           <p class="tips" v-if="header.his_ago">历史逾期：{{ header.his_ago }}次</p>
           <p class="tips" v-if="header.now_ago">当前逾期：{{ header.now_ago }}次</p>
           <template v-if="!list[0]">
@@ -88,7 +89,8 @@
         header: {
           money: this.$store.state.pay.currentAmount,
           his_ago: this.$store.state.pay.historyOverdueCount,
-          now_ago: this.$store.state.pay.overdueCount
+          now_ago: this.$store.state.pay.overdueCount,
+          icon: require('common/image/card_img_success1.png')
         },
         much: [
           {
@@ -132,12 +134,13 @@
     watch: {
      '$route' (to, from) { // 监听到 某个 数据 传回call的时候，该页面进行重新加载
         if (to.query.call) {
-          console.log('监听到数据变动，重新AJAX获取数据', to.query.call)
+          console.log('监听到call为true，重新AJAX获取数据')
           this.getData()
         }
       }
     },
     created () {
+      this.$store.commit('save', '17764587901') // 存手机号
       this.getData()
     },
     methods: {
@@ -177,7 +180,7 @@
             // 改变导航栏的title
             if (res.historyOverdueCount > 1) {
               this.top_header.title = '累计待付'
-            } else if (res.currentAmount === '0.00' && this.list[0]) {
+            } else if (res.currentAmount === '0.00' && res.list[0]) {
               this.top_header.title = '本月账单已结清'
             }
             // 第一次要先赋值，data响应不到
@@ -248,6 +251,11 @@
           font-size: .56rem;
           font-weight: bold;
           line-height: .73rem;
+        }
+        .icon {
+          height: 1rem;
+          width: 1rem;
+          margin-bottom: .2rem;
         }
         .tips {
           color: #fed6ae;

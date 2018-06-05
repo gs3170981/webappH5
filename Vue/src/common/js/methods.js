@@ -228,6 +228,33 @@ const M_userAgent = () => {
   return output
 }
 
+const M_visibilitychange = (fn) => { // 移动端，从后台进入页面时，触发回调
+  const handle = () => {
+    if (D.visibilityState && D.visibilityState === 'visible' || 
+    D.webkitVisibilityState && D.webkitVisibilityState === 'visible' ||
+    D.mozVisibilityState && D.mozVisibilityState === 'visible' ||
+    D.msVisibilityState && D.msVisibilityState === 'visible') {
+      fn && fn()
+      D.removeEventListener('visibilitychange', handle)
+      D.removeEventListener('webkitvisibilitychange', handle)
+      D.removeEventListener('mozvisibilitychange', handle)
+      D.removeEventListener('msvisibilitychange', handle)
+    }
+  }
+  D.addEventListener('visibilitychange', handle)
+  D.addEventListener('webkitvisibilitychange', handle)
+  D.addEventListener('mozvisibilitychange', handle)
+  D.addEventListener('msvisibilitychange', handle)
+}
+
+//const M_setInterval = (fn, timer) => {
+//let _timer = new Date().getTime()
+//let is = false
+//while (!is) {
+//  
+//}
+//}
+
 export {
   M_Touch,
   M_NumberPlusReduce,
@@ -236,5 +263,7 @@ export {
   M_findClass,
   M_decimal,
   M_Proms,
-  M_userAgent
+  M_userAgent,
+  M_visibilitychange
+//M_setInterval
 }

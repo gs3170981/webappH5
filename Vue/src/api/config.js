@@ -52,7 +52,7 @@ const API = {
       return res
     }
     if (FAKE) {
-      let res = {"orderTime":"20180531110901","orderMoney":"1.0","notifyUrl":"http://39.108.15.199:8061/reimbursement/callback.json","merid":"yft2017082500005","sing":"921a40e85b88a5a63f9cf91f9cc2f4dc","merchantOutOrderNo":"20180531110901743","noncestr":"jiexinanbao"}
+      let res = {obj:{"orderTime":"20180531110901","orderMoney":"1.0","notifyUrl":"http://39.108.15.199:8061/reimbursement/callback.json","merid":"yft2017082500005","sing":"921a40e85b88a5a63f9cf91f9cc2f4dc","merchantOutOrderNo":"20180531110901743","noncestr":"jiexinanbao"}}
       fn(dataHandle(res.obj))
       return
     }
@@ -85,12 +85,34 @@ const API = {
     let res = 'http://alipay.3c-buy.com/api/createQuickOrder' + data
     fn(res)
   },
-  '/reimbursement/querypaystatus' (url, data, fn) {
+  '/reimbursement/querypaystatus' (url, data, fn) { // 查询订单是否支付成功
     const dataHandle = (res) => { // 数据处理，相应的字段保留两位小数
       return res
     }
     if (FAKE) {
       let res = {"code":0,"obj":{"payResult": 1}}
+      fn(dataHandle(res.obj))
+      return
+    }
+    axios.post(url, data, FORMDATA).then(res => {
+      res = res.data
+//    alert(JSON.stringify(res))
+      if (res.code === CODE_OK) {
+        fn(dataHandle(res.obj))
+      } else {
+        CODE_ERR({url: url, info: res}, true)
+      }
+    })
+//  .catch(res => {
+//    CODE_ERR({url: url, info: res})
+//  })
+  },
+  '/m/zed/queryCheckingOrder' (url, data, fn) { // 审核中分期列表
+    const dataHandle = (res) => {
+      return res
+    }
+    if (FAKE) {
+      let res = {"code":0,"obj":{"list":[{"applyId":644,"name":"刘国","idCardNo":"370921198211010016","sex":1,"mobile":"17863825666","checkStatus":2,"icon_url":null,"productName":"联网报警服务","amount":10000,"repayTotalTimes":12,"orderNo":"E5abF-10120171123145208","companyName":"泰安市汇隆网络科技有限公司","shopNo":"010152","shopName":"信合苑卫生服务站","interest":null,"contractNo":"101","startDate":1511452800000,"endDate":1542902400000,"created":1511420743000,"employeeMobile":"17863825666","failReason":null,"alreadyRepayTimes":null,"paidAmount":null,"overdueCount":null,"quareTime":null,"stopTime":null,"indexCurrent":null,"currentTime":null,"currentMoney":null,"overdues":null,"overdueRepayDate":null,"durationTime":null},{"applyId":650,"name":"刘国","idCardNo":"370921198211010016","sex":1,"mobile":"13853858078","checkStatus":6,"icon_url":null,"productName":"联网报警服务","amount":120000,"repayTotalTimes":12,"orderNo":"E5abF-10120171123151620","companyName":"泰安市汇隆网络科技有限公司","shopNo":"010152","shopName":"信合苑卫生服务站","interest":null,"contractNo":"211","startDate":1511366400000,"endDate":1542816000000,"created":1511421665000,"employeeMobile":"13853858078","failReason":" 测试","alreadyRepayTimes":null,"paidAmount":null,"overdueCount":null,"quareTime":null,"stopTime":null,"indexCurrent":null,"currentTime":null,"currentMoney":null,"overdues":null,"overdueRepayDate":null,"durationTime":null},{"applyId":644,"name":"刘国","idCardNo":"370921198211010016","sex":1,"mobile":"17863825666","checkStatus":2,"icon_url":null,"productName":"联网报警服务","amount":10000,"repayTotalTimes":12,"orderNo":"E5abF-10120171123145208","companyName":"泰安市汇隆网络科技有限公司","shopNo":"010152","shopName":"信合苑卫生服务站","interest":null,"contractNo":"101","startDate":1511452800000,"endDate":1542902400000,"created":1511420743000,"employeeMobile":"17863825666","failReason":null,"alreadyRepayTimes":null,"paidAmount":null,"overdueCount":null,"quareTime":null,"stopTime":null,"indexCurrent":null,"currentTime":null,"currentMoney":null,"overdues":null,"overdueRepayDate":null,"durationTime":null},{"applyId":644,"name":"刘国","idCardNo":"370921198211010016","sex":1,"mobile":"17863825666","checkStatus":2,"icon_url":null,"productName":"联网报警服务","amount":10000,"repayTotalTimes":12,"orderNo":"E5abF-10120171123145208","companyName":"泰安市汇隆网络科技有限公司","shopNo":"010152","shopName":"信合苑卫生服务站","interest":null,"contractNo":"101","startDate":1511452800000,"endDate":1542902400000,"created":1511420743000,"employeeMobile":"17863825666","failReason":null,"alreadyRepayTimes":null,"paidAmount":null,"overdueCount":null,"quareTime":null,"stopTime":null,"indexCurrent":null,"currentTime":null,"currentMoney":null,"overdues":null,"overdueRepayDate":null,"durationTime":null},{"applyId":644,"name":"刘国","idCardNo":"370921198211010016","sex":1,"mobile":"17863825666","checkStatus":2,"icon_url":null,"productName":"联网报警服务","amount":10000,"repayTotalTimes":12,"orderNo":"E5abF-10120171123145208","companyName":"泰安市汇隆网络科技有限公司","shopNo":"010152","shopName":"信合苑卫生服务站","interest":null,"contractNo":"101","startDate":1511452800000,"endDate":1542902400000,"created":1511420743000,"employeeMobile":"17863825666","failReason":null,"alreadyRepayTimes":null,"paidAmount":null,"overdueCount":null,"quareTime":null,"stopTime":null,"indexCurrent":null,"currentTime":null,"currentMoney":null,"overdues":null,"overdueRepayDate":null,"durationTime":null},{"applyId":644,"name":"刘国","idCardNo":"370921198211010016","sex":1,"mobile":"17863825666","checkStatus":2,"icon_url":null,"productName":"联网报警服务","amount":10000,"repayTotalTimes":12,"orderNo":"E5abF-10120171123145208","companyName":"泰安市汇隆网络科技有限公司","shopNo":"010152","shopName":"信合苑卫生服务站","interest":null,"contractNo":"101","startDate":1511452800000,"endDate":1542902400000,"created":1511420743000,"employeeMobile":"17863825666","failReason":null,"alreadyRepayTimes":null,"paidAmount":null,"overdueCount":null,"quareTime":null,"stopTime":null,"indexCurrent":null,"currentTime":null,"currentMoney":null,"overdues":null,"overdueRepayDate":null,"durationTime":null}]}}
       fn(dataHandle(res.obj))
       return
     }

@@ -88,27 +88,27 @@
           {
             id: 'a',
             path: require('common/image/stages_icon_examine.png'),
-            href: '/order_audit',
+            href: '/myOrder_item?type=0',
             title: '审核中'
           }, {
             id: 'b',
             path: require('common/image/stages_icon_write.png'),
-            href: '/order_notContract',
+            href: '/myOrder_item?type=1',
             title: '待签约'
           }, {
             id: 'c',
             path: require('common/image/stages_icon_money.png'),
-            href: '/order_notLoan',
+            href: '/myOrder_item?type=2',
             title: '待放款'
           }, {
             id: 'd',
             path: require('common/image/stages_icon_payment.png'),
-            href: '/order_notPayment',
+            href: '/myOrder_item?type=3',
             title: '待付款'
           }, {
             id: 'e',
             path: require('common/image/stages_icon_end.png'),
-            href: '/order_over',
+            href: '/myOrder_item?type=4',
             title: '已结束'
           }
         ],
