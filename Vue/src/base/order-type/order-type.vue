@@ -23,7 +23,7 @@
     props: {
       type: [String, Boolean],
       money: String,
-      to: String
+      iphone: String
     },
     data () {
       return {
@@ -42,7 +42,17 @@
     },
     methods: {
       ok () {
-        this.$router.push({path: this.to, query: {call: true}})
+//      const URL = location.protocol + 
+//        '//' + 
+//        location.host + 
+//        location.pathname + 
+//        '#/?mobile=' + this.iphone
+//      location.href = URL
+        jiexin.back()
+        jiexin.fireEvent('pay_updata', 'immediatePayment', true)
+
+//      jiexin.updateBackView('stageProduct')
+//      this.$router.push({path: this.to, query: {call: true}})
       }
     }
   }

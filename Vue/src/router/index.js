@@ -121,24 +121,24 @@ export default new Router({
 //      {
 //        path: 'moneyItem_info',
 //        component: moneyItemInfo,
-          children: [
-            {
-              path: 'pay',
-              component: moneyItemInfoPay,
+//        children: [
+//          {
+//            path: 'pay',
+//            component: moneyItemInfoPay,
 //            children: [
 //              {
 //                path: 'union',
 //                component: moneyItemInfoPayUnion
 //              }
 //            ]
-            }
+//          }
 //        ]
 //      }
 //      , {
 //        path: 'myOrder_item',
 //        component: myOrderItem
 //      }
-      ]
+//    ]
 //    children: [
 //      {
 //        path: 'menuItem_stages', // 头部item列表
@@ -200,6 +200,9 @@ export default new Router({
 //        
 //      }
 //    ]
+    }, {
+      path: '/pay',
+      component: moneyItemInfoPay
     }
   ]
 })

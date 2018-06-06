@@ -32,9 +32,10 @@
           </p>
         </div>
         <!--<p class="pay-btn row-item" @click="goPay()">去付款</p>-->
-        <a class="pay-btn row-item" :href="order_href" @click="goPay">去付款</a>
+        <!--<a class="pay-btn row-item" :href="order_href" @click="goPay">去付款</a>-->
+        <p class="pay-btn row-item" @click="goPay">去付款</p>
       </div>
-      <order-type :type="order_type" :money="data.money" :to="'/'"></order-type>
+      <order-type :type="order_type" :money="data.money" :iphone="iphone"></order-type>
     </scroll>
     <!--子滑动页面-->
     <router-view></router-view>
@@ -59,6 +60,7 @@
     data () {
       return {
         order_type: false, // 展示订单状态的开关
+//      order_type: 'success', // 展示订单状态的开关
         icon: {
           err: require('common/image/pay_icon_tip.png')
         },
@@ -96,7 +98,7 @@
         type: '', // 是否是提前还
         header: {
           style: {
-            background: "url(" + require('common/image/pay_bg.png') + ")top center",
+            background: "url(" + require('common/image/pay_bg.jpg') + ")top center",
           }
         },
         data: {
@@ -153,20 +155,15 @@
           ]
         }
       }
-      this.orderCreate() // 订单创建
     },
     mounted () {
-//    this.orderType()
-//    if (this.$route.query.order_id) {
-//      return
-//    }
       this.radio_checked('MONEY_ITEM_INFO_PAY_radio_checked', 'checkValue', 0) // 传下标默认选中
     },
     destroyed () {
       clearInterval(this.inspect_timer)
     },
     methods: {
-      orderCreate () { // 创建订单
+      goPay () {
         let flag = 'all' // 默认是提前还
         let money = parseFloat(this.$route.query.remainAmount)
         if (!this.type) { // 如果是当月还 则传当月15号 20180515
@@ -174,14 +171,15 @@
           let _date = new Date()
           flag = _date.getFullYear() + '' + ((_date.getMonth() + 1) >= 10 ? (_date.getMonth() + 1) : '0' + (_date.getMonth() + 1)) + 15
         }
+//      alert(this.iphone + '-' + money + '-' + flag)
         new M_Proms(fn => {
           this.AJAX({
             url: '/reimbursement/createOrder',
             data: {
 //            leaderPhone: this.$store.state.user.phone,
               leaderPhone: this.iphone,
-              money: money, // 应付
-//            money: 1, // 测试的
+//            money: money, // 应付
+              money: 1, // 测试的
               flag: flag
             },
             success: r => {
@@ -195,45 +193,50 @@
                 orderTime=${r.orderTime}&
                 sign=${r.sing}
               `.replace(/\s+/g,"")
-              
-              fn.then()
+              setTimeout(() => {
+                fn.then()
+              }, 0)
             }
           })
         }).then((fn) => {
-          
           this.AJAX({
             url: '/api/createOrder', // 选择支付的方式
             data: this.order.key,
             success: res => {
               this.order.href = res
+              fn.then()
             }
           })
-        })
-      },
-      goPay () {
-        if (this.checkValue !== 0) { // 除去第一种当前页跳转方式
-          window.event.currentTarget.href = 'javascript:void(0)'
-          this.AJAX({
-            url: this.options[this.checkValue].url, // 选择支付的方式
-            data: this.order.key,
-            success: res => {
-              // 直接当前页面跳转掉
-              location.href = res
-//            this.$router.push({path: '/moneyItem_info/pay/union', query: {
-//              href: res,
-//              order_id: this.order.data.merchantOutOrderNo
-//            }})
-            }
-          })
-        } else {
-//        this.orderType()
-          M_visibilitychange(() => { // 对于支付宝这类，需监听后台转进页面的跳转 -- 纯页面才行，app嵌H5就不行
+        }).then(() => {
+          if (this.checkValue !== 0) { // 除去第一种当前页跳转方式
+//          window.event.currentTarget.href = 'javascript:void(0)'
+            this.AJAX({
+              url: this.options[this.checkValue].url, // 选择支付的方式
+              data: this.order.key,
+              success: res => {
+                // 直接当前页面跳转掉
+                location.href = res
+  //            this.$router.push({path: '/moneyItem_info/pay/union', query: {
+  //              href: res,
+  //              order_id: this.order.data.merchantOutOrderNo
+  //            }})
+              }
+            })
+          } else {
             this.orderType()
-          })
-          window.event.currentTarget.href = this.order.href
-          // A标签的问题！！！！ 改成跳转试试
-          
-        }
+  //        M_visibilitychange(() => { // 对于支付宝这类，需监听后台转进页面的跳转 -- 纯页面才行，app嵌H5就不行
+  //          this.orderType()
+  //        })
+  
+            location.href = this.order.href
+  
+  //        this.order_href
+  //        window.event.currentTarget.href = this.order.href
+            // A标签的问题！！！！ 改成跳转试试
+            
+          }
+        })
+        
         
       },
       orderType () {
@@ -247,6 +250,7 @@
           if (!ag) {
             return
           }
+//        alert(this.order.data.merchantOutOrderNo)
           ag = false
           this.AJAX({
             url: '/reimbursement/querypaystatus',

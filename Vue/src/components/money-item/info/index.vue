@@ -3,9 +3,16 @@
     <!--头部-->
     <!--<top-header class="top" :opt="top_header"></top-header>-->
     <!--内容-->
-    <scroll ref="scroll" class="row-content" :data="list"><!-- :data="record"-->
+    <mt-popup
+      v-model="popupVisible"
+      position="top"
+      style="width: 100%;"
+      :modal="false">
+      <p class="propG">更新成功！</p>
+    </mt-popup>
+    <scroll ref="scroll" class="row-content" :data="list" :pullend="true" @touchToend="touchToend" :listenScroll="true" @scroll="_scroll"><!-- :data="record"-->
       <div style="padding-bottom: .9rem;">
-        
+        <i class="fa fa-hand-o-down fa_down" :class="{ fa_down_rotate: fa_down_rotate }"></i>
         <header class="header">
           <h1 class="title">{{top_header.title}}</h1>
           <img v-if="header.money === '0.00' && list[0]" class="icon" :src="header.icon" />
@@ -78,9 +85,11 @@
   import Scroll from 'base/scroll/scroll'
   import BottomFooter from 'base/bottom-footer/bottom-footer'
   import { M_NumberPlusReduce } from 'common/js/methods.js'
+  import { Popup } from 'mint-ui'
   export default {
     data () {
       return {
+        popupVisible: false,
         bannerIndexStyle: {
           background: '#4091f7'
         },
@@ -118,11 +127,11 @@
         ],
         banner: [
           {
-            url: '/',
+            url: 'javascript:void(0)',
             href: require('common/image/stages_banner.png'),
             id: 'a'
           }, {
-            url: '/',
+            url: 'javascript:void(0)',
             href: require('common/image/pay_banner.png'),
             id: 'a'
           }
@@ -132,7 +141,8 @@
           icon: require('common/image/pay_img_default.png')
         },
 //      iphone: '17764587901' // 测试的
-        iphone: this.$route.query.mobile
+        iphone: this.$route.query.mobile,
+        fa_down_rotate: false
       }
     },
     components: {
@@ -140,17 +150,26 @@
       Scroll,
       BottomFooter,
       Banner,
-      SlidePage
+      SlidePage,
+      'mt-popup': Popup
     },
-    watch: {
-     '$route' (to, from) { // 监听到 某个 数据 传回call的时候，该页面进行重新加载
-        if (to.query.call) {
-          console.log('监听到call为true，重新AJAX获取数据')
-          this.getData()
-        }
-      }
-    },
+//  watch: {
+//   '$route' (to, from) { // 监听到 某个 数据 传回call的时候，该页面进行重新加载
+//      if (to.query.call) {
+//        console.log('监听到call为true，重新AJAX获取数据')
+//        this.getData()
+//      }
+//    }
+//  },
     created () {
+      jiexin.addEvent('pay_updata', (type) => { // 监听回调
+        setTimeout(() => {
+          this.getData()
+        }, 20)
+//      if (type) {
+//        alert()
+//      }
+      })
 //    document.addEventListener("visibilitychange", function(){
 //      document.hidden ? "" : alert(1)
 //    })
@@ -158,6 +177,31 @@
       this.getData()
     },
     methods: {
+      touchToend (e) {
+        if (e.distY >= 250) {
+//        this.pull_down = true
+          this.getData()
+          this.fa_down_rotate = false
+//        this.pull_text = '加载完成'
+        }
+      },
+      _scroll (e) {
+        if (e.distY >= 250) {
+          this.fa_down_rotate = true
+        } else {
+          this.fa_down_rotate = false
+        }
+      },
+      scrollPullDown (e) {
+//      console.log(e.stop)
+//      if (e.distY >= 150) {
+//        this.$refs.scroll.disable()
+//      }
+      },
+      scrollToEnd () {
+//      console.log(1)
+//      this.$refs.scroll.disable()
+      },
       loadImage() {
         if (!this.checkloaded) {
           this.checkloaded = true
@@ -165,12 +209,22 @@
         }
       },
       getData () {
+        let is = false
+        if (this.fa_down_rotate) {
+          is = true
+        }
         this.AJAX({
           url: '/m/zzg/zedHome',
           data: {
             mobile: this.iphone
           },
           success: res => {
+            if (is) {
+              this.popupVisible = true
+              setTimeout(() => {
+                this.popupVisible = false
+              }, 1000)
+            }
             // 数字自增自减动画
             M_NumberPlusReduce([
               {
@@ -212,12 +266,12 @@
           location.host + 
           location.pathname + 
           url + 
-          '?mobile=' + 
+          '?mobile=' + this.iphone + 
           '&nextMonthAmount=' + this.much[0].val + 
           '&amount=' + this.much[1].val + 
           '&remainAmount=' + this.much[2].val + 
           '&currentAmount=' + this.header.money + 
-          this.iphone + (type ? ('&type=' + type) : '')
+          (type ? ('&type=' + type) : '')
 //      location.href = URL
         jiexin.openWindow({
           url: URL,
@@ -235,7 +289,27 @@
     .top {
       background: @background-header;
     }
+    .propG {
+      background: #373737;
+      color: white;
+      text-align: center;
+      width: 100%;
+      height: .5rem;
+      line-height: .5rem;
+    }
     .row-content {
+      .fa_down {
+        text-align: center;
+        width: 100%;
+        position: fixed;
+        top: -.7rem;
+        transition: all .2s ease;
+        color: white;
+        font-size: @font-size-header_title;
+      }
+      .fa_down_rotate {
+        transform: rotate(180deg);
+      }
       .header {
         display: flex;
         flex-direction: column;

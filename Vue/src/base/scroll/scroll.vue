@@ -33,6 +33,14 @@
         type: Boolean,
         default: false
       },
+      pulldown: {
+        type: Boolean,
+        default: false
+      },
+      pullend: {
+        type: Boolean,
+        default: false
+      },
       beforeScroll: {
         type: Boolean,
         default: false
@@ -88,7 +96,7 @@
           click: this.click,
 //        scrollX: this.scrollX,
           bindToWrapper: true, // TODO 如果是自己的滚动事件，并绑定在容器上，则该属性须为true！
-          scrollY: this.scrollY,
+          scrollY: this.scrollY
 //        stopPropagation: true
         })
         if (this.listenScroll) {
@@ -111,13 +119,22 @@
             this.$emit('scrollToEnd')
           })
         }
-        
-        if (this.start) {
+        if (this.pulldown) { // 下拉刷新 pulldown 需传参为 true
+          this.scroll.on('scrollEnd', () => {
+            if (this.scroll.distY >= 150) {
+              this.$emit('scrollToEnd')
+            }
+          })
+        } else if (this.start) {
           this.scroll.on('scrollStart', () => {
             this.$emit('scrollToStart', this.scroll)
           })
         }
-
+        if (this.pullend) {
+          this.scroll.on('touchend', () => {
+            this.$emit('touchToend', this.scroll)
+          })
+        }
         if (this.beforeScroll) {
           this.scroll.on('beforeScrollStart', () => {
             this.$emit('beforeScroll')
@@ -133,6 +150,16 @@
       refresh() {
         this.scroll && this.scroll.refresh()
       },
+//    _stop() {
+//      if (this.scroll) {
+//        console.log(this.scroll)
+//        setTimeout(() => {
+//          this.scroll.moved = false
+//        }, 20)
+//        
+////        this.scroll.isInTransition = false
+//      }
+//    },
       scrollTo() {
         this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
       },

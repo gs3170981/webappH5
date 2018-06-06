@@ -14,6 +14,7 @@ const CODE_OK = 0
 const FAKE = false // true:假数据 false:真数据
 
 const CODE_ERR = (r, type) => { // 封装失败的回调
+//alert(JSON.stringify(r))
   type ? MessageBox.alert('网络好像开了点小差？', '提示') : MessageBox.alert('服务器炸啦，正在抢修中！', '提示')
   console.error(r.url, r.info)
 }
