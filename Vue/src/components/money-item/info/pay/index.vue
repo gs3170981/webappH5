@@ -178,8 +178,8 @@
             data: {
 //            leaderPhone: this.$store.state.user.phone,
               leaderPhone: this.iphone,
-//            money: money, // 应付
-              money: 1, // 测试的
+              money: money, // 应付
+//            money: 1, // 测试的
               flag: flag
             },
             success: r => {
