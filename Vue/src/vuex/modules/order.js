@@ -2,15 +2,35 @@ export default { // 查账付款
   state: {
     '0': {
       list: []
+    },
+    '1': {
+      list: []
+    },
+    '2': {
+      list: []
+    },
+    '3': {
+      list: []
+    },
+    '4': {
+      list: []
     }
   },
   mutations: {
     submit(state, obj) {
-      let len = Object.keys(obj).length
+      let {
+        res,
+        index
+      } = obj
+      let len = Object.keys(res).length
       let j = 0
-      for (let i in obj) {
+      let _state = state
+      if (index) {
+        _state = state[index]
+      }
+      for (let i in res) {
         if (j === len) return
-        if (state.hasOwnProperty(i)) state[i] = obj[i]
+        if (_state.hasOwnProperty(i)) _state[i] = res[i]
         j++
       }
     }

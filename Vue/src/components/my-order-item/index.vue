@@ -12,7 +12,27 @@
           <!--<scroll class="banner row-content" ref="scroll" v-for="t in banner" :data="t.item">-->
             <ul class="banner" v-for="t in nav">
               <li class="item" v-for="tt in t.list">
-                <p>{{ tt.companyName }}</p>
+                <p class="title"><img class="icon" :src="other.item.logo_icon" />{{ tt.companyName }}</p>
+                <ul class="items">
+                	<li class="line">
+                	  <label class="name">产品名称:</label>
+                	  <span class="val"><img class="i" :src="other.item.title_icon" /></span>
+                	</li>
+                	<li class="line">
+                    <label class="name">金额期数:</label>
+                    <span class="val"></span>
+                  </li>
+                  <li class="line">
+                    <label class="name">订单编号:</label>
+                    <span class="val"></span>
+                  </li>
+                </ul>
+                <img class="type" src=""/>
+              </li>
+              <li class="none" v-if="t.list.length == 0">
+                <img class="icon" :src="other.icon" alt="" />
+                <p class="tips" v-if="t.url">暂无订单</p>
+                <p class="tips" v-else>待开发</p>
               </li>
             </ul>
           <!--</scroll>-->
@@ -51,6 +71,32 @@
             href: ''
           }
         },
+        other: {
+          icon: require('common/image/pay_img_default.png'),
+          item: {
+            logo_icon: require('common/image/order_icon_company.png'),
+            title_icon: require('common/image/order_icon_stages.png'),
+            
+            '0,1': require('common/image/seal_icon_first.png'), // 待初审     0(待处理), 1（提交中）
+            // 2 初审中 ？
+            '3': require('common/image/seal_icon_freject.png'), // 初审驳回      3（初审驳回）
+            // 4 已终止 ？
+
+            // 5 复审中 ？
+            // 6 复审驳回 ？
+            // 7 审核通过 ？
+//          title_icon: require('common/image/seal_icon_fveto.png'), // 初审否决
+//          title_icon: require('common/image/seal_icon_overdue.png'), // 逾期中
+//          title_icon: require('common/image/seal_icon_stages.png'), // 分期中
+//          final_icon: require('common/image/seal_icon_final.png'), // 待终审
+//          title_icon: require('common/image/seal_icon_pass.png'), // 终审通过
+//          title_icon: require('common/image/seal_icon_sign.png'), // 已签约
+//          title_icon: require('common/image/seal_icon_settle.png'), // 业务结清
+//          title_icon: require('common/image/seal_icon_veto.png'), // 终审否决
+//          title_icon: require('common/image/seal_icon_wstop.png'), // 待终止
+//          title_icon: require('common/image/seal_icon_stop.png'), // 业务终止
+          }
+        },
         nav: [
           {
             title: '审核中',
@@ -61,26 +107,27 @@
               pageIndex: 0,
               pageSize: 10
             },
-            list: [{companyName:'0'},{companyName:'四川好管家'},{companyName:'四川好管家'},{companyName:'四川好管家'},{companyName:'四川好管家'},{companyName:'四川好管家'},{companyName:'四川好管家'}]
+//          list: [{companyName:'0'},{companyName:'四川好管家'},{companyName:'四川好管家'}]
+            list: this.$store.state.order['0'].list
           }, {
             title: '待签约',
             key: '1',
             url: '',
-            list: [{companyName:'1'},{companyName:'四川好管家'},{companyName:'四川好管家'}]
+            list: this.$store.state.order['1'].list
           }, {
             title: '待放款',
             key: '2',
-            list: [{companyName:'2'},{companyName:'四川好管家'},{companyName:'四川好管家'}],
+            list: this.$store.state.order['2'].list,
             url: ''
           }, {
             title: '待付款',
             key: '3',
-            list: [{companyName:'3'},{companyName:'四川好管家'},{companyName:'四川好管家'}],
+            list: this.$store.state.order['3'].list,
             url: '/m/zzg/queryPayMent'
           }, {
             title: '已结束',
             key: '4',
-            list: [{companyName:'4'},{companyName:'四川好管家'},{companyName:'四川好管家'}],
+            list: this.$store.state.order['4'].list,
             url: '/m/zed/queryHasendOrderList',
           }
         ]
@@ -102,42 +149,55 @@
 //    }
 //  },
     created () {
+//    this.touchEnd()
 //    this.getList(this.type)
     },
     watch: {
-      type (to) {
-        console.log(to)
-        this.$refs.banner._play(to + '')
+      type (to, from) {
+//      if (to != from) {
+//        debugger
+//        console.log(from)
+//        setTimeout(() => {
+            this.$refs.banner._go(+to)
+//        }, 20)
+//      }
       }
     },
     mounted () {
       setTimeout(() => {
-        this.$refs.banner._play(this.type)
+//      this.$refs.banner._go(this.type)
+
+        this.touchEnd(this.type, true)
       }, 20)
     },
     methods: {
-      getList (index) { // ajax
-        let url = this.nav[this.type].url
-        let data = this.nav[this.type].data
-        if (!url) {
-          console.warn('后台接口暂未支持')
+      touchEnd (index, is) {
+        // 这边ajax拿到数据后，修改列表高度 --- 问题是如何正确修改高度值
+        if (!is && this.type == index) {
           return
         }
-        this.AJAX({
-          url: url,
-          data: data,
-          success: res => {
-            this.nav[this.type].list = res.list
-            console.log(res)
+        console.log(index)
+        let obj = this.nav[index]
+        obj.url && this.AJAX({
+          url: obj.url,
+          data: obj.data,
+          success: (res) => {
+            obj.list = res.list
+//          this.$store.commit('submit', res, index + '')
+            this.$store.commit('submit', {
+              res: res,
+              index: index
+            })
           }
         })
-      },
-      touchEnd (index) {
-        // 这边ajax拿到数据后，修改列表高度 --- 问题是如何正确修改高度值
+        
 //      console.log(index)
-        this.type = index
+//      setTimeout(() => {
+          this.type = index
+//      }, 200)
+        this.$refs.scroll.scrollTo(0, 0, 500)
+        this.$refs.banner._go(index)
 
-//      this.$refs.banner._play(2)
 //      const D = document
 //      let obj = D.getElementsByClassName('MY_ORDER_ITEM-banner')
 //      let h = window.getComputedStyle(obj[index], null).height
@@ -146,6 +206,7 @@
 //      this.$refs.scroll.refresh()
       },
       navClick (index) {
+        this.touchEnd(index)
         this.type = index
       }
 //    loadImage() {
@@ -189,8 +250,24 @@
       .row-slider-wrapper {
         /*background: white;*/
         .banner {
+          min-height: 15rem;
+          /*overflow: hidden;*/
           .item {
             height: 2.8rem;
+          }
+          .none {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            .icon {
+              margin: 1rem 0 .5rem;
+              height: 1.4rem;
+              width: 2.24rem;
+            }
+            .tips {
+              color: #B6B6B6;
+            }
           }
         }
       }

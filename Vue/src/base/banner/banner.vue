@@ -113,7 +113,7 @@
           snap: true,
           snapLoop: this.loop,
           snapThreshold: 0.3,
-          bindToWrapper: true,
+          bindToWrapper: true, // 停止移动,自行拖拽
           snapSpeed: 400
         })
 
@@ -139,14 +139,17 @@
       _initDots() {
         this.dots = new Array(this.children.length)
       },
-      _play(page) { // 进来的page必须是字符型
-        let pageIndex = page ? parseInt(page) : this.currentPageIndex + 1
+      _play(page) {
+        let pageIndex = this.currentPageIndex + 1
         if (this.loop) {
           pageIndex += 1
         }
         this.timer = setTimeout(() => {
           this.slider.goToPage(pageIndex, 0, 400)
         }, this.interval)
+      },
+      _go(page) {
+        this.slider.goToPage(+page, 0, 400)
       },
       _manualClick (type) {
         let e = this.slider.getCurrentPage()
