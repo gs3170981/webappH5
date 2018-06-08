@@ -57,6 +57,10 @@
         type: Boolean,
         default: false
       },
+//    tap: {
+//      type: Boolean,
+//      default: false
+//    },
       end: {
         type: Boolean,
         default: false
@@ -86,6 +90,7 @@
         this.scroll = new BScroll(this.$refs.wrapper, {
           probeType: this.probeType,
           click: this.click,
+//        tap: this.tap, // 试试这个能否监听事件
 //        scrollX: this.scrollX,
           bindToWrapper: true, // TODO 如果是自己的滚动事件，并绑定在容器上，则该属性须为true！
           scrollY: this.scrollY,
@@ -117,7 +122,6 @@
             this.$emit('scrollToStart', this.scroll)
           })
         }
-
         if (this.beforeScroll) {
           this.scroll.on('beforeScrollStart', () => {
             this.$emit('beforeScroll')

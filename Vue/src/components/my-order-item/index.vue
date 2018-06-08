@@ -8,32 +8,52 @@
     </ul>
     <scroll ref="scroll" class="row-content">
       <div style="padding-bottom: .9rem;">
-        <banner class="row-slider-wrapper" :interval="0" ref="banner" :autoPlay="false" :loop="false" @touchEnd="touchEnd"><!--:dotsIndex="bannerIndexStyle"-->
+        <banner class="row-slider-wrapper" :bounce="false" :momentumLimitDistance="50" :interval="0" ref="banner" :autoPlay="false" :loop="false" @touchEnd="touchEnd"><!--:dotsIndex="bannerIndexStyle"-->
           <!--<scroll class="banner row-content" ref="scroll" v-for="t in banner" :data="t.item">-->
-            <ul class="banner" v-for="t in nav">
-              <li class="item" v-for="tt in t.list">
+            <ul class="banner MY_ORDER_ITEM-banner" :key="t.key" v-for="t in nav">
+              <router-link :key="" tag="li" v-for="tt in t.list" class="item" :to="'/myOrder_item/det'">
+                <p class="title"><img class="icon" :src="other.item.logo_icon" />{{ tt.companyName }}</p>
+                <ul class="items">
+                  <li class="line">
+                    <label class="name">产品名称：</label>
+                    <span class="val">{{ tt.productName }}<img class="i" :src="other.item.title_icon" /></span>
+                  </li>
+                  <li class="line">
+                    <label class="name">金额期数：</label>
+                    <span class="val">￥{{ tt.amount }} / {{ tt.repayTotalTimes }}期</span>
+                  </li>
+                  <li class="line">
+                    <label class="name">订单编号：</label>
+                    <span class="val">{{ tt.orderNo }}</span>
+                  </li>
+                </ul>
+                <img class="type" :src="other.item[tt.checkStatus]"/>
+              </router-link>
+              
+              <!--<li class="item" v-for="tt in t.list">
                 <p class="title"><img class="icon" :src="other.item.logo_icon" />{{ tt.companyName }}</p>
                 <ul class="items">
                 	<li class="line">
-                	  <label class="name">产品名称:</label>
-                	  <span class="val"><img class="i" :src="other.item.title_icon" /></span>
+                	  <label class="name">产品名称：</label>
+                	  <span class="val">{{ tt.productName }}<img class="i" :src="other.item.title_icon" /></span>
                 	</li>
                 	<li class="line">
-                    <label class="name">金额期数:</label>
-                    <span class="val"></span>
+                    <label class="name">金额期数：</label>
+                    <span class="val">￥{{ tt.amount }} / {{ tt.repayTotalTimes }}期</span>
                   </li>
                   <li class="line">
-                    <label class="name">订单编号:</label>
-                    <span class="val"></span>
+                    <label class="name">订单编号：</label>
+                    <span class="val">{{ tt.orderNo }}</span>
                   </li>
                 </ul>
-                <img class="type" src=""/>
-              </li>
-              <li class="none" v-if="t.list.length == 0">
+                <img class="type" :src="other.item[0]"/>
+              </li>-->
+              <li class="none" v-if="t.list.length == 0 && t.loading">
                 <img class="icon" :src="other.icon" alt="" />
                 <p class="tips" v-if="t.url">暂无订单</p>
                 <p class="tips" v-else>待开发</p>
               </li>
+              <li v-else-if="!t.loading" class="loading fa fa-spinner fa-pulse"></li>
             </ul>
           <!--</scroll>-->
         </banner>
@@ -77,13 +97,16 @@
             logo_icon: require('common/image/order_icon_company.png'),
             title_icon: require('common/image/order_icon_stages.png'),
             
-            '0,1': require('common/image/seal_icon_first.png'), // 待初审     0(待处理), 1（提交中）
+            '0': require('common/image/seal_icon_first.png'), // 待初审     0(待处理), 1（提交中）
+            '1': require('common/image/seal_icon_first.png'), // 待初审     0(待处理), 1（提交中）
+            '2': require('common/image/seal_icon_first.png'),
             // 2 初审中 ？
             '3': require('common/image/seal_icon_freject.png'), // 初审驳回      3（初审驳回）
             // 4 已终止 ？
 
             // 5 复审中 ？
             // 6 复审驳回 ？
+            '6': require('common/image/seal_icon_veto.png'),
             // 7 审核通过 ？
 //          title_icon: require('common/image/seal_icon_fveto.png'), // 初审否决
 //          title_icon: require('common/image/seal_icon_overdue.png'), // 逾期中
@@ -107,26 +130,31 @@
               pageIndex: 0,
               pageSize: 10
             },
+            loading: false,
 //          list: [{companyName:'0'},{companyName:'四川好管家'},{companyName:'四川好管家'}]
             list: this.$store.state.order['0'].list
           }, {
             title: '待签约',
             key: '1',
             url: '',
+            loading: false,
             list: this.$store.state.order['1'].list
           }, {
             title: '待放款',
             key: '2',
+            loading: false,
             list: this.$store.state.order['2'].list,
             url: ''
           }, {
             title: '待付款',
             key: '3',
+            loading: false,
             list: this.$store.state.order['3'].list,
             url: '/m/zzg/queryPayMent'
           }, {
             title: '已结束',
             key: '4',
+            loading: false,
             list: this.$store.state.order['4'].list,
             url: '/m/zed/queryHasendOrderList',
           }
@@ -176,27 +204,44 @@
         if (!is && this.type == index) {
           return
         }
-        console.log(index)
-        let obj = this.nav[index]
-        obj.url && this.AJAX({
-          url: obj.url,
-          data: obj.data,
-          success: (res) => {
-            obj.list = res.list
-//          this.$store.commit('submit', res, index + '')
-            this.$store.commit('submit', {
-              res: res,
-              index: index
-            })
-          }
-        })
-        
-//      console.log(index)
-//      setTimeout(() => {
-          this.type = index
-//      }, 200)
+        this.type = index
         this.$refs.scroll.scrollTo(0, 0, 500)
         this.$refs.banner._go(index)
+        
+        console.log(index)
+        let obj = this.nav[index]
+        
+        let dom = document.getElementsByClassName('MY_ORDER_ITEM-banner')
+        for (let i = 0; i < dom.length; i++) {
+          dom[i].style.height = '15rem'
+        }
+
+        this.$refs.scroll.refresh()
+        
+        if (obj.url) {
+          
+          this.AJAX({
+            url: obj.url,
+            data: obj.data,
+            success: (res) => {
+              obj.loading = true
+              obj.list = res.list
+  //          this.$store.commit('submit', res, index + '')
+              this.$store.commit('submit', {
+                res: res,
+                index: index
+              })
+              for (let i = 0; i < dom.length; i++) {
+                dom[i].style.height = res.list.length * 3 + 'rem'
+              }
+
+              this.$refs.scroll.refresh()
+            }
+          })
+        } else {
+          obj.loading = true
+        }
+        
 
 //      const D = document
 //      let obj = D.getElementsByClassName('MY_ORDER_ITEM-banner')
@@ -251,9 +296,61 @@
         /*background: white;*/
         .banner {
           min-height: 15rem;
+          padding: 0 .2rem;
           /*overflow: hidden;*/
           .item {
-            height: 2.8rem;
+            margin-top: .2rem;
+            border-radius: .1rem;
+            padding: 0 .25rem;
+            box-sizing: border-box;
+            position: relative;
+            background: white;
+            .title {
+              display: flex;
+              border-bottom: .01rem solid #f2f4f5;
+              align-items: center;
+              height: .75rem;
+              font-weight: bold;
+              line-height: .75rem;
+              .icon {
+                height: .36rem;
+                width: .32rem;
+                margin-right: .25rem;
+              }
+            }
+            .items {
+              padding: .23rem 0;
+              padding-top: .23rem;
+              line-height: .45rem;
+              color: #626364;
+              box-sizing: border-box;
+              text-align: left;
+              .line {
+                height: .45rem;
+                .name {
+                  font-size: @font-size-smail;
+                  
+                }
+                .val {
+                  font-size: @font-size-smail;
+                  .i {
+                    margin-left: .15rem;
+                    display: inline;
+                    width: .34rem;
+                    position: relative;
+                    top: .05rem;
+                    height: .3rem;
+                  }
+                }
+              }
+            }
+            .type {
+              position: absolute;
+              top: .2rem;
+              right: .2rem;
+              width: 1.02rem;
+              height: 1.06rem;
+            }
           }
           .none {
             display: flex;
@@ -268,6 +365,12 @@
             .tips {
               color: #B6B6B6;
             }
+          }
+          .loading {
+            position: relative;
+            top: 4rem;
+            color: #B6B6B6;
+            font-size: .8rem;
           }
         }
       }

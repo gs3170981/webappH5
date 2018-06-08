@@ -20,6 +20,11 @@ const myOrderItem = (resolve) => {
     resolve(module)
   })
 }
+const myOrderItemDet = (resolve) => {
+  import('components/my-order-item/det/index').then((module) => {
+    resolve(module)
+  })
+}
 const moneyItemInfoPay = (resolve) => {
   import('components/money-item/info/pay/index').then((module) => {
     resolve(module)
@@ -135,7 +140,13 @@ export default new Router({
           ]
         }, {
           path: 'myOrder_item',
-          component: myOrderItem
+          component: myOrderItem,
+          children: [
+            {
+              path: 'det',
+              component: myOrderItemDet
+            }
+          ]
         }
       ]
 //    children: [

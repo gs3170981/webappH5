@@ -44,6 +44,14 @@
         type: Boolean,
         default: true
       },
+      bounce: { // 自动滚动
+        type: Boolean,
+        default: true
+      },
+      momentumLimitDistance: { // 自动滚动
+        type: Number,
+        default: 15
+      },
       interval: {
         type: Number,
         default: 4000
@@ -114,7 +122,9 @@
           snapLoop: this.loop,
           snapThreshold: 0.3,
           bindToWrapper: true, // 停止移动,自行拖拽
-          snapSpeed: 400
+          snapSpeed: 400,
+          momentumLimitDistance: this.momentumLimitDistance, // 最少移动的触摸距离才能滑动
+          bounce: this.bounce // 是否开启回弹
         })
 
         this.slider.on('scrollEnd', () => {
