@@ -44,6 +44,14 @@
         type: Boolean,
         default: true
       },
+      bounce: { // 自动滚动
+        type: Boolean,
+        default: true
+      },
+      momentumLimitDistance: { // 自动滚动
+        type: Number,
+        default: 15
+      },
       interval: {
         type: Number,
         default: 4000
@@ -108,21 +116,25 @@
         this.slider = new BScroll(this.$refs.slider, {
           scrollX: true,
           scrollY: false,
+//        freeScroll: true,
           momentum: false,
           snap: true,
           snapLoop: this.loop,
           snapThreshold: 0.3,
-          bindToWrapper: true,
-          snapSpeed: 400
+          bindToWrapper: true, // 停止移动,自行拖拽
+          snapSpeed: 400,
+          momentumLimitDistance: this.momentumLimitDistance, // 最少移动的触摸距离才能滑动
+          bounce: this.bounce // 是否开启回弹
         })
 
         this.slider.on('scrollEnd', () => {
+
           let pageIndex = this.slider.getCurrentPage().pageX
           if (this.loop) {
             pageIndex -= 1
           }
           this.currentPageIndex = pageIndex
-
+          this.$emit('touchEnd', pageIndex)
           if (this.autoPlay) {
             this._play()
           }
@@ -137,7 +149,7 @@
       _initDots() {
         this.dots = new Array(this.children.length)
       },
-      _play() {
+      _play(page) {
         let pageIndex = this.currentPageIndex + 1
         if (this.loop) {
           pageIndex += 1
@@ -145,6 +157,9 @@
         this.timer = setTimeout(() => {
           this.slider.goToPage(pageIndex, 0, 400)
         }, this.interval)
+      },
+      _go(page) {
+        this.slider.goToPage(+page, 0, 400)
       },
       _manualClick (type) {
         let e = this.slider.getCurrentPage()

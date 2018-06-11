@@ -7,7 +7,7 @@ import Index from 'components/index'
 
 Vue.use(Router)
 
-// TODO 因为直接import，url中带‘-’解析不了，则用回调
+// TODO 因为直接import，url中带‘-’解析不了，并且可能会被模块化调用（h5嵌入）则用回调
 // 这里就不用for遍历json配置项了，保持代码可读性
 
 const MenuItemMore = (resolve) => {
@@ -81,7 +81,7 @@ const MyTask = (resolve) => {
   })
 }
 const Mews = (resolve) => {
-  import('components/news/news').then((module) => {
+  import('components/news/index').then((module) => {
     resolve(module)
   })
 }
