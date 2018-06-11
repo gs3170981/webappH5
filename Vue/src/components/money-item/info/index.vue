@@ -187,7 +187,7 @@
             this.header.his_ago = res.historyOverdueCount
             this.header.now_ago = res.overdueCount
             this.list = res.list
-            this.$store.commit('submit', res)
+            this.$store.commit('pay_submit', res)
           }
         })
 //      this.AJAX['/zzg/zedHome']({

@@ -181,7 +181,7 @@
 //    this.getList(this.type)
     },
     watch: {
-      type (to, from) {
+      type (to, from) { // TODO 是不是不需要，臻信通这儿不用也可
 //      if (to != from) {
 //        debugger
 //        console.log(from)

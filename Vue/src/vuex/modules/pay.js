@@ -9,7 +9,7 @@ export default { // 查账付款
     list: [] // 订单列表
   },
   mutations: {
-    submit(state, obj) {
+    pay_submit(state, obj) {
       let len = Object.keys(obj).length
       let j = 0
       for (let i in obj) {
