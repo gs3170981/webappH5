@@ -85,6 +85,11 @@ const Mews = (resolve) => {
     resolve(module)
   })
 }
+const MewsDet_Act = (resolve) => {
+  import('components/news/det/act/index').then((module) => {
+    resolve(module)
+  })
+}
 const Problem = (resolve) => {
   import('components/problem/index').then((module) => {
     resolve(module)
@@ -155,7 +160,13 @@ export default new Router({
           component: MyTask
         }, {
           path: 'news', // 左上角menu菜单列表
-          component: Mews
+          component: Mews,
+          children: [
+            {
+              path: 'act_det',
+              component: MewsDet_Act
+            }
+          ]
         }, {
           path: 'problem',
           component: Problem

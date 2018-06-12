@@ -1,7 +1,7 @@
 <template>
   <slide-page class="NEWS" :klass="'NEWS'" :href="top_header.left.href">
     <!--头部-->
-    <top-header class="top" :opt="top_header"></top-header>
+    <top-header class="top" :opt="top_header" @topHeader_seach="topSeach"></top-header>
     <ul class="header">
       <li class="item" :class="{ active: t.key == type }" :key="t.key" v-for="(t, i) in nav" @click="navClick(t.key)">
         <img class="icon" :src="t.icon" />
@@ -19,6 +19,7 @@
               <li class="item" v-for="(tt, ii) in t.list">
                 <p class="title">
                   <img class="icon" :src="t[ii].icon"/>
+                  <span class="new" v-if="tt.new"></span>
                   <!--<img class="icon" :src="t[tt.type].icon"/>-->
                   <!--<span class="name" v-text="t[tt.type].name"></span>-->
                   <span class="name">订单{{ t[ii].name }}</span>
@@ -30,11 +31,33 @@
             </template>
             <!--系统通知-->
             <template v-else-if="t.url === 'API_newsSys'">
-              
+              <li class="item" v-for="(tt, ii) in t.list">
+                <p class="title">
+                  <img class="icon" :src="t['0']"/>
+                  <span class="name" v-text="tt.title"></span>
+                  <span class="timer" v-text="tt.timer"></span>
+                </p>
+                <p class="det" style="padding-bottom: .2rem;" v-text="tt.det"></p>
+              </li>
             </template>
             <!--平台活动-->
             <template v-else>
-              
+              <router-link v-for="(tt, ii) in t.list" :key="ii" tag="li" class="item" :to="'/news/act_det'">
+                <p class="title">
+                  <img class="icon" :src="t[tt.type]"/>
+                  <span class="name" v-text="tt.title"></span>
+                  <span class="btn">领取任务</span>
+                </p>
+                <img class="img" :src="tt.img" />
+              </router-link>
+              <!--<li class="item" v-for="(tt, ii) in t.list">
+                <p class="title">
+                  <img class="icon" :src="t[tt.type]"/>
+                  <span class="name" v-text="tt.title"></span>
+                  <span class="btn">领取任务</span>
+                </p>
+                <img class="img" :src="tt.img" alt="" />
+              </li>-->
             </template>
             <li class="none" v-if="t.list.length == 0 && t.loading">
               <img class="icon" :src="other.icon" alt="" />
@@ -45,6 +68,16 @@
         </banner>
       </div>
     </scroll>
+    <!--历史搜索条件界面-->
+    <section v-show="seach.is" class="seach_his">
+      <p class="title">
+        <span class="name">历史搜索</span>
+        <img class="icon" :src="seach.icon" alt="" />
+      </p>
+      <ul class="det">
+        <li class="item" v-for="t in seach.item" v-text="t.title"></li>
+      </ul>
+    </section>
     <!--子滑动页面-->
     <router-view></router-view>
   </slide-page>
@@ -67,10 +100,30 @@
           title: '消息中心',
           right: {
             icon: require('common/image/nav_btn_search.png'),
-            href: '/'
+//          href: '/',
+            type: 'seach'
           }
         },
-        type: 0, // 哪一个
+        seach: { // 搜索的历史界面展示
+          is: false,
+          icon: require('common/image/search_icon_delete.png'),
+          item: [
+            {
+              title: '全部'
+            }, {
+              title: '臻商贷'
+            }, {
+              title: '安保分期联网报警'
+            }, {
+              title: '信用卡'
+            }, {
+              title: '活动奖励'
+            }, {
+              title: '提现'
+            }
+          ]
+        },
+        type: 0, // tab哪一个
         nav: [
           {
             url: 'API_newsBusiness',
@@ -135,6 +188,7 @@
             title: '系统通知',
             url: 'API_newsSys',
             list: [],
+            '0': require('common/image/system_icon_notice.png'),
             key: 1,
             number: 0,
             loading: false,
@@ -144,6 +198,8 @@
             icon: require('common/image/msg_btn_pc.png'),
             title: '平台活动',
             key: 2,
+            '0': require('common/image/pc_icon_stages.png'),
+            '1': require('common/image/pc_icon_loan.png'),
             url: 'API_newsAct',
             loading: false,
             list: [],
@@ -180,6 +236,15 @@
       }, 20)
     },
     methods: {
+      topSeach (show) {
+        if (show === 'show') {
+          this.seach.is = true
+        } else if (show === 'enter') {
+          
+        } else { // hide
+          this.seach.is = false
+        }
+      },
       getData (index, data, dom) {
         let obj = this.nav[index]
         if (index === 0) { // 瞎姬霸写 --- 等有接口后，规范AJAX，参照臻E盾
@@ -283,7 +348,7 @@
     .row-content {
       .banner {
         min-height: 15rem;
-        padding: 0 .3rem;
+        padding: 0 .2rem;
         text-align: left;
         .item {
           background: white;
@@ -292,12 +357,22 @@
           .title {
             display: flex;
             align-items: center;
+            position: relative;
             border-bottom: .01rem solid #f2f4f5;
             height: .74rem;
             .icon {
               height: .36rem;
               margin-right: .2rem;
               width: .32rem;
+            }
+            .new {
+              height: .1rem;
+              width: .1rem;
+              background: #fd6d4b;
+              border-radius: 50%;
+              top: .15rem;
+              left: .27rem;
+              position: absolute;
             }
             .name {
               font-weight: bold;
@@ -307,6 +382,21 @@
               font-size: @font-size-item_det1;
               color: #b1b2b3;
             }
+            .btn {
+              margin-left: auto;
+              font-size: .22rem;
+              color: #ff765b;
+              border: .01rem solid #ff765b;
+              border-radius: .05rem;
+              height: .42rem;
+              line-height: .42rem;
+              padding: 0 .1rem;
+            }
+          }
+          .img {
+            height: 3.1rem;
+            width: 6.3rem;
+            padding-bottom: .3rem;
           }
           .det {
             font-size: @font-size-smail;
@@ -340,12 +430,40 @@
         .loading {
           position: relative;
           top: 4rem;
-          left: 45%;
+          left: 3.2rem;
           color: #B6B6B6;
           font-size: .8rem;
         }
       }
       
+    }
+    .seach_his {
+      height: 100%;
+      background: white;
+      width: 100%;
+      position: fixed;
+      margin-top: .87rem;
+      box-sizing: border-box;
+      padding: .1rem .3rem;
+      top: 0;
+      .title {
+        height: .8rem;
+        align-items: center;
+        display: flex;
+        .name {
+          color: #979899;
+        }
+        .icon {
+          height: .3rem;
+          width: .28rem;
+          margin-left: auto;
+        }
+      }
+      .det {
+        .item {
+          
+        }
+      }
     }
   }
   
