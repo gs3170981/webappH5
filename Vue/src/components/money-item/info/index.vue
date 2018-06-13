@@ -17,7 +17,7 @@
           <h1 class="title">{{top_header.title}}</h1>
           <img v-if="header.money === '0.00' && list[0]" class="icon" :src="header.icon" />
           <h1 v-else class="money"><span>￥</span>{{ header.money }}<span style="margin-left: .15rem;"></span></h1>
-          <p class="tips" v-if="header.his_ago">历史逾期：{{ header.his_ago }}次</p>
+          <p class="tips" v-if="!header.now_ago && header.his_ago">历史逾期：{{ header.his_ago }}次</p>
           <p class="tips" v-if="header.now_ago">当前逾期：{{ header.now_ago }}次</p>
           <template v-if="!list[0]">
             <p class="tips" style="color: white;">暂无待付订单</p>
@@ -27,7 +27,7 @@
           <p v-else-if="header.now_ago" class="btn row-item" style="background: #fbc25e;" @click="jump('/#/pay', '', '在线付款')">立即付款</p>
           <!--<router-link v-else-if="header.now_ago" tag="p" class="btn row-item" style="background: #fbc25e;" :to="'/moneyItem_info/pay'">立即付款</router-link>-->
           <!--<router-link v-else-if="header.money === '0.00' && list[0]" style="background: transparent;border: .01rem solid white;" tag="p" class="btn row-item" :to="{ path:'/pay',query: {type: 'early'} }">提前付款</router-link>-->
-          <p v-else-if="header.money === '0.00' && list[0]" class="btn row-item"  style="background: transparent;border: .01rem solid white;" @click="jump('/#/pay', 'early', '提前付款')">提前付款</p>
+          <p v-else-if="header.money === '0.00' && list[0]" class="btn row-item"  style="background: transparent;border: 1px solid white;" @click="jump('/#/pay', 'early', '提前付款')">提前付款</p>
           <!--<router-link v-else-if="header.money === '0.00' && list[0]" style="background: transparent;border: .01rem solid white;" tag="p" class="btn row-item" :to="{ path:'/moneyItem_info/pay',query: {type: 'early'} }">提前付款</router-link>-->
           <p v-else class="btn row-item" @click="jump('/#/pay', '', '在线付款')">立即付款</p>
           <!--<p v-else class="btn row-item" @click="jump('/#/moneyItem_info/pay', '', '在线付款')">立即付款</p>-->
@@ -433,7 +433,7 @@
       }
       .item {
         background: white;
-        padding: .25rem .25rem 3rem;
+        padding: .25rem .25rem 5rem;
         .list {
           height: .85rem;
           line-height: .85rem;
