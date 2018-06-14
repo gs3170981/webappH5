@@ -24,7 +24,7 @@
       <!--<template v-if="opt.right.type && opt.right.type === 'seach'">-->
         <form class="seach-form" v-if="opt.right.type && opt.right.type === 'seach'" action='' onsubmit="return false;">
           <div class="seach" :class="{ seach_active: seach.show }">
-            <input id="input" placeholder="搜索" class="input" type="search" @keydown="seach_keydown" />
+            <input v-model="opt.right.val" id="input" placeholder="搜索" class="input" type="search" @keydown="seach_keydown" />
             <img class="icon" :src="seach.icon" />
           </div>
           <span v-show="seach.show" class="close-btn" @click="seach_close">取消</span>
@@ -103,7 +103,7 @@
       },
       seach_close () {
         this.seach.show = false
-        $("input").value = ''
+        this.opt.right.val = ''
         this.$emit('topHeader_seach', 'hide')
       }
     }

@@ -174,7 +174,12 @@
           clearTimeout(this.timer)
           this._play()
         }, 2000) // 没设开关，所以多些延迟，防止滚动操作频繁
-        
+      },
+      disable () {
+        this.slider.disable && this.slider.disable()
+      },
+      enable () {
+        this.slider.enable && this.slider.enable()
       }
     }
   }

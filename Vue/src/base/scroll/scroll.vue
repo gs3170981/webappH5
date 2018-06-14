@@ -53,11 +53,23 @@
         type: Number,
         default: 20
       },
+      deceleration: {
+        type: Number,
+        default: 0.001
+      },
       start: {
         type: Boolean,
         default: false
       },
       end: {
+        type: Boolean,
+        default: false
+      },
+      bounce: {
+        type: Boolean,
+        default: true
+      },
+      pullend: {
         type: Boolean,
         default: false
       }
@@ -86,6 +98,9 @@
         this.scroll = new BScroll(this.$refs.wrapper, {
           probeType: this.probeType,
           click: this.click,
+//        momentum: false,
+          bounce: this.bounce, // 默认开启回弹
+          deceleration: this.deceleration, // 滚动速度
 //        scrollX: this.scrollX,
           bindToWrapper: true, // TODO 如果是自己的滚动事件，并绑定在容器上，则该属性须为true！
           scrollY: this.scrollY,
@@ -108,7 +123,7 @@
           })
         } else if (this.end) {
           this.scroll.on('scrollEnd', () => {
-            this.$emit('scrollToEnd')
+            this.$emit('scrollToEnd', this.scroll)
           })
         }
         
@@ -117,7 +132,11 @@
             this.$emit('scrollToStart', this.scroll)
           })
         }
-
+        if (this.pullend) {
+          this.scroll.on('touchend', () => {
+            this.$emit('touchToend', this.scroll)
+          })
+        }
         if (this.beforeScroll) {
           this.scroll.on('beforeScrollStart', () => {
             this.$emit('beforeScroll')

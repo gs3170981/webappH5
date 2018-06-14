@@ -2,7 +2,7 @@
   <slide-page class="NEWS" :klass="'NEWS'" :href="top_header.left.href">
     <!--头部-->
     <top-header class="top" :opt="top_header" @topHeader_seach="topSeach"></top-header>
-    <ul class="header">
+    <ul v-show="header_is" class="header">
       <li class="item" :class="{ active: t.key == type }" :key="t.key" v-for="(t, i) in nav" @click="navClick(t.key)">
         <img class="icon" :src="t.icon" />
         <p class="title" v-text="t.title"></p>
@@ -10,19 +10,19 @@
       </li>
     </ul>
     <!--内容--><!-- :data="record"-->
-    <scroll ref="scroll" class="row-content">
-      <div style="padding-bottom: 2.6rem;">
+    <scroll :deceleration="0.005" ref="scroll" class="row-content" :pullup="true" :class="{ 'content-top' : !header_is }" @scrollToEnd="scrollUpdata">
+      <div style="padding-bottom: 1.7rem;">
         <banner class="row-slider-wrapper" :bounce="false" :momentumLimitDistance="50" :interval="0" ref="banner" :autoPlay="false" :loop="false" @touchEnd="touchEnd"><!--:dotsIndex="bannerIndexStyle"-->
           <ul v-for="(t, i) in nav" class="banner NEWS-banner">
             <!--业务消息-->
             <template v-if="t.url === 'API_newsBusiness'">
               <li class="item" v-for="(tt, ii) in t.list">
                 <p class="title">
-                  <img class="icon" :src="t[ii].icon"/>
+                  <img class="icon" :src="t[tt.type].icon"/>
                   <span class="new" v-if="tt.new"></span>
                   <!--<img class="icon" :src="t[tt.type].icon"/>-->
                   <!--<span class="name" v-text="t[tt.type].name"></span>-->
-                  <span class="name">订单{{ t[ii].name }}</span>
+                  <span class="name">订单{{ t[tt.type].name }}</span>
                   <span class="timer" v-text="tt.timer"></span>
                 </p>
                 <p class="det" v-text="tt.det"></p>
@@ -33,7 +33,7 @@
             <template v-else-if="t.url === 'API_newsSys'">
               <li class="item" v-for="(tt, ii) in t.list">
                 <p class="title">
-                  <img class="icon" :src="t['0']"/>
+                  <img style="width: .42rem;height: .34rem;margin-right: .2rem;" :src="t['0']"/>
                   <span class="name" v-text="tt.title"></span>
                   <span class="timer" v-text="tt.timer"></span>
                 </p>
@@ -44,7 +44,7 @@
             <template v-else>
               <router-link v-for="(tt, ii) in t.list" :key="ii" tag="li" class="item" :to="'/news/act_det'">
                 <p class="title">
-                  <img class="icon" :src="t[tt.type]"/>
+                  <img style="width: .46rem;height: .42rem;margin-right: .2rem;" :src="t[tt.type]"/>
                   <span class="name" v-text="tt.title"></span>
                   <span class="btn">领取任务</span>
                 </p>
@@ -75,7 +75,7 @@
         <img class="icon" :src="seach.icon" alt="" />
       </p>
       <ul class="det">
-        <li class="item" v-for="t in seach.item" v-text="t.title"></li>
+        <li class="item" v-for="t in seach.item" v-text="t.title" @click="seachHis_btn(t.title)"></li>
       </ul>
     </section>
     <!--子滑动页面-->
@@ -101,9 +101,11 @@
           right: {
             icon: require('common/image/nav_btn_search.png'),
 //          href: '/',
-            type: 'seach'
+            type: 'seach',
+            val: ''
           }
         },
+        header_is: true, // 头部展示
         seach: { // 搜索的历史界面展示
           is: false,
           icon: require('common/image/search_icon_delete.png'),
@@ -236,14 +238,38 @@
       }, 20)
     },
     methods: {
+      scrollUpdata () {
+        let data = JSON.parse(JSON.stringify(this.nav[this.type].list[0]))
+//      console.log(this.nav[this.type].list, data)
+        this.nav[this.type].list.push(data)
+        
+        let dom = document.getElementsByClassName('NEWS-banner')
+        for (let i = 0; i < dom.length; i++) {
+          dom[i].style.height = this.nav[this.type].list.length * 3.07 + 'rem'
+        }
+        this.$refs.scroll.refresh()
+      },
       topSeach (show) {
         if (show === 'show') {
           this.seach.is = true
         } else if (show === 'enter') {
           
+          let val = this.top_header.right.val
+          this.seach.is = false
+          this.header_is = false
+          this.$refs.banner.disable()
+          // AJAX
+//        console.log(this.type)
+          
         } else { // hide
           this.seach.is = false
+          this.header_is = true
+          this.$refs.banner.enable()
         }
+      },
+      seachHis_btn (val) {
+        this.top_header.right.val = val
+        this.topSeach('enter')
       },
       getData (index, data, dom) {
         let obj = this.nav[index]
@@ -252,7 +278,7 @@
             obj.list = res
             obj.loading = true
             for (let i = 0; i < dom.length; i++) {
-              dom[i].style.height = res.length * 3 + 'rem'
+              dom[i].style.height = res.length * 3.07 + 'rem'
             }
             this.$refs.scroll.refresh()
           })
@@ -275,7 +301,7 @@
         this.type = index
         this.$refs.scroll.scrollTo(0, 0, 500)
         this.$refs.banner._go(index)
-        console.log(index)
+//      console.log(index)
         
         let obj = this.nav[index]
         let dom = document.getElementsByClassName('NEWS-banner')
@@ -344,6 +370,9 @@
           font-weight: bold;
         }
       }
+    }
+    .content-top {
+      margin-top: .87rem;
     }
     .row-content {
       .banner {
@@ -460,8 +489,16 @@
         }
       }
       .det {
+        text-align: center;
         .item {
-          
+          border-radius: .04rem;
+          height: .66rem;
+          line-height: .66rem;
+          display: inline-block;
+          background: #f5f6f7;
+          color: #313233;
+          padding: 0 .4rem;
+          margin: 0 .24rem .24rem 0;
         }
       }
     }
