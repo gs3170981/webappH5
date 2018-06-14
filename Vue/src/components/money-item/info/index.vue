@@ -21,15 +21,15 @@
           <p class="tips" v-if="header.now_ago">当前逾期：{{ header.now_ago }}次</p>
           <template v-if="!list[0]">
             <p class="tips" style="color: white;">暂无待付订单</p>
-            <p class="btn row-item disabled-btn">立即付款</p>
+            <p class="btn disabled-btn">立即付款</p>
           </template>
           <!--<router-link v-else-if="header.now_ago" tag="p" class="btn row-item" style="background: #fbc25e;" :to="'/pay'">立即付款</router-link>-->
-          <p v-else-if="header.now_ago" class="btn row-item" style="background: #fbc25e;" @click="jump('/#/pay', '', '在线付款')">立即付款</p>
+          <p v-else-if="header.now_ago" class="btn" style="background: #fbc25e;" @click="jump('/#/pay', '', '在线付款')">立即付款</p>
           <!--<router-link v-else-if="header.now_ago" tag="p" class="btn row-item" style="background: #fbc25e;" :to="'/moneyItem_info/pay'">立即付款</router-link>-->
           <!--<router-link v-else-if="header.money === '0.00' && list[0]" style="background: transparent;border: .01rem solid white;" tag="p" class="btn row-item" :to="{ path:'/pay',query: {type: 'early'} }">提前付款</router-link>-->
-          <p v-else-if="header.money === '0.00' && list[0]" class="btn row-item"  style="background: transparent;border: 1px solid white;" @click="jump('/#/pay', 'early', '提前付款')">提前付款</p>
+          <p v-else-if="header.money === '0.00' && list[0]" class="btn"  style="background: transparent;border: 1px solid white;" @click="jump('/#/pay', 'early', '提前付款')">提前付款</p>
           <!--<router-link v-else-if="header.money === '0.00' && list[0]" style="background: transparent;border: .01rem solid white;" tag="p" class="btn row-item" :to="{ path:'/moneyItem_info/pay',query: {type: 'early'} }">提前付款</router-link>-->
-          <p v-else class="btn row-item" @click="jump('/#/pay', '', '在线付款')">立即付款</p>
+          <p v-else class="btn" @click="jump('/#/pay', '', '在线付款')">立即付款</p>
           <!--<p v-else class="btn row-item" @click="jump('/#/moneyItem_info/pay', '', '在线付款')">立即付款</p>-->
           <!--<router-link v-else tag="p" class="btn row-item" :to="'/moneyItem_info/pay'">立即付款</router-link>-->
         </header>
@@ -54,8 +54,8 @@
           <span class="title">全部待付订单</span>
           <!--<router-link tag="span" v-if="list[0]" class="btn row-item" :to="{ path:'/moneyItem_info/pay',query: {type: 'early'} }">提前付款</router-link>-->
           <!--<span v-if="list[0]" class="btn row-item" @click="jump('/#/moneyItem_info/pay?type=early', 'early', '提前付款')">提前付款</span>-->
-          <span v-if="list[0]" class="btn row-item" @click="jump('/#/pay', 'early', '提前付款')">提前付款</span>
-          <span class="btn row-item" v-else style="opacity: .5;">提前付款</span>
+          <span v-if="list[0]" class="btn" @click="jump('/#/pay', 'early', '提前付款')">提前付款</span>
+          <span class="btn" v-else style="opacity: .5;">提前付款</span>
         </p>
         
         <ul v-if="list[0]" class="item">
@@ -246,8 +246,10 @@
               }
             ])
             // 改变导航栏的title
-            if (res.historyOverdueCount > 1) {
+            if (res.overdueCount > 1) {
               this.top_header.title = '累计待付'
+            } else if (res.currentAmount === '0.00' && !res.list[0]) {
+              this.top_header.title = '本月待付'
             } else if (res.currentAmount === '0.00' && res.list[0]) {
               this.top_header.title = '本月账单已结清'
             }

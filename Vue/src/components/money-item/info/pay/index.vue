@@ -22,7 +22,7 @@
         <ul class="payType">
           <li v-for="t in options" class="item" @click="radio_checked('MONEY_ITEM_INFO_PAY_radio_checked', 'checkValue')">
             <img class="icon" :src="t.icon" />
-            <span class="row-checkbox MONEY_ITEM_INFO_PAY_radio_checked"></span>
+            <span class="row-checkbox MONEY_ITEM_INFO_PAY_radio_checked" style="border: 1px solid #4e99fd;"></span>
           </li>
         </ul>
         <div style="position: relative;">
@@ -49,6 +49,7 @@
   import OrderType from 'base/order-type/order-type'
   import { radio_checked } from 'common/js/mixins.js'
   import { M_Proms, M_visibilitychange } from 'common/js/methods.js'
+  import { MessageBox } from 'mint-ui'
   
   export default {
 //  computed: {
@@ -138,23 +139,27 @@
 //    }
 //  },
     created () {
-      this.type = this.$route.query.type
-      if (this.type) {
-        this.top_header.title = '提前付款'
-        this.data = {
-          title: '应付金额',
-          money: this.$route.query.remainAmount,
-          item: [
-            {
-              title: '分期总额(元)',
-              val: this.$route.query.amount
-            }, {
-              title: '剩余未付(元)',
-              val: this.$route.query.remainAmount
-            }
-          ]
+//    if (this.$route.query.merchantOutOrderNo) { // 安卓上回到该页面会刷新，则判断url上是否有订单号这个参数
+//      this.orderType()
+//    } else {
+        this.type = this.$route.query.type
+        if (this.type) {
+          this.top_header.title = '提前付款'
+          this.data = {
+            title: '应付金额',
+            money: this.$route.query.remainAmount,
+            item: [
+              {
+                title: '分期总额(元)',
+                val: this.$route.query.amount
+              }, {
+                title: '剩余未付(元)',
+                val: this.$route.query.remainAmount
+              }
+            ]
+          }
         }
-      }
+//    }
     },
     mounted () {
       this.radio_checked('MONEY_ITEM_INFO_PAY_radio_checked', 'checkValue', 0) // 传下标默认选中
@@ -173,31 +178,45 @@
         }
 //      alert(this.iphone + '-' + money + '-' + flag)
         new M_Proms(fn => {
-          this.AJAX({
-            url: '/reimbursement/createOrder',
-            data: {
-//            leaderPhone: this.$store.state.user.phone,
-              leaderPhone: this.iphone,
-              money: money, // 应付
-//            money: 1, // 测试的
-              flag: flag
-            },
-            success: r => {
-              this.order.data = r
-              this.order.key = `?
-                merchantOutOrderNo=${r.merchantOutOrderNo}&
-                merid=${r.merid}&
-                noncestr=${r.noncestr}&
-                notifyUrl=${r.notifyUrl}&
-                orderMoney=${r.orderMoney}&
-                orderTime=${r.orderTime}&
-                sign=${r.sing}
-              `.replace(/\s+/g,"")
-              setTimeout(() => {
-                fn.then()
-              }, 0)
-            }
-          })
+          let orderCreate = () => {
+            this.AJAX({
+              url: '/reimbursement/createOrder',
+              data: {
+  //            leaderPhone: this.$store.state.user.phone,
+                leaderPhone: this.iphone,
+                money: money, // 应付
+  //            money: 1, // 测试的
+                flag: flag
+              },
+              success: r => {
+                this.order.data = r
+//              location.hash = location.hash + '&merchantOutOrderNo=' + r.merchantOutOrderNo
+                this.order.key = `?
+                  merchantOutOrderNo=${r.merchantOutOrderNo}&
+                  merid=${r.merid}&
+                  noncestr=${r.noncestr}&
+                  notifyUrl=${r.notifyUrl}&
+                  orderMoney=${r.orderMoney}&
+                  orderTime=${r.orderTime}&
+                  sign=${r.sing}
+                `.replace(/\s+/g,"")
+                setTimeout(() => {
+                  fn.then()
+                }, 0)
+              }
+            })
+          }
+          if (this.checkValue === 0) { // 如果是支付宝的话
+            jiexin.isAlipay('', val => {
+              if (val == 1) {
+                orderCreate()
+              } else if (val == 0) { // 如果没装支付宝
+                MessageBox.alert('您的手机未下载"支付宝"软件，请到应用市场上下载！', '温馨提示')
+              }
+            })
+            return
+          }
+          orderCreate()
         }).then((fn) => {
           this.AJAX({
             url: '/api/createOrder', // 选择支付的方式
@@ -209,6 +228,8 @@
           })
         }).then(() => {
           if (this.checkValue !== 0) { // 除去第一种当前页跳转方式
+//          debugger
+//          isInstallAlipay
 //          window.event.currentTarget.href = 'javascript:void(0)'
             this.AJAX({
               url: this.options[this.checkValue].url, // 选择支付的方式
@@ -240,6 +261,9 @@
         
       },
       orderType () {
+//      if (!this.$route.query.merchantOutOrderNo && is) {
+//        return
+//      }
         this.order_type = 'loading'
         this.top_header.title_style.color = 'white'
         this.top_header.title = '付款结果'
@@ -255,6 +279,7 @@
           this.AJAX({
             url: '/reimbursement/querypaystatus',
             data: {
+//            merchantOutOrderNo: this.$route.query.merchantOutOrderNo
               merchantOutOrderNo: this.order.data.merchantOutOrderNo
             },
             success: res => {

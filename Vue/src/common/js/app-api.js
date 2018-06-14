@@ -39,6 +39,18 @@
         }
       }
     },
+    isShowRight (opt) {
+      if (this.isIos()) {
+        isShowRightButton(opt)
+      } else if (this.isAndroid()) {
+        htmlToJava.handleEDunwebViewAction(JSON.stringify(opt))
+      } else {
+        alert('该手机型号检测失败！')
+      }
+    },
+//  rightEvent () {
+//    
+//  },
     openNewPage: function (url, params) {
       // 打开新页面
       var str = '?';
@@ -77,6 +89,30 @@
       else if (self.isAndroid()) {
         htmlToJava.setActivityCount(viewid);
       }
+    },
+    isAlipay (val, call) {
+      if (val) {
+        this.isAlipay_c(val)
+        return
+      }
+      this.isAlipay_c = call // 缓存
+      if (this.isIos()) {
+        try { // 目前在调试的情况下
+        	isInstallAlipay()
+        } catch(e){
+          call(1)
+        }
+      } else if (this.isAndroid()) {
+        try { // 目前在调试的情况下
+          call(htmlToJava.isInstallAlipay())
+        } catch(e){
+          call(1)
+        }
+      } else {
+        alert('该手机型号检测失败！')
+      }
+//    alert(val)
+//    document.getElementById("body").innerHTML = val
     },
     back: function (viewid) {
       //返回 可传viewid

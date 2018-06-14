@@ -15,7 +15,7 @@ const FAKE = false // true:假数据 false:真数据
 
 const CODE_ERR = (r, type) => { // 封装失败的回调
 //alert(JSON.stringify(r))
-  type ? MessageBox.alert('网络好像开了点小差？', '提示') : MessageBox.alert('服务器炸啦，正在抢修中！', '提示')
+  type ? MessageBox.alert('接口查询失败，请联系管理员！', '温馨提示') : MessageBox.alert('服务器炸啦，正在抢修中！', '温馨提示')
   console.error(r.url, r.info)
 }
 const FORMDATA = { // axios formData提交的配置项
