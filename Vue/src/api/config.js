@@ -15,7 +15,7 @@ const FAKE = false // true:假数据 false:真数据
 
 const CODE_ERR = (r, type) => { // 封装失败的回调
 //alert(JSON.stringify(r))
-  type ? MessageBox.alert('接口查询失败，请联系管理员！', '温馨提示') : MessageBox.alert('服务器炸啦，正在抢修中！', '温馨提示')
+  type ? MessageBox.alert('接口查询失败，请联系管理员！\n请求地址：' + r.url + '\n请求参数：' + JSON.stringify(r.data), '温馨提示') : MessageBox.alert('服务器炸啦，正在抢修中！', '温馨提示')
   console.error(r.url, r.info)
 }
 const FORMDATA = { // axios formData提交的配置项
@@ -49,9 +49,9 @@ const API = {
       if (res.code === CODE_OK) {
         fn(dataHandle(res.obj))
       } else {
-        CODE_ERR({url: url, info: res}, true)
+        CODE_ERR({url: url, info: res, data: data}, true)
       }
-    }).catch(res => CODE_ERR({url: url, info: res}))
+    }).catch(res => CODE_ERR({url: url, info: res, data: data}))
   },
   '/reimbursement/createOrder' (url, data, fn) {
     const dataHandle = (res) => {
@@ -67,9 +67,9 @@ const API = {
       if (res.code === CODE_OK) {
         fn(dataHandle(res.obj))
       } else {
-        CODE_ERR({url: url, info: res}, true)
+        CODE_ERR({url: url, info: res, data: data}, true)
       }
-    }).catch(res => CODE_ERR({url: url, info: res}))
+    }).catch(res => CODE_ERR({url: url, info: res, data: data}))
   },
   '/api/createOrder' (url, data, fn) { // 支付宝付款API
     let urlscheme = M_userAgent().ios ? 'alipay' : 'alipays'
@@ -106,7 +106,7 @@ const API = {
       if (res.code === CODE_OK) {
         fn(dataHandle(res.obj))
       } else {
-        CODE_ERR({url: url, info: res}, true)
+        CODE_ERR({url: url, info: res, data: data}, true)
       }
     })
 //  .catch(res => {
@@ -127,9 +127,9 @@ const API = {
       if (res.code === CODE_OK) {
         fn(dataHandle(res.obj))
       } else {
-        CODE_ERR({url: url, info: res}, true)
+        CODE_ERR({url: url, info: res, data: data}, true)
       }
-    }).catch(res => CODE_ERR({url: url, info: res}))
+    }).catch(res => CODE_ERR({url: url, info: res, data: data}))
   }
 }
 

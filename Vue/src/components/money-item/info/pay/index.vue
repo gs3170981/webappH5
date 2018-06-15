@@ -70,10 +70,11 @@
           {
             url: '/api/createOrder', // 支付宝
             icon: require('common/image/pay_logo_alipay.png')
-          }, {
-            url: '/api/createQuickOrder', // 银联
-            icon: require('common/image/pay_logo_union.png')
           }
+//        , {
+//          url: '/api/createQuickOrder', // 银联
+//          icon: require('common/image/pay_logo_union.png')
+//        }
         ],
         val: '',
         order_href: '', // btn绑定上的值
