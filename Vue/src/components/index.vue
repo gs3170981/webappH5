@@ -140,7 +140,7 @@
               }, {
                 id: 'b',
                 icon: require('common/image/pop_icon_write.png'),
-                title: '问题反馈',
+                title: '意见反馈',
                 href: '/problem'
               }, {
                 id: 'c',

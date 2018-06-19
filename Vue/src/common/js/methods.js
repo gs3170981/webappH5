@@ -17,21 +17,118 @@ const M_Touch = () => {
     }
   }, 20)
 }
-const M_NumberPlusReduce = (obj, now) => { // 数据自增自减，针对整数
-  let timer = setInterval(r => {
-    if (obj.e[obj.val] === now) {
-      clearInterval(timer)
-      return
+// 测试例子 e 为 父级对象，val为e对象下的key，res.amount为当前的val值
+// M_NumberPlusReduce({
+//   e: this.header,
+//   val: 'money' // this.header.money = 1000
+// }, res.amount) // 1500
+const M_NumberPlusReduce = (obj, now) => { // 数据自增自减，针对2位小数
+  if (Object.prototype.toString.call(obj)=='[object Array]') { // 支持for json
+    for (let i = 0; i < obj.length; i++) {
+      M_NumberPlusReduce(obj[i], obj[i].now)
     }
-    if (obj.e[obj.val] > now) {
-      obj.e[obj.val]--
+    return
+  }
+  // now 是ajax值
+//if (!parseInt(now)) return
+  let val = parseInt(obj.e[obj.val])
+  if (!val) val = 0
+  let _now = parseFloat(now).toFixed(2)
+  let now_smail = _now.substring(_now.lastIndexOf('.'), _now.length)
+  now = parseInt(now)
+  const small_comp = (v, n) => {
+    let timer = setInterval(r => {
+      if (v == n) {
+        clearInterval(timer)
+        obj.e[obj.val] = parseFloat(v) + now_smail
+        return
+      }
+      v > n ? v-- : v++
+      obj.e[obj.val] = parseFloat(v) + now_smail
+    }, 0)
+  }
+  let f_number = 1
+  let sum = now
+  let is = false
+  let diff_val = 50 // 差值在多少以内，进行随机时间执行
+  let diff_max_val = 100 // 差值太大的时候，执行的固定次数
+  let i = 0
+  if (val > now) { // 减
+    if ((val - sum) > diff_val) {
+      f_number = parseInt(((val - sum) - diff_val) / diff_max_val)
+      if (f_number) {
+        sum += diff_val
+        is = true
+      } else {
+        f_number = 1
+      }
+    }
+    if (is) {
+      let timer = setInterval(r => {
+        if (i === diff_max_val) {
+          clearInterval(timer)
+          small_comp(val, now)
+          return
+        }
+        val -= f_number
+        i++
+        obj.e[obj.val] = parseFloat(val) + now_smail
+      }, Math.random() * 10)
     } else {
-      obj.e[obj.val]++
+      small_comp(val, sum)
     }
-  }, 0)
+  } else { // 加
+    if ((sum - val) > diff_val) {
+      f_number = parseInt(((sum - val) - diff_val) / diff_max_val)
+      if (f_number) {
+        sum -= diff_val
+        is = true
+      } else {
+        f_number = 1
+      }
+    }
+    if (is) {
+      let timer = setInterval(r => {
+        if (i === diff_max_val) {
+          clearInterval(timer)
+          small_comp(val, now)
+          return
+        }
+        val += f_number
+        i++
+        obj.e[obj.val] = parseFloat(val) + now_smail
+      },  Math.random() * 10)
+    } else {
+      small_comp(val, sum)
+    }
+  }
 }
 const $ = (dom) => {
   return D.getElementById(dom)
+}
+// 相当于JQ find class
+const M_findClass = (el, klass) => {
+  let child = el.children
+  for (let i = 0; i < child.length; i++) {
+    let klass_arr = child[i].classList
+    let is = false
+    for (let j = 0; j < klass_arr.length; j++) {
+      if (klass_arr[j] === klass) {
+        return child[i]
+      }
+    }
+    if (!is) {
+      if (child[i].children[0]) {
+        return M_findClass(child[i], klass)
+      }
+    }
+  }
+}
+// 例子 M_decimal(res, ['amount', 'remainAmount', 'currentAmount', 'nextMonthAmount'])
+const M_decimal = (obj, arr) => { // 传入多个对象，返回2位小数
+  for (let i = 0; i < arr.length; i++) {
+    obj[arr[i]] = (obj[arr[i]] ? obj[arr[i]] : 0).toFixed(2)
+  }
 }
 
 const M_touchMove = (klass, call) => {
@@ -105,9 +202,68 @@ const M_touchMove = (klass, call) => {
   obj.addEventListener("touchstart", touchstart, false)
 }
 
+class M_Proms { // 链式调用
+  constructor (fn) {
+    this.arr = []
+    this.count = -1
+    fn(this)
+  }
+  then (r) {
+    if (typeof (r) === 'function') {
+      this.arr.push(r)
+      return this
+    } else {
+      this.arr[++this.count] && this.arr[this.count](this, r)
+    }
+  }
+}
+
+const M_userAgent = () => {
+  var output = {}
+  if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+    output['ios'] = true
+  } else if (navigator.userAgent.match(/android/i)) {
+    output['android'] = true
+  }
+  return output
+}
+
+const M_visibilitychange = (fn) => { // 移动端，从后台进入页面时，触发回调
+  const handle = () => {
+    if (D.visibilityState && D.visibilityState === 'visible' || 
+    D.webkitVisibilityState && D.webkitVisibilityState === 'visible' ||
+    D.mozVisibilityState && D.mozVisibilityState === 'visible' ||
+    D.msVisibilityState && D.msVisibilityState === 'visible') {
+      fn && fn()
+      D.removeEventListener('visibilitychange', handle)
+      D.removeEventListener('webkitvisibilitychange', handle)
+      D.removeEventListener('mozvisibilitychange', handle)
+      D.removeEventListener('msvisibilitychange', handle)
+    }
+  }
+  D.addEventListener('visibilitychange', handle)
+  D.addEventListener('webkitvisibilitychange', handle)
+  D.addEventListener('mozvisibilitychange', handle)
+  D.addEventListener('msvisibilitychange', handle)
+}
+
+//const M_setInterval = (fn, timer) => {
+//let _timer = new Date().getTime()
+//let is = false
+//while (!is) {
+//  
+//}
+//}
+
 export {
   M_Touch,
   M_NumberPlusReduce,
   $,
-  M_touchMove
+  M_touchMove,
+  M_findClass,
+  M_decimal,
+  M_Proms,
+  M_userAgent,
+  M_visibilitychange
+//M_setInterval
 }

@@ -26,6 +26,7 @@
           <div class="seach" :class="{ seach_active: seach.show }">
             <input v-model="opt.right.val" id="input" placeholder="搜索" class="input" type="search" @keydown="seach_keydown" />
             <img class="icon" :src="seach.icon" />
+            <span v-show="opt.right.val.length" class="input_clear" @click="seach_clear">x</span>
           </div>
           <span v-show="seach.show" class="close-btn" @click="seach_close">取消</span>
         </form>
@@ -96,6 +97,7 @@
       seach_keydown (e) {
         if (event.keyCode == "13") {
           this.$emit('topHeader_seach', 'enter')
+          $("input").blur()
         }
       },
       mask_show () {
@@ -105,6 +107,10 @@
         this.seach.show = false
         this.opt.right.val = ''
         this.$emit('topHeader_seach', 'hide')
+      },
+      seach_clear () {
+        this.opt.right.val = ''
+        $("input").focus()
       }
     }
   }
@@ -183,6 +189,18 @@
             left: .2rem;
             width: .32rem;
           }
+          .input_clear {
+            position: absolute;
+            right: .2rem;
+            height: .32rem;
+            width: .32rem;
+            border-radius: 50%;
+            background: #d4d5d6;
+            color: white;
+            font-size: .25rem;
+            line-height: .32rem;
+            text-align: center;
+          }
           .input {
             height: 100%;
             display: block;
@@ -210,7 +228,7 @@
         }
       }
       .menu {
-        z-index: 2;
+        z-index: 3;
         position: absolute;
         right: .1rem;
         transform-origin: 90% top 0;

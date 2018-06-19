@@ -31,7 +31,7 @@
             </template>
             <!--系统通知-->
             <template v-else-if="t.url === 'API_newsSys'">
-              <li class="item" v-for="(tt, ii) in t.list">
+              <li class="item" v-for="(tt, ii) in t.list" @click="sysMask">
                 <p class="title">
                   <img style="width: .42rem;height: .34rem;margin-right: .2rem;" :src="t['0']"/>
                   <span class="name" v-text="tt.title"></span>
@@ -78,6 +78,19 @@
         <li class="item" v-for="t in seach.item" v-text="t.title" @click="seachHis_btn(t.title)"></li>
       </ul>
     </section>
+    <!--遮罩-->
+    <mask-page :show="nav[1].mask.is">
+      <div class="mask-content">
+        <dl class="content" :style="nav[1].mask.style">
+          <dt class="title">系统维护公告</dt>
+          <dd class="name" v-text="nav[1].mask.title"></dd>
+          <dd class="det" v-text="nav[1].mask.det"></dd>
+          <dd class="tips">臻e盾平台运营中心</dd>
+          <dd class="timer" v-text="nav[1].mask.timer"></dd>
+          <dd class="close" @click="nav[1].mask.is = false">x</dd>
+        </dl>
+      </div>
+    </mask-page>
     <!--子滑动页面-->
     <router-view></router-view>
   </slide-page>
@@ -86,6 +99,7 @@
 <script>
   import SlidePage from 'base/slide-page/slide-page'
   import TopHeader from 'base/top-header/top-header'
+  import MaskPage from 'base/mask/mask-page'
   import Banner from 'base/banner/banner'
   import Scroll from 'base/scroll/scroll'
   import { API_newsBusiness, API_newsAct, API_newsSys } from 'api/config.js'
@@ -194,7 +208,17 @@
             key: 1,
             number: 0,
             loading: false,
-            is: false
+            is: false,
+            mask: { // 遮罩的显示
+              is: false,
+              title: '系统维护公告',
+              det: '臻e盾将于2018-04-26凌晨2:00-3:00进行系统维度，维护期间部分功能可能无法使用，给您带来不便敬请谅解！',
+              timer: '2018-04-26',
+              style: {
+                background: "url(" + require('common/image/msg-pop-bg.png') + ")top center",
+                backgroundSize: '100% 100%'
+              }
+            }
           },
           {
             icon: require('common/image/msg_btn_pc.png'),
@@ -217,6 +241,7 @@
     components: {
       TopHeader,
       Banner,
+      MaskPage,
       Scroll,
       SlidePage
     },
@@ -238,6 +263,9 @@
       }, 20)
     },
     methods: {
+      sysMask () { // 系统通知
+        this.nav[1].mask.is = true
+      },
       scrollUpdata () {
         let data = JSON.parse(JSON.stringify(this.nav[this.type].list[0]))
 //      console.log(this.nav[this.type].list, data)
@@ -465,6 +493,57 @@
         }
       }
       
+    }
+    .mask-content {
+      display: flex;
+      align-items: center;
+      height: 90%;
+      justify-content: center;
+      .content {
+        width: 5.8rem;
+        color: #979899;
+        height: 6.82rem;
+        .title {
+          font-size: @font-size-header_title;
+          margin: 2.7rem auto .54rem;
+          text-align: center;
+          color: black;
+          font-weight: bold;
+        }
+        .name {
+          margin-bottom: .25rem;
+          font-size: @font-size-item_det1;
+          margin-left: .5rem
+        }
+        .det {
+          box-sizing: border-box;
+          padding: 0 .5rem;
+          line-height: .44rem;
+          font-size: @font-size-item_det1;
+        }
+        .tips {
+          text-align: right;
+          font-size: @font-size-smail;
+          padding: .4rem .5rem .15rem 0;
+        }
+        .timer {
+          text-align: right;
+          font-size: @font-size-smail;
+          padding: 0 .5rem 0 0;
+        }
+        .close {
+          height: .7rem;
+          width: .7rem;
+          border-radius: 50%;
+          border: .02rem solid white;
+          font-weight: bold;
+          text-align: center;
+          line-height: .65rem;
+          margin: 1rem auto 0;
+          font-size: @font-size-header_title;
+          color: white;
+        }
+      }
     }
     .seach_his {
       height: 100%;

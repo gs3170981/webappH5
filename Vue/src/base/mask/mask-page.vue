@@ -32,7 +32,7 @@
     background: rgba(0, 0, 0, 0.3);
     opacity: 0;
     transition: opacity .3s ease;
-    z-index: 0;
+    z-index: 2;
     top: 0;
   }
   .show {
