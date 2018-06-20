@@ -77,11 +77,10 @@ const radio_checked = {
       _this.style.transform = 'scale3d(0,0,1)'
       setTimeout(() => {
         if (opt && opt.img && opt.img === 'radio') {
-          _this.style.background = "url(" + require('common/image/pay_icon_choose_s.png') + ")top center"
+          _this.style.background = "url(" + require('common/image/pay_icon_choose_s1.png') + ")top center"
         } else {
           _this.style.background = "url(" + require('common/image/pay_icon_choose_s.png') + ")top center"
         }
-
         _this.style.transform = 'scale3d(1,1,1)'
       }, 50)
     }

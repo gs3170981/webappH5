@@ -4,7 +4,7 @@
       <slot>
       </slot>
     </div>
-    <div class="dots">
+    <div v-if="dot" class="dots">
       <span class="dot" :style="dotsIndex" :class="{active: currentPageIndex === index }" v-for="(item, index) in dots"></span>
     </div>
     <!--<div v-if="manual" class="manual-icon">-->
@@ -25,6 +25,10 @@
     name: 'slider',
     props: {
       loop: {
+        type: Boolean,
+        default: true
+      },
+      dot: {
         type: Boolean,
         default: true
       },

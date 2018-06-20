@@ -95,6 +95,11 @@ const Problem = (resolve) => {
     resolve(module)
   })
 }
+const Problem_Pic = (resolve) => {
+  import('components/problem/pic/index').then((module) => {
+    resolve(module)
+  })
+}
 const About = (resolve) => {
   import('components/about/index').then((module) => {
     resolve(module)
@@ -169,7 +174,13 @@ export default new Router({
           ]
         }, {
           path: 'problem',
-          component: Problem
+          component: Problem,
+          children: [
+            {
+              path: 'pic',
+              component: Problem_Pic
+            }
+          ]
         }, {
           path: 'about',
           component: About

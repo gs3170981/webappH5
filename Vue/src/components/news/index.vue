@@ -286,6 +286,7 @@
           this.seach.is = false
           this.header_is = false
           this.$refs.banner.disable()
+          
           // AJAX
 //        console.log(this.type)
           
