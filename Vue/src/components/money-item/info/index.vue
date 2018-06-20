@@ -170,6 +170,11 @@
 //        alert()
 //      }
       })
+      
+//    setInterval(() => {
+////      this.getData()
+//      console.log('长连接')
+//    }, 3000)
 //    document.addEventListener("visibilitychange", function(){
 //      document.hidden ? "" : alert(1)
 //    })
@@ -484,6 +489,7 @@
       width: 100%;
       background: white;
       z-index: -1;
+      color: white;
       padding-top: 2.5rem;
     }
   }

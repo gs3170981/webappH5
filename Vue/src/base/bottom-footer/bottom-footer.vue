@@ -4,8 +4,8 @@
       <!--<span class="line">——</span>　中标金服　<span class="line">——</span>-->
       <span class="line"></span>
     </h1>
-    <!--<p class="tips">杭州中标金融服务外包有限公司仅提供借贷申请通道</p>-->
-    <p class="tips"></p>
+    <p class="tips">杭州中标金融服务外包有限公司仅提供借贷申请通道</p>
+    <!--<p class="tips"></p>-->
   </footer>
 </template>
 

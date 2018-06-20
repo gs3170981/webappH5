@@ -39,6 +39,8 @@
     </scroll>
     <!--子滑动页面-->
     <router-view></router-view>
+    <!--底部-->
+    <bottom-footer class="footer"></bottom-footer>
   </slide-page>
 </template>
 
@@ -47,6 +49,7 @@
 //import TopHeader from 'base/top-header/top-header'
   import Scroll from 'base/scroll/scroll'
   import OrderType from 'base/order-type/order-type'
+  import BottomFooter from 'base/bottom-footer/bottom-footer'
   import { radio_checked } from 'common/js/mixins.js'
   import { M_Proms, M_visibilitychange } from 'common/js/methods.js'
   import { MessageBox } from 'mint-ui'
@@ -127,6 +130,7 @@
 //    TopHeader,
       Scroll,
       OrderType,
+      BottomFooter,
       SlidePage
     },
 //  watch: {
@@ -289,6 +293,7 @@
 //              alert('true' + res)
                 this.order_type = 'success'
                 clearInterval(this.inspect_timer)
+                jiexin.fireEvent('pay_updata', 'immediatePayment', true)
                 return
               }
             }
@@ -421,6 +426,11 @@
       height: 100%;
       padding-top: .87rem;
       box-sizing: border-box;
+    }
+    .footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
     }
   }
 </style>
