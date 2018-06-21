@@ -1,5 +1,5 @@
 <template>
-  <slide-page class="PROBLEM" :klass="'PROBLEM'" :href="top_header.left.href">
+  <slide-page class="PROBLEM" id="PROBLEM" :klass="'PROBLEM'" :href="top_header.left.href">
     <!--头部-->
     <top-header class="header" :opt="top_header"></top-header>
     <!--内容-->
@@ -19,8 +19,8 @@
           <p class="title">选择产品<span style="font-size: .26rem;color: #b1b2b3;"> （200字以内）</span></p>
           <textarea v-model="det" class="input" placeholder="请详细描述您的问题或建议，我们将及时跟进解决。       （建议添加相关问题截图）"></textarea>
           <ul class="pic">
-            <li @click="picShow" class="item" v-for="(t, i) in pic" v-show="pic.length" :style="{ marginRight: (i + 1) % 4 === 0 ? 0 : '.25rem' }">
-              <img class="icon" :src="t.icon"/>
+            <li @click="picShow(i)" class="item" v-for="(t, i) in pic" v-show="pic.length" :style="{ marginRight: (i + 1) % 4 === 0 ? 0 : '.25rem' }">
+              <img class="icon" :id='"pic_" + i' :src="t.icon"/>
             </li>
             <li class="item">
               <input class="file" type="file" name="" id="" value="" @change="picChange" />
@@ -47,6 +47,7 @@
   import SlidePage from 'base/slide-page/slide-page'
   import Scroll from 'base/scroll/scroll'
   import { radio_checked } from 'common/js/mixins.js'
+  import { $ } from 'common/js/methods.js'
   export default {
     mixins: [radio_checked],
     data () {
@@ -101,16 +102,66 @@
         }
         let reader = new FileReader()
         reader.onload = (res) => {
-          this.pic.push({
-            icon: res.target.result
-          })
-//        $('#myIDphoto')[0].src = e.target.result
+          let obj = {
+            icon: res.target.result,
+          }
+          this.pic.push(obj)
+          let index = this.pic.length - 1
+//        this.picAddStyle(index)
+          this.picAddStyle(index, obj)
         }
         reader.readAsDataURL(e.files[0])
       },
-      picShow () {
+      // TODO 对图片进行预估大小方便阅览时展示
+      // 手机端还是会出现，图片在顶部展示的问题
+      picAddStyle (index, obj) {
+        // 查询当前图片，须获取到图片信息为止
+        let timer = setInterval(() => {
+          if ($('pic_' + index)) {
+            clearInterval(timer)
+            func()
+          }
+        }, 200)
+        const func = () => {
+          let w = $('pic_' + index).naturalWidth
+          let h = $('pic_' + index).naturalHeight
+          let m_t = ''
+          const PROBLEM_style = window.getComputedStyle($('PROBLEM'), null)
+          let b_h = parseInt(PROBLEM_style.height)
+          let b_w = parseInt(PROBLEM_style.width)
+          let b_h_center = b_h / 2
+          if (w >= h) {
+            // 计算图片等比缩放
+            h = h * (b_w / w)
+            w = '100%'
+            m_t = b_h_center - h / 2
+          } else {
+            w = 'auto'
+            h = b_h / 1.3
+            m_t = b_h_center - h / 2
+          }
+          obj.style = {
+            width: w,
+            height: h + 'px',
+            padding: m_t + 'px 0 '
+//          marginTop: m_t + 'px'
+          }
+        }
+        
+//      this.pic[index].style = {
+//        width: w,
+//        height: h + 'px',
+//        marginTop: m_t + 'px'
+//      }
+      },
+      picShow (index) {
         window._c_picList = this.pic
-        this.$router.push({path: '/problem/pic'})
+        this.$router.push({
+          path: '/problem/pic',
+          query: {
+            index: index
+          }
+        })
       }
     }
   }
@@ -209,6 +260,7 @@
               width: 100%;
             }
             .icon {
+              object-fit: cover;
               width: 100%;
               height: 100%;
             }

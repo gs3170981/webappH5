@@ -65,6 +65,10 @@
         type: Boolean,
         default: false
       },
+      preventDefault: {
+        type: Boolean,
+        default: false
+      },
       bounce: {
         type: Boolean,
         default: true
@@ -104,6 +108,7 @@
 //        scrollX: this.scrollX,
           bindToWrapper: true, // TODO 如果是自己的滚动事件，并绑定在容器上，则该属性须为true！
           scrollY: this.scrollY,
+          preventDefault: this.preventDefault // 滚动中是否触发事件
 //        stopPropagation: true
         })
         if (this.listenScroll) {

@@ -48,11 +48,15 @@
         type: Boolean,
         default: true
       },
-      bounce: { // 自动滚动
+      bounce: {
         type: Boolean,
         default: true
       },
-      momentumLimitDistance: { // 自动滚动
+      click: { // 是否派发点击事件
+        type: Boolean,
+        default: false
+      },
+      momentumLimitDistance: {
         type: Number,
         default: 15
       },
@@ -123,6 +127,7 @@
 //        freeScroll: true,
           momentum: false,
           snap: true,
+          click: this.click,
           snapLoop: this.loop,
           snapThreshold: 0.3,
           bindToWrapper: true, // 停止移动,自行拖拽
@@ -132,7 +137,6 @@
         })
 
         this.slider.on('scrollEnd', () => {
-
           let pageIndex = this.slider.getCurrentPage().pageX
           if (this.loop) {
             pageIndex -= 1
@@ -143,7 +147,7 @@
             this._play()
           }
         })
-
+        
         this.slider.on('beforeScrollStart', () => {
           if (this.autoPlay) {
             clearTimeout(this.timer)
@@ -153,7 +157,7 @@
       _initDots() {
         this.dots = new Array(this.children.length)
       },
-      _play(page) {
+      _play() {
         let pageIndex = this.currentPageIndex + 1
         if (this.loop) {
           pageIndex += 1
