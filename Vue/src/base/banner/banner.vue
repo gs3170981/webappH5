@@ -52,6 +52,10 @@
         type: Boolean,
         default: true
       },
+      scrollY: {
+        type: Boolean,
+        default: false
+      },
       click: { // 是否派发点击事件
         type: Boolean,
         default: false
@@ -123,7 +127,7 @@
       _initSlider() {
         this.slider = new BScroll(this.$refs.slider, {
           scrollX: true,
-          scrollY: false,
+          scrollY: this.scrollY,
 //        freeScroll: true,
           momentum: false,
           snap: true,

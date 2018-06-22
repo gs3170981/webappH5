@@ -1,7 +1,7 @@
 <template>
-  <slide-page class="PROBLEM_PIC" :klass="'PROBLEM_PIC'" :href="top_header.left.href">
+  <slide-page class="PROBLEM_PIC" :klass="'PROBLEM_PIC'" :slidePage="false" :picDownTouch="true" :picDownTouchElId="'PROBLEM_PIC-banner'" :href="top_header.left.href">
     <!--头部-->
-    <top-header :class="{ hide: header_show }" class="header" :opt="top_header"></top-header>
+    <top-header :class="{ hide: header_show }" class="header" :opt="top_header" @right="navRemove"></top-header>
     <!--内容-->
     <banner id="PROBLEM_PIC-banner" class="row-slider-wrapper banner" :click='true' ref="banner" @touchEnd="touchEnd" :autoPlay="false" :loop="false" :dot="false"><!--:dotsIndex="bannerIndexStyle"-->
       <div class="list" v-for="t in banner" @click="header_show = !header_show">
@@ -34,6 +34,7 @@
           },
           title: '',
           right: {
+            icon: require('common/image/nav_btn_delete.png'),
           }
         },
         banner: window._c_picList,
@@ -71,7 +72,7 @@
       }, 20)
     },
     methods: {
-      asd () {
+      navRemove () {
         alert()
       },
       touchEnd (index) {
@@ -97,6 +98,7 @@
     }
     .header {
       transition: all .35s ease;
+      background: black;
       /*background: @background-header;*/
     }
     .banner {
@@ -106,6 +108,7 @@
         /*margin-top: 2.7rem;*/
         .item {
           margin: auto;
+          transition: all .2s ease;
         }
       }
     }

@@ -113,7 +113,7 @@
         reader.readAsDataURL(e.files[0])
       },
       // TODO 对图片进行预估大小方便阅览时展示
-      // 手机端还是会出现，图片在顶部展示的问题
+      // 手机端有时还是会出现，图片在顶部展示的问题
       picAddStyle (index, obj) {
         // 查询当前图片，须获取到图片信息为止
         let timer = setInterval(() => {
@@ -130,16 +130,16 @@
           let b_h = parseInt(PROBLEM_style.height)
           let b_w = parseInt(PROBLEM_style.width)
           let b_h_center = b_h / 2
-          if (w >= h) {
+//        if (w >= h) {
             // 计算图片等比缩放
             h = h * (b_w / w)
             w = '100%'
             m_t = b_h_center - h / 2
-          } else {
-            w = 'auto'
-            h = b_h / 1.3
-            m_t = b_h_center - h / 2
-          }
+//        } else {
+//          w = 'auto'
+//          h = b_h / 1.3
+//          m_t = b_h_center - h / 2
+//        }
           obj.style = {
             width: w,
             height: h + 'px',

@@ -202,7 +202,160 @@ const M_touchMove = (klass, call) => {
   obj.addEventListener("touchstart", touchstart, false)
 }
 
-class M_Proms { // 链式调用
+const M_touchMove_pic = (klass, el, call) => {
+  const obj = D.getElementsByClassName(klass)[0] // 一些获取节点的
+  const obj_style = window.getComputedStyle(obj, null)
+  const $el = $(el)
+  const $el_style = window.getComputedStyle($el.children[0], null)
+  if (!obj) {
+    return  
+  }
+  let timer = null // 截流的开关
+  let t_start // 截流的
+//let is = false
+  let down_is = 'first' // 第一次touchstart的标识
+  let touchStart = {} // 并赋值给他
+  
+  let touchEnd_out // 下拉out
+  const throttle = function (fn, delay, mustDelay) { // 截流核心函数
+    let context = this,
+    args = arguments,
+    t_cur = +new Date()
+    clearTimeout(timer)
+    if (!t_start) {
+      t_start = t_cur
+    }
+    if (t_cur - t_start >= mustDelay) {
+      fn.apply(context, args)
+      t_start = t_cur
+    }
+    else {
+      timer = setTimeout(() => {
+        fn.apply(this, args)
+      }, delay)
+    }
+  }
+  let touchmove = (e) => {
+    e = window.e || e
+    e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true
+    let _obj = e.target // 获取当前dom元素
+    // 一个手指
+    if (e.targetTouches.length == 1) {
+      throttle(() => {
+        var touch = e.targetTouches[0]
+        
+//        console.log(touchStart.pageY, touch.pageY)
+        if (down_is === 'first') {
+//        let child = obj.children[0]
+          // TODO 这个很重要，有耦合性，效果：如果better-scroll在移动的话，这个就不触发
+          let trs = $el_style.transform.split(',')
+          trs = parseInt(trs[trs.length - 2])
+          
+          // 第一个判断是触摸的模糊大小
+          if (Math.abs(touch.pageX - touchStart.pageX) < 5 && touch.pageY > touchStart.pageY && trs % parseInt(obj_style.width) === 0) {
+            down_is = true // 触发下拉touchmove的标识
+          }
+        } else if (down_is) {
+
+          let diff = touch.pageY - touchStart.pageY // 大于0，则为下拉
+          let _diff = touch.pageX - touchStart.pageX // 左右移动,-为左，+为右
+          let val = touchEnd_out = diff / parseInt(obj_style.height) // 计算下拉的百分比
+          let _val = _diff / parseInt(obj_style.width) // 计算左右的百分比
+          let opc = 1 - val // 计算放大缩小以及透明度
+//        _obj.style['transform-origin'] = _val * 100 +'% '+ val * 100 / 2 +'% 0'
+          _obj.style.transform = 'translate('+ _val * 100 +'%, '+ val * 100 / 2 +'%) translateZ(0px) scale3d('+ (opc >= 1 ? 1 : 1 - val / 2) +', '+ (opc >= 1 ? 1 : 1 - val / 2) +', 1)'
+//        _obj.style.transform = 'translate('+ _val * 100 +'%, '+ val * 100 / 2 +'%) translateZ(0px) scale3d('+ (opc >= 1 ? 1 : 1 - val / 2) +', '+ (opc >= 1 ? 1 : 1 - val / 2) +', 1)'
+          obj.style.opacity = 1 - val * 2
+//        console.log(opc)
+        }
+        
+        
+//      if (touch.pageX === touchStart.pageX) {
+//        down_is = true
+//        console.log(touch.pageX, touch.pageY)
+//      } else {
+////        down_is = false
+//      }
+
+//      if (touch.pageX >= 0) {
+////        console.log(123) // 节流效果查看
+//        // 该节点需要有c3平滑属性transition
+//        obj.style.transform = "translate3d("+ touch.pageX +"px, 0, 0)"
+//      }
+      }, 35, 80) // TODO 如果有性能问题，在这里微调
+    } else {
+      
+    }
+  }
+  let touchstart = (e) => {
+    e = window.e || e
+    e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true
+    let touch = e.targetTouches[0]
+    let _obj = e.target // 获取当前dom元素
+//  console.log(touch)
+//  if (touch.pageX <= 20) { // TODO 到安卓后改为20,测试可调为100
+//    is = true
+      touchStart = {
+        pageX: touch.pageX,
+        pageY: touch.pageY
+      }
+//    down_is = true
+      down_is = 'first'
+//    console.log(e.target)
+      obj.addEventListener('touchmove', touchmove, false)
+//  }
+  }
+//for (let i = 0; i < $el.length; i++) {
+//  let _obj = $el[i]
+  obj.addEventListener("touchend", (e) => {
+    e = window.e || e
+    e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true
+    let _obj = e.target // 获取当前dom元素
+//  if (!is) {
+//    return
+//  }
+//  let touch = e.changedTouches[0]
+//  let dom = window.getComputedStyle(obj, null)
+    if (touchEnd_out * 100 > 40) { // 超出下限模拟值，则返回
+//    obj.style.opacity = 0
+//    setTimeout(() => {
+        call && call({
+          slide: false // 返回的时候取消滚动效果
+        })
+//    }, 200)
+    } else { // 还有双指的操作，等会else if
+      // 这里先当做普通的反弹
+      // 有这个问题
+      setTimeout(() => {
+        _obj.style.transform = 'translate(0, 0) translateZ(0px) scale3d(1, 1, 1)'
+        obj.style.opacity = 1
+      }, 100)
+      
+    }
+    
+//  down_is = 'first'
+//  if (touch.pageX < (parseInt(dom.width) / 2)) {
+//    setTimeout(() => {
+//      obj.style.transform = "translate3d(0, 0, 0)"
+//    }, 100)
+//  } else {
+//    call && call()
+//  }
+//  is = false
+    
+    obj.removeEventListener("touchmove", touchmove)
+  }, false)
+//}
+  
+//$el
+  obj.addEventListener("touchstart", touchstart, false)
+//for (let i = 0; i < $el.length; i++) {
+//  let _obj = $el[i]
+//  _obj.addEventListener("touchstart", touchstart, false)
+//}
+}
+
+class M_Proms { // 异步链式调用
   constructor (fn) {
     this.arr = []
     this.count = -1
@@ -264,6 +417,7 @@ export {
   M_decimal,
   M_Proms,
   M_userAgent,
-  M_visibilitychange
+  M_visibilitychange,
+  M_touchMove_pic
 //M_setInterval
 }

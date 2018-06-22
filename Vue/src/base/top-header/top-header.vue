@@ -91,8 +91,9 @@
             $("input").focus()
             this.$emit('topHeader_seach', 'show')
           }
+        } else {
+          this.$emit('right')
         }
-//      this.$emit('right')
       },
       seach_keydown (e) {
         if (event.keyCode == "13") {
