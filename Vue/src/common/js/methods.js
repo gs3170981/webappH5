@@ -240,7 +240,7 @@ const M_touchMove_pic = (klass, el, call) => {
     e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true
     let _obj = e.target // 获取当前dom元素
     // 一个手指
-    if (e.targetTouches.length == 1) {
+    if (!touchStart.two) {
       throttle(() => {
         var touch = e.targetTouches[0]
         
@@ -252,7 +252,7 @@ const M_touchMove_pic = (klass, el, call) => {
           trs = parseInt(trs[trs.length - 2])
           
           // 第一个判断是触摸的模糊大小
-          if (Math.abs(touch.pageX - touchStart.pageX) < 5 && touch.pageY > touchStart.pageY && trs % parseInt(obj_style.width) === 0) {
+          if (Math.abs(touch.pageX - touchStart.pageX) < 3 && touch.pageY > touchStart.pageY && trs % parseInt(obj_style.width) === 0) {
             down_is = true // 触发下拉touchmove的标识
           }
         } else if (down_is) {
@@ -262,67 +262,52 @@ const M_touchMove_pic = (klass, el, call) => {
           let val = touchEnd_out = diff / parseInt(obj_style.height) // 计算下拉的百分比
           let _val = _diff / parseInt(obj_style.width) // 计算左右的百分比
           let opc = 1 - val // 计算放大缩小以及透明度
+          // TODO 微信好像是，手指点击的那个点就是中心点，不过没必要那么仿真了。
 //        _obj.style['transform-origin'] = _val * 100 +'% '+ val * 100 / 2 +'% 0'
           _obj.style.transform = 'translate('+ _val * 100 +'%, '+ val * 100 / 2 +'%) translateZ(0px) scale3d('+ (opc >= 1 ? 1 : 1 - val / 2) +', '+ (opc >= 1 ? 1 : 1 - val / 2) +', 1)'
 //        _obj.style.transform = 'translate('+ _val * 100 +'%, '+ val * 100 / 2 +'%) translateZ(0px) scale3d('+ (opc >= 1 ? 1 : 1 - val / 2) +', '+ (opc >= 1 ? 1 : 1 - val / 2) +', 1)'
           obj.style.opacity = 1 - val * 2
 //        console.log(opc)
         }
-        
-        
-//      if (touch.pageX === touchStart.pageX) {
-//        down_is = true
-//        console.log(touch.pageX, touch.pageY)
-//      } else {
-////        down_is = false
-//      }
-
-//      if (touch.pageX >= 0) {
-////        console.log(123) // 节流效果查看
-//        // 该节点需要有c3平滑属性transition
-//        obj.style.transform = "translate3d("+ touch.pageX +"px, 0, 0)"
-//      }
       }, 35, 80) // TODO 如果有性能问题，在这里微调
     } else {
-      
+      // 两颗手指的图片放大缩小操作 do something......
     }
   }
   let touchstart = (e) => {
     e = window.e || e
     e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true
     let touch = e.targetTouches[0]
-    let _obj = e.target // 获取当前dom元素
-//  console.log(touch)
-//  if (touch.pageX <= 20) { // TODO 到安卓后改为20,测试可调为100
-//    is = true
+    if (e.targetTouches.length == 1) { // 一颗手指
       touchStart = {
         pageX: touch.pageX,
         pageY: touch.pageY
       }
-//    down_is = true
-      down_is = 'first'
-//    console.log(e.target)
-      obj.addEventListener('touchmove', touchmove, false)
-//  }
+    } else { // 多颗手指的时候
+      let touch1 = e.targetTouches[1]
+      touchStart = {
+        one: {
+          pageX: touch.pageX,
+          pageY: touch.pageY
+        },
+        two: {
+          pageX: touch1.pageX,
+          pageY: touch1.pageY
+        }
+      }
+    }
+    
+    down_is = 'first'
+    obj.addEventListener('touchmove', touchmove, false)
   }
-//for (let i = 0; i < $el.length; i++) {
-//  let _obj = $el[i]
   obj.addEventListener("touchend", (e) => {
     e = window.e || e
     e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true
     let _obj = e.target // 获取当前dom元素
-//  if (!is) {
-//    return
-//  }
-//  let touch = e.changedTouches[0]
-//  let dom = window.getComputedStyle(obj, null)
     if (touchEnd_out * 100 > 40) { // 超出下限模拟值，则返回
-//    obj.style.opacity = 0
-//    setTimeout(() => {
-        call && call({
-          slide: false // 返回的时候取消滚动效果
-        })
-//    }, 200)
+      call && call({
+        slide: false // 返回的时候取消滚动效果
+      })
     } else { // 还有双指的操作，等会else if
       // 这里先当做普通的反弹
       // 有这个问题

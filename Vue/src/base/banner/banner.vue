@@ -60,6 +60,10 @@
         type: Boolean,
         default: false
       },
+      data: {
+        type: Array,
+        default: null
+      },
       momentumLimitDistance: {
         type: Number,
         default: 15
@@ -67,6 +71,10 @@
       interval: {
         type: Number,
         default: 4000
+      },
+      refreshDelay: {
+        type: Number,
+        default: 20
       }
     },
     data() {
@@ -192,6 +200,19 @@
       },
       enable () {
         this.slider.enable && this.slider.enable()
+      },
+      refresh () {
+        this.slider.refresh && this.slider.refresh()
+      },
+      destroy () {
+        this.slider.destroy && this.slider.destroy()
+      }
+    },
+    watch: {
+      data() {
+        setTimeout(() => {
+          this.refresh()
+        }, this.refreshDelay)
       }
     }
   }
