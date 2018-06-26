@@ -272,6 +272,7 @@ const M_touchMove_pic = (klass, el, call) => {
       }, 35, 80) // TODO 如果有性能问题，在这里微调
     } else {
       // 两颗手指的图片放大缩小操作 do something......
+      console.log(1)
     }
   }
   let touchstart = (e) => {

@@ -55,6 +55,26 @@ const MyCommissionAskMoney = (resolve) => {
     resolve(module)
   })
 }
+const MyCommissionAskMoneyHistory = (resolve) => {
+  import('components/my/commission/ask-money/child/history').then((module) => {
+    resolve(module)
+  })
+}
+const MyCommissionAskMoneyFlow = (resolve) => {
+  import('components/my/commission/ask-money/child/flow').then((module) => {
+    resolve(module)
+  })
+}
+const MyCommissionAskMoneyTiedCard = (resolve) => {
+  import('components/my/commission/ask-money/tied-card').then((module) => {
+    resolve(module)
+  })
+}
+const MyCommissionAskMoneyTiedCardResult = (resolve) => {
+  import('components/my/commission/ask-money/child/tied-result').then((module) => {
+    resolve(module)
+  })
+}
 const MyCommissionTask = (resolve) => {
   import('components/my/commission/task/index').then((module) => {
     resolve(module)
@@ -135,8 +155,26 @@ export default new Router({
           component: MyCommission,
           children: [
             {
-              path: 'ask_money',
-              component: MyCommissionAskMoney
+              path: 'ask_money', // 绑卡成功的
+              component: MyCommissionAskMoney,
+              children: [
+                {
+                  path: 'history',
+                  component: MyCommissionAskMoneyHistory
+                }, {
+                  path: 'flow',
+                  component: MyCommissionAskMoneyFlow
+                }
+              ]
+            }, {
+              path: 'ask_money_tied_card', // 未绑卡成功的
+              component: MyCommissionAskMoneyTiedCard,
+              children: [
+                {
+                  path: 'tied_result',
+                  component: MyCommissionAskMoneyTiedCardResult
+                }
+              ]
             }, {
               path: 'rule',
               component: MyCommissionRule

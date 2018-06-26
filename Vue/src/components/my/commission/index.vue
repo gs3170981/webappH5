@@ -11,7 +11,7 @@
         <section class="content-float row-padding">
           <h1 class="title">佣金概览<router-link tag="span" class="more" to="/my_commission/more">查看更多<img class="row-icon-right" :src="icon.right" /></router-link></h1>
           <div id="chart"></div>
-          <router-link tag="img" class="ask_money" :src="icon.money" to="/my_commission/ask_money"></router-link>
+          <router-link tag="img" class="ask_money" :src="icon.money" to="/my_commission/ask_money_tied_card"></router-link>
         </section>
         <!--中间的内容模块-->
         <section class="content row-padding row-border-bottom">

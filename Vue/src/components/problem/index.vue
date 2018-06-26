@@ -34,7 +34,7 @@
             <input v-model="iphone" class="input" type="text" placeholder="请输入您的手机号，方便我们及时向您沟通解决问题" name="" id="" value="" />
           </dd>
         </dl>
-        <p class="btn row-btn">提交</p>
+        <p class="btn row-btn" @click="updata">提交</p>
       </div>
     </scroll>
     <!--子滑动页面-->
@@ -89,6 +89,7 @@
       SlidePage
     },
     created () {
+      console.log(7777)
     },
     mounted () {
       this.radio_checked('PROBLEM_radio_checked', 'listValue', 0, {img: 'radio'})
@@ -162,6 +163,9 @@
             index: index
           }
         })
+      },
+      updata () {
+        console.log('提交')
       }
     }
   }
