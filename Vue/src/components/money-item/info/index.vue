@@ -42,7 +42,7 @@
         <section class="banner">
           <banner v-if="banner.length" class="row-slider-wrapper" :dotsIndex="bannerIndexStyle">
             <div v-for="t in banner">
-              <a :href="t.url">
+              <a :href="t.url" @click="bannerJump(t)">
                 <img class="needsclick" @load="loadImage" :src="t.href">
               </a>
             </div>
@@ -127,13 +127,17 @@
         ],
         banner: [
           {
+            id: 'banner_card',
             url: 'javascript:void(0)',
+            title: '办信用卡',
             href: require('common/image/stages_banner.png'),
-            id: 'a'
+            path: 'http://info.51icare.cn/webv4/card/dist/#/'
           }, {
+            id: 'banner_carLoan',
+            title: '臻车贷',
             url: 'javascript:void(0)',
             href: require('common/image/pay_banner.png'),
-            id: 'a'
+            path: 'http://info.51icare.cn/webv4/carLoan/dist/index.html'
           }
         ],
         list: this.$store.state.pay.list,
@@ -182,6 +186,14 @@
       this.getData()
     },
     methods: {
+      bannerJump (t) {
+        jiexin.openWindow({
+          url: t.path,
+          viewid: t.id,
+          title: t.title
+        })
+        return false
+      },
       touchToend (e) {
         if (e.distY >= 250) {
 //        this.pull_down = true
