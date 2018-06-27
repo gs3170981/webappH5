@@ -130,13 +130,13 @@
             id: 'banner_card',
             url: 'javascript:void(0)',
             title: '办信用卡',
-            href: require('common/image/stages_banner.png'),
+            href: require('common/image/card_banner.png'),
             path: 'http://info.51icare.cn/webv4/card/dist/#/'
           }, {
             id: 'banner_carLoan',
             title: '臻车贷',
             url: 'javascript:void(0)',
-            href: require('common/image/pay_banner.png'),
+            href: require('common/image/car_banner.png'),
             path: 'http://info.51icare.cn/webv4/carLoan/dist/index.html'
           }
         ],
