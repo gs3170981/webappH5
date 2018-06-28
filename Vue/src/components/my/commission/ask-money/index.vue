@@ -10,8 +10,8 @@
           <dt class="title">提现金额</dt>
           <dd class="money">
             <span style="font-size: .54rem;">￥</span>
-            <span class="input" v-text="money" @click="key_board = true"></span>
-            <img class="icon" v-if="money" @click="moneyClear" :src="other.icon3"/>
+            <span class="input" v-text="money" @click="key_board = !key_board"></span>
+            <img class="icon" v-if="money" @click="moneyClear(true)" :src="other.icon3"/>
           </dd>
           <dd class="tips" v-if="money">额外扣除¥10元手续费</dd>
           <dd class="tips" v-else>可提佣金￥8000.00</dd>
@@ -23,7 +23,7 @@
     <!--子滑动页面-->
     <router-view></router-view>
     <!--数字键盘-->
-    <key-board :show="key_board"></key-board>
+    <key-board ref="keyBoard" :show="key_board" @end="moneyClear" @val="getMoney"></key-board>
   </slide-page>
 </template>
 
@@ -43,8 +43,8 @@
           },
           title: '佣金提现',
           right: {
-//          icon: require('common/image/nav_btn_help.png'),
-//          href: ''
+            icon: require('common/image/nav_btn_record.png'),
+            href: '/my_commission/ask_money/history'
           }
         },
         money: '',
@@ -67,15 +67,20 @@
     },
     methods: {
       submit_btn () {
-        this.$router.push({path: '/my_commission/ask_money/tied_result', query: {
+        this.$router.push({path: '/my_commission/ask_money/flow', query: {
           is: true,
         }})
       },
-      moneyClear () {
-        
+      moneyClear (is) {
+        if (is) {
+          this.$refs.keyBoard.money = ''
+          this.money = ''
+          return
+        }
+        this.key_board = false
       },
-      inputTouch () {
-        
+      getMoney (val) {
+        this.money = val
       }
     }
   }

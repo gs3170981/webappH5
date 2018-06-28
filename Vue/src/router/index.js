@@ -60,6 +60,11 @@ const MyCommissionAskMoneyHistory = (resolve) => {
     resolve(module)
   })
 }
+const MyCommissionAskMoneyHistoryDet = (resolve) => {
+  import('components/my/commission/ask-money/child/det/index').then((module) => {
+    resolve(module)
+  })
+}
 const MyCommissionAskMoneyFlow = (resolve) => {
   import('components/my/commission/ask-money/child/flow').then((module) => {
     resolve(module)
@@ -160,7 +165,13 @@ export default new Router({
               children: [
                 {
                   path: 'history',
-                  component: MyCommissionAskMoneyHistory
+                  component: MyCommissionAskMoneyHistory,
+                  children: [
+                    {
+                      path: 'det',
+                      component: MyCommissionAskMoneyHistoryDet
+                    }
+                  ]
                 }, {
                   path: 'flow',
                   component: MyCommissionAskMoneyFlow

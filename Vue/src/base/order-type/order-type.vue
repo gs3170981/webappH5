@@ -43,10 +43,14 @@
     },
     methods: {
       again () {
-        
+        this.$router.push({
+          path: '/my_commission/ask_money_tied_card'
+        })
       },
       back () {
-        
+        this.$router.push({
+          path: '/my_commission'
+        })
       },
       ok () {
         this.$router.push({

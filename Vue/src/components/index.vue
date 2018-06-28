@@ -41,7 +41,7 @@
                 <!--TODO 这边width性能有问题，有时间改成scale3d-->
                 <p class="now" :style="{ width: t.val + '%' }"></p>
               </div>
-              <div class="number">{{ t.val }} <span>单</span></div>
+              <div class="number"><span>{{ t.val }}</span> <span>单</span></div>
             </li>
           </ul>
         </section>
