@@ -150,7 +150,7 @@
           title: '',
           right: {
             icon: require('common/image/nav_btn_user.png'),
-            href: '/menuItem_stages/det',
+            href: '',
           }
         },
         rank: [

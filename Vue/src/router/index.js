@@ -20,6 +20,11 @@ const MenuItemStages = (resolve) => {
     resolve(module)
   })
 }
+const MenuItemStagesDet = (resolve) => {
+  import('components/menu-item/stages/det/index').then((module) => {
+    resolve(module)
+  })
+}
 const MenuItemShop = (resolve) => {
   import('components/menu-item/shop/index').then((module) => {
     resolve(module)
@@ -139,7 +144,13 @@ export default new Router({
       children: [
         {
           path: 'menuItem_stages', // 头部item列表
-          component: MenuItemStages
+          component: MenuItemStages,
+          children: [
+            {
+              path: 'det',
+              component: MenuItemStagesDet,
+            }
+          ]
         }, {
           path: 'menuItem_shop',
           component: MenuItemShop
