@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+		<title></title>
+	</head>
+	<body>
+	  <input type="button" name="test" id="test" value="去支付" />
+	</body>
+	<script>
+	  document.getElementById("test").onclick = function () {
+	    location.href="http://alipay.3c-buy.com/api/createQuickOrder?merchantOutOrderNo=20180712175208324&merid=yft2018011200003&noncestr=jiexinanbao&notifyUrl=http://39.108.15.199:8061/reimbursement/callback.json&orderMoney=2.0&orderTime=20180712175208&sign=c31526250fde6f9d7a515f51407d26fc"
+	  }
+	</script>
+</html>

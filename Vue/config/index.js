@@ -14,7 +14,8 @@ module.exports = {
     proxyTable: { // 转接
       '/zfq': {
 // 'http://192.168.20.175:8061'
-        target: 'http://39.108.15.199:8061',
+//      target: 'http://39.108.15.199:8061',
+        target: 'http://114.55.86.215:8061',
         changeOrigin: true,
         pathRewrite: {
           '^/zfq': '/' //这里理解成用‘/api’代替target里面的地址，组件中我们调接口时直接用/api代替

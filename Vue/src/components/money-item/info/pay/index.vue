@@ -34,6 +34,17 @@
         <!--<p class="pay-btn row-item" @click="goPay()">去付款</p>-->
         <!--<a class="pay-btn row-item" :href="order_href" @click="goPay">去付款</a>-->
         <p class="pay-btn row-item" @click="goPay">去付款</p>
+        <!--form test-->
+          <!--<form id="test_form" style="display:none;" action="https://alipay.3c-buy.com/api/createQuickOrder" method="post">
+          	<input type="" name="merchantOutOrderNo" id="merchantOutOrderNo" value="" />
+          	<input type="" name="merid" id="merid" value="" />
+          	<input type="" name="noncestr" id="noncestr" value="" />
+          	<input type="" name="notifyUrl" id="notifyUrl" value="" />
+          	<input type="" name="orderMoney" id="orderMoney" value="" />
+          	<input type="" name="orderTime" id="orderTime" value="" />
+          	<input type="" name="sign" id="sign" value="" />
+          </form>-->
+        <!--form test-->
       </div>
       <order-type :type="order_type" :money="data.money" :iphone="iphone"></order-type>
     </scroll>
@@ -73,11 +84,10 @@
           {
             url: '/api/createOrder', // 支付宝
             icon: require('common/image/pay_logo_alipay.png')
+          }, {
+            url: '/api/createQuickOrder', // 银联
+            icon: require('common/image/pay_logo_union.png')
           }
-//        , {
-//          url: '/api/createQuickOrder', // 银联
-//          icon: require('common/image/pay_logo_union.png')
-//        }
         ],
         val: '',
         order_href: '', // btn绑定上的值
@@ -167,6 +177,16 @@
 //    }
     },
     mounted () {
+      if (jiexin.isIos()) { // IOS基于银联的回调pay_updataFunction
+        updataBackViewController(JSON.stringify({
+          viewid: 'immediatePayment',
+          fireEventController: {
+            eventName: 'pay_updata',
+            extdata: true,
+            viewid: 'immediatePayment'
+          }
+        }))
+      }
       this.radio_checked('MONEY_ITEM_INFO_PAY_radio_checked', 'checkValue', 0) // 传下标默认选中
     },
     destroyed () {
@@ -180,6 +200,10 @@
           money = parseFloat(this.$route.query.currentAmount)
           let _date = new Date()
           flag = _date.getFullYear() + '' + ((_date.getMonth() + 1) >= 10 ? (_date.getMonth() + 1) : '0' + (_date.getMonth() + 1)) + 15
+        }
+        if (money > 3000) { // 如果是银联则钱不能超过3000
+          MessageBox.alert('银联支付金额不可大于3000元！', '温馨提示')
+          return
         }
 //      alert(this.iphone + '-' + money + '-' + flag)
         new M_Proms(fn => {
@@ -195,7 +219,19 @@
               },
               success: r => {
                 this.order.data = r
-//              location.hash = location.hash + '&merchantOutOrderNo=' + r.merchantOutOrderNo
+                // test
+//              const $ = (e) => {
+//                return document.getElementById(e)
+//              }
+//              $('merchantOutOrderNo').value = r.merchantOutOrderNo
+//              $('merid').value = r.merid
+//              $('noncestr').value = r.noncestr
+//              $('notifyUrl').value = r.notifyUrl
+//              $('orderMoney').value = r.orderMoney
+//              $('orderTime').value = r.orderTime
+//              $('sign').value = r.sing
+//              $('test_form').submit()
+                // test
                 this.order.key = `?
                   merchantOutOrderNo=${r.merchantOutOrderNo}&
                   merid=${r.merid}&
@@ -203,7 +239,8 @@
                   notifyUrl=${r.notifyUrl}&
                   orderMoney=${r.orderMoney}&
                   orderTime=${r.orderTime}&
-                  sign=${r.sing}
+                  sign=${r.sing}&
+                  id=${this.iphone}
                 `.replace(/\s+/g,"")
                 setTimeout(() => {
                   fn.then()

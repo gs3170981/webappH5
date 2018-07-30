@@ -106,6 +106,7 @@
         },
         header: {
           money: this.$store.state.pay.currentAmount,
+          _money: '',
           his_ago: this.$store.state.pay.historyOverdueCount,
           now_ago: this.$store.state.pay.overdueCount,
           icon: require('common/image/card_img_success1.png')
@@ -114,14 +115,17 @@
           {
             id: 'a',
             val: this.$store.state.pay.nextMonthAmount,
+            _val: '',
             title: '下月应付(元)'
           }, {
             id: 'b',
             val: this.$store.state.pay.amount,
+            _val: '',
             title: '分期总额(元)'
           }, {
             id: 'c',
             val: this.$store.state.pay.remainAmount,
+            _val: '',
             title: '剩余未付(元)'
           }
         ],
@@ -168,6 +172,7 @@
     created () {
       jiexin.addEvent('pay_updata', (type) => { // 监听回调
         setTimeout(() => {
+          console.log('刷新！')
           this.getData()
         }, 20)
 //      if (type) {
@@ -247,19 +252,19 @@
               {
                 e: this.header,
                 val: 'money',
-                now: res.currentAmount
+                now: this.header._money = res.currentAmount
               }, {
                 e: this.much[0],
                 val: 'val',
-                now: res.nextMonthAmount
+                now: this.much[0]._val = res.nextMonthAmount
               }, {
                 e: this.much[1],
                 val: 'val',
-                now: res.amount
+                now: this.much[1]._val = res.amount
               }, {
                 e: this.much[2],
                 val: 'val',
-                now: res.remainAmount
+                now: this.much[2]._val = res.remainAmount
               }
             ])
             // 改变导航栏的title
@@ -286,10 +291,10 @@
           location.pathname + 
           url + 
           '?mobile=' + this.iphone + 
-          '&nextMonthAmount=' + this.much[0].val + 
-          '&amount=' + this.much[1].val + 
-          '&remainAmount=' + this.much[2].val + 
-          '&currentAmount=' + this.header.money + 
+          '&nextMonthAmount=' + this.much[0]._val + 
+          '&amount=' + this.much[1]._val + 
+          '&remainAmount=' + this.much[2]._val + 
+          '&currentAmount=' + this.header._money + 
           (type ? ('&type=' + type) : '')
 //      location.href = URL
         jiexin.openWindow({
